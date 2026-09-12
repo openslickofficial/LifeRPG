@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Shield, Sparkles } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 export function Navbar() {
   return (
@@ -56,6 +57,16 @@ export function Navbar() {
 
           {/* Animated Theme Switcher */}
           <ThemeToggle />
+
+          {/* Sign In CTA */}
+          <Link href="/login">
+            <Button
+              size="sm"
+              className="h-9 rounded-xl px-3.5 text-xs font-semibold"
+            >
+              Sign In
+            </Button>
+          </Link>
         </div>
       </div>
     </header>

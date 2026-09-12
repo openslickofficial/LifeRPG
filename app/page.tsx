@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   ArrowRight,
@@ -128,13 +129,15 @@ export default function Home() {
 
             {/* CTA Cluster */}
             <div className="mt-8 flex flex-wrap items-center gap-4">
-              <Button
-                size="lg"
-                className="group shadow-brand h-12 rounded-xl px-7 text-base font-semibold hover:scale-[1.02] active:scale-[0.98]"
-              >
-                <span>Get Started</span>
-                <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
-              </Button>
+              <Link href="/login">
+                <Button
+                  size="lg"
+                  className="group shadow-brand h-12 rounded-xl px-7 text-base font-semibold hover:scale-[1.02] active:scale-[0.98]"
+                >
+                  <span>Get Started</span>
+                  <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
+                </Button>
+              </Link>
 
               <Button
                 variant="outline"

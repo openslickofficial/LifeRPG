@@ -1,0 +1,158 @@
+"use client";
+
+import * as React from "react";
+import { useRouter } from "next/navigation";
+import { Shield, Sparkles, Loader2, AlertCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
+import { createClient } from "@/lib/supabase/client";
+
+export default function OnboardingPage() {
+  const router = useRouter();
+  const [username, setUsername] = React.useState("");
+  const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
+
+  const supabase = createClient();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const cleanUsername = username.trim();
+
+    if (cleanUsername.length < 3) {
+      setError("Username must be at least 3 characters long.");
+      return;
+    }
+
+    if (!/^[a-zA-Z0-9_]+$/.test(cleanUsername)) {
+      setError("Username can only contain letters, numbers, and underscores.");
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) {
+        router.push("/login");
+        return;
+      }
+
+      // Update profile username
+      const { error: updateError } = await supabase
+        .from("profiles")
+        .update({ username: cleanUsername })
+        .eq("id", user.id);
+
+      if (updateError) {
+        if (updateError.code === "23505") {
+          setError("That username is already claimed by another adventurer.");
+        } else {
+          setError(updateError.message);
+        }
+        setLoading(false);
+        return;
+      }
+
+      router.push("/dashboard");
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : "Failed to save username";
+      setError(message);
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="relative flex min-h-[calc(100vh-4rem)] items-center justify-center px-4 py-12">
+      <div className="w-full max-w-md">
+        <Card className="border-border/80 bg-card/95 shadow-elevated rounded-3xl border p-0 backdrop-blur-xl">
+          <CardHeader className="space-y-3 p-8 pb-4 text-center">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-tr from-violet-600 via-indigo-600 to-cyan-500 p-0.5 shadow-md shadow-violet-500/25">
+              <div className="bg-background/20 flex h-full w-full items-center justify-center rounded-[14px] text-white backdrop-blur-xs">
+                <Shield className="h-7 w-7" />
+              </div>
+            </div>
+
+            <div>
+              <CardTitle className="font-heading text-foreground text-2xl font-bold tracking-tight sm:text-3xl">
+                Claim Your Call Sign
+              </CardTitle>
+              <CardDescription className="font-body text-muted-foreground mt-2 text-sm leading-relaxed">
+                Every adventurer in Life RPG requires a distinct handle for
+                quests, guilds, and leaderboards.
+              </CardDescription>
+            </div>
+          </CardHeader>
+
+          <form onSubmit={handleSubmit}>
+            <CardContent className="space-y-4 p-8 pt-4">
+              {error && (
+                <div className="flex items-start gap-2.5 rounded-2xl border border-rose-500/30 bg-rose-500/10 p-3 text-xs text-rose-700 dark:text-rose-300">
+                  <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-rose-500" />
+                  <p className="leading-relaxed">{error}</p>
+                </div>
+              )}
+
+              <div className="space-y-2">
+                <label
+                  htmlFor="username"
+                  className="font-heading text-muted-foreground text-xs font-semibold tracking-wider uppercase"
+                >
+                  Adventurer Username
+                </label>
+                <div className="relative">
+                  <input
+                    id="username"
+                    type="text"
+                    required
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    placeholder="e.g. shadow_blade"
+                    maxLength={20}
+                    className="border-border/90 bg-background/80 text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:ring-primary/20 h-12 w-full rounded-xl border px-4 font-mono text-sm transition-all outline-none focus:ring-2"
+                  />
+                  <span className="text-muted-foreground absolute top-3.5 right-3.5 font-mono text-xs">
+                    {username.length}/20
+                  </span>
+                </div>
+              </div>
+            </CardContent>
+
+            <CardFooter className="border-border/60 bg-muted/20 flex flex-col gap-3 border-t p-6">
+              <Button
+                type="submit"
+                size="lg"
+                disabled={loading || !username.trim()}
+                className="shadow-brand h-12 w-full rounded-xl text-base font-semibold"
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <span>Inscribing Call Sign...</span>
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="mr-2 h-4 w-4" />
+                    <span>Enter Character Realm</span>
+                  </>
+                )}
+              </Button>
+            </CardFooter>
+          </form>
+        </Card>
+      </div>
+    </div>
+  );
+}
