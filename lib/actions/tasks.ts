@@ -9,6 +9,7 @@ import {
   UpdateTaskInput,
 } from "@/lib/validations/task";
 import { calculateTaskReward } from "@/lib/rpg/rewards";
+import { checkLevelUp, xpRequiredForLevel } from "@/lib/rpg/leveling";
 import { rateLimit } from "@/lib/rate-limit";
 
 export interface ActionResult<T = unknown> {
@@ -303,29 +304,110 @@ export async function completeTaskAction(
         };
       }
 
-      // Increment profile XP
+      // Increment profile XP with non-linear leveling curve
       const { data: profile } = await supabase
         .from("profiles")
         .select("current_xp, currency, level")
         .eq("id", user.id)
         .single();
 
+      let charLevelUpInfo = {
+        leveledUp: false,
+        oldLevel: 1,
+        newLevel: 1,
+        levelsGained: 0,
+        remainingXp: 0,
+        xpNeeded: 50,
+      };
+
+      let newCurrency = 0;
+
       if (profile) {
-        const newXp = profile.current_xp + existingTask.xp_reward;
-        const newCurrency = profile.currency + existingTask.currency_reward;
-        const newLevel = Math.max(profile.level, 1 + Math.floor(newXp / 1000));
+        const totalXp = profile.current_xp + existingTask.xp_reward;
+        const levelResult = checkLevelUp(profile.level, totalXp);
+        newCurrency = profile.currency + existingTask.currency_reward;
+
+        charLevelUpInfo = {
+          leveledUp: levelResult.leveledUp,
+          oldLevel: profile.level,
+          newLevel: levelResult.newLevel,
+          levelsGained: levelResult.levelsGained,
+          remainingXp: levelResult.remainingXp,
+          xpNeeded: xpRequiredForLevel(levelResult.newLevel),
+        };
+
         await supabase
           .from("profiles")
           .update({
-            current_xp: newXp,
+            current_xp: levelResult.remainingXp,
             currency: newCurrency,
-            level: newLevel,
+            level: levelResult.newLevel,
           })
           .eq("id", user.id);
       }
 
+      // Increment attribute XP with non-linear leveling curve
+      const { data: attr } = await supabase
+        .from("attributes")
+        .select("*")
+        .eq("profile_id", user.id)
+        .eq("name", existingTask.category)
+        .maybeSingle();
+
+      let attrLevelUpInfo = {
+        leveledUp: false,
+        attributeName: existingTask.category,
+        oldLevel: 1,
+        newLevel: 1,
+        levelsGained: 0,
+        remainingXp: 0,
+        xpNeeded: 50,
+      };
+
+      if (attr) {
+        const totalAttrXp = attr.current_xp + existingTask.xp_reward;
+        const attrResult = checkLevelUp(attr.level, totalAttrXp);
+        attrLevelUpInfo = {
+          leveledUp: attrResult.leveledUp,
+          attributeName: existingTask.category,
+          oldLevel: attr.level,
+          newLevel: attrResult.newLevel,
+          levelsGained: attrResult.levelsGained,
+          remainingXp: attrResult.remainingXp,
+          xpNeeded: xpRequiredForLevel(attrResult.newLevel),
+        };
+
+        await supabase
+          .from("attributes")
+          .update({
+            current_xp: attrResult.remainingXp,
+            level: attrResult.newLevel,
+          })
+          .eq("profile_id", user.id)
+          .eq("name", existingTask.category);
+      } else {
+        const attrResult = checkLevelUp(1, existingTask.xp_reward);
+        attrLevelUpInfo = {
+          leveledUp: attrResult.leveledUp,
+          attributeName: existingTask.category,
+          oldLevel: 1,
+          newLevel: attrResult.newLevel,
+          levelsGained: attrResult.levelsGained,
+          remainingXp: attrResult.remainingXp,
+          xpNeeded: xpRequiredForLevel(attrResult.newLevel),
+        };
+
+        await supabase.from("attributes").insert({
+          profile_id: user.id,
+          name: existingTask.category,
+          level: attrResult.newLevel,
+          current_xp: attrResult.remainingXp,
+        });
+      }
+
       revalidatePath("/dashboard/quests");
       revalidatePath("/dashboard");
+      revalidatePath("/dashboard/attributes");
 
       return {
         success: true,
@@ -333,12 +415,19 @@ export async function completeTaskAction(
           task_id: taskId,
           xp_gained: existingTask.xp_reward,
           currency_gained: existingTask.currency_reward,
+          new_xp: charLevelUpInfo.remainingXp,
+          new_currency: newCurrency,
+          new_level: charLevelUpInfo.newLevel,
+          category: existingTask.category,
+          characterLevelUp: charLevelUpInfo,
+          attributeLevelUp: attrLevelUpInfo,
         },
       };
     }
 
     revalidatePath("/dashboard/quests");
     revalidatePath("/dashboard");
+    revalidatePath("/dashboard/attributes");
 
     return {
       success: true,

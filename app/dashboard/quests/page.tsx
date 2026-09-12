@@ -25,6 +25,12 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
+  LevelUpCelebration,
+  CharacterLevelUpData,
+  AttributeLevelUpData,
+} from "@/components/LevelUpCelebration";
+import { checkLevelUp } from "@/lib/rpg/leveling";
+import {
   Dialog,
   DialogContent,
   DialogHeader,
@@ -162,6 +168,16 @@ export default function QuestsPage() {
     type: "success" | "error" | "rate_limit";
     text: string;
   } | null>(null);
+
+  // Level Up Celebration state
+  const [isCelebrationOpen, setIsCelebrationOpen] = React.useState(false);
+  const [celebrationData, setCelebrationData] = React.useState<{
+    characterLevelUp?: CharacterLevelUpData | null;
+    attributeLevelUp?: AttributeLevelUpData | null;
+  }>({});
+  // Mock character progress for interactive preview testing
+  const [demoCharacterLevel, setDemoCharacterLevel] = React.useState(1);
+  const [demoCharacterXp, setDemoCharacterXp] = React.useState(35); // 35/50 XP, next quest triggers level up!
 
   const supabase = React.useMemo(() => createClient(), []);
 
@@ -371,8 +387,51 @@ export default function QuestsPage() {
     // 2. Call server action / RPC
     const res = await completeTaskAction(quest.id);
 
-    // 3. Rollback if server rejects (e.g. rate limit, auth, network error) unless preview
-    if (!res.success && !isPreview) {
+    if (res.success && res.data) {
+      const rpcData = res.data as {
+        characterLevelUp?: CharacterLevelUpData;
+        attributeLevelUp?: AttributeLevelUpData;
+      };
+
+      if (
+        rpcData.characterLevelUp?.leveledUp ||
+        rpcData.attributeLevelUp?.leveledUp
+      ) {
+        setCelebrationData({
+          characterLevelUp: rpcData.characterLevelUp,
+          attributeLevelUp: rpcData.attributeLevelUp,
+        });
+        setIsCelebrationOpen(true);
+      }
+    } else if (isPreview) {
+      // In preview/demo mode, compute non-linear leveling progression
+      const totalXp = demoCharacterXp + quest.xp_reward;
+      const levelResult = checkLevelUp(demoCharacterLevel, totalXp);
+
+      if (levelResult.leveledUp) {
+        setCelebrationData({
+          characterLevelUp: {
+            leveledUp: true,
+            oldLevel: demoCharacterLevel,
+            newLevel: levelResult.newLevel,
+            levelsGained: levelResult.levelsGained,
+          },
+          attributeLevelUp: {
+            leveledUp: true,
+            attributeName: quest.category,
+            oldLevel: 1,
+            newLevel: 2,
+            levelsGained: 1,
+          },
+        });
+        setDemoCharacterLevel(levelResult.newLevel);
+        setDemoCharacterXp(levelResult.remainingXp);
+        setIsCelebrationOpen(true);
+      } else {
+        setDemoCharacterXp(totalXp);
+      }
+    } else {
+      // 3. Rollback if server rejects (e.g. rate limit, auth, network error) unless preview
       setQuests(previousQuests);
       showToast(
         res.error || "Failed to complete quest.",
@@ -844,6 +903,14 @@ export default function QuestsPage() {
           </form>
         </DialogContent>
       </Dialog>
+
+      {/* Level-Up Celebration Delight Moment Overlay */}
+      <LevelUpCelebration
+        isOpen={isCelebrationOpen}
+        onClose={() => setIsCelebrationOpen(false)}
+        characterLevelUp={celebrationData.characterLevelUp}
+        attributeLevelUp={celebrationData.attributeLevelUp}
+      />
     </div>
   );
 }

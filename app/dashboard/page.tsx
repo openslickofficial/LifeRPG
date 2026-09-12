@@ -19,6 +19,7 @@ import { Card, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
+import { getLevelProgress } from "@/lib/rpg/leveling";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -67,16 +68,13 @@ export default async function DashboardPage() {
     }
   }
 
-  // Calculate XP progress towards next level
-  const targetXpForNextLevel = 1000;
-  const xpInCurrentTier = currentXp % targetXpForNextLevel;
-  const xpProgressPercentage = Math.min(
-    100,
-    Math.max(
-      8, // minimum visual ring progress
-      Math.round((xpInCurrentTier / targetXpForNextLevel) * 100)
-    )
+  // Calculate non-linear XP progress towards next level using pure leveling curve
+  const progress = getLevelProgress(level, currentXp);
+  const xpNeededRemaining = Math.max(
+    0,
+    progress.xpNeededForNextLevel - progress.xpIntoLevel
   );
+  const xpProgressPercentage = progress.percentage;
 
   return (
     <div className="space-y-8">
@@ -117,9 +115,9 @@ export default async function DashboardPage() {
             icon={<Sparkles className="h-5 w-5" />}
             label="Experience Points"
             value={`${currentXp.toLocaleString()}`}
-            subvalue={`${targetXpForNextLevel - xpInCurrentTier} XP to Lvl ${level + 1}`}
+            subvalue={`${xpNeededRemaining} XP to Lvl ${level + 1}`}
             accentColor="emerald"
-            trend="+350 XP earned today"
+            trend={`${progress.xpIntoLevel} / ${progress.xpNeededForNextLevel} XP in Tier`}
           >
             <CircularProgress
               percentage={xpProgressPercentage}
@@ -268,31 +266,31 @@ export default async function DashboardPage() {
               </Link>
             </div>
 
-            <div className="mt-4 grid grid-cols-3 gap-3">
-              <div className="border-border/60 bg-muted/40 rounded-2xl border p-3.5 text-center">
-                <span className="font-heading text-foreground text-xs font-bold">
+            <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+              <div className="border-border/60 bg-muted/40 rounded-2xl border p-3.5 text-center transition-colors hover:border-rose-500/40">
+                <span className="font-heading text-xs font-bold text-rose-500">
                   ⚔️ Strength
                 </span>
                 <p className="text-foreground mt-1 font-mono text-base font-extrabold">
                   Lvl 12
                 </p>
                 <p className="text-muted-foreground font-mono text-[10px]">
-                  Vitality Core
+                  Physical Grit
                 </p>
               </div>
-              <div className="border-border/60 bg-muted/40 rounded-2xl border p-3.5 text-center">
-                <span className="font-heading text-foreground text-xs font-bold">
+              <div className="border-border/60 bg-muted/40 rounded-2xl border p-3.5 text-center transition-colors hover:border-cyan-500/40">
+                <span className="font-heading text-xs font-bold text-cyan-500">
                   🔮 Intellect
                 </span>
                 <p className="text-foreground mt-1 font-mono text-base font-extrabold">
                   Lvl 16
                 </p>
                 <p className="text-muted-foreground font-mono text-[10px]">
-                  Knowledge Core
+                  Focus Systems
                 </p>
               </div>
-              <div className="border-border/60 bg-muted/40 rounded-2xl border p-3.5 text-center">
-                <span className="font-heading text-foreground text-xs font-bold">
+              <div className="border-border/60 bg-muted/40 rounded-2xl border p-3.5 text-center transition-colors hover:border-violet-500/40">
+                <span className="font-heading text-xs font-bold text-violet-500">
                   🛡️ Discipline
                 </span>
                 <p className="text-foreground mt-1 font-mono text-base font-extrabold">
@@ -300,6 +298,17 @@ export default async function DashboardPage() {
                 </p>
                 <p className="text-muted-foreground font-mono text-[10px]">
                   Habit Resolve
+                </p>
+              </div>
+              <div className="border-border/60 bg-muted/40 rounded-2xl border p-3.5 text-center transition-colors hover:border-amber-500/40">
+                <span className="font-heading text-xs font-bold text-amber-500">
+                  🎨 Creativity
+                </span>
+                <p className="text-foreground mt-1 font-mono text-base font-extrabold">
+                  Lvl 10
+                </p>
+                <p className="text-muted-foreground font-mono text-[10px]">
+                  Innovation & Art
                 </p>
               </div>
             </div>
