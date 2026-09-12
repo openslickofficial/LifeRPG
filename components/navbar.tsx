@@ -1,10 +1,19 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Shield, Sparkles } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
 export function Navbar() {
+  const pathname = usePathname();
+
+  // Dashboard layout has its own Sidebar and DashboardHeader
+  if (pathname.startsWith("/dashboard")) {
+    return null;
+  }
   return (
     <header className="border-border/70 bg-background/85 sticky top-0 z-50 w-full border-b backdrop-blur-xl transition-colors duration-200">
       <div className="container mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">

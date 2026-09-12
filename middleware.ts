@@ -37,10 +37,12 @@ export async function middleware(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const pathname = request.nextUrl.pathname;
+  const isPreview = request.nextUrl.searchParams.get("preview") === "true";
 
   // Protect /dashboard, /onboarding, and any authenticated routes
   if (
     !user &&
+    !isPreview &&
     (pathname.startsWith("/dashboard") || pathname.startsWith("/onboarding"))
   ) {
     const url = request.nextUrl.clone();
