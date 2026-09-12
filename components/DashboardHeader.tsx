@@ -59,23 +59,29 @@ export function DashboardHeader({
         <button
           type="button"
           aria-label="View notifications (1 unread)"
-          className="border-border/80 bg-card/80 text-foreground/80 hover:border-primary/50 hover:bg-secondary/60 hover:text-foreground focus-visible:ring-primary relative flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-2xl border shadow-xs backdrop-blur-md transition-all duration-200 focus-visible:ring-2 focus-visible:outline-none active:scale-95"
+          className="border-border/80 bg-card/80 text-foreground/80 hover:border-primary/50 hover:bg-secondary/60 hover:text-foreground focus-visible:ring-primary relative flex h-11 min-h-[44px] w-11 min-w-[44px] shrink-0 cursor-pointer items-center justify-center rounded-2xl border shadow-xs backdrop-blur-md transition-all duration-200 focus-visible:ring-2 focus-visible:outline-none active:scale-95"
         >
-          <Bell className="h-4 w-4" />
+          <Bell className="h-4 w-4" aria-hidden="true" />
           {/* Pulsing notification dot */}
-          <span className="absolute top-2.5 right-2.5 flex h-2 w-2">
+          <span
+            className="absolute top-2.5 right-2.5 flex h-2 w-2"
+            aria-hidden="true"
+          >
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-rose-400 opacity-75" />
             <span className="relative inline-flex h-2 w-2 rounded-full bg-rose-500" />
           </span>
         </button>
 
-        {/* Quick Action Button */}
+        {/* Quick Action Button to Quest Board */}
         <Button
+          asChild
           size="sm"
-          className="shadow-brand h-10 gap-1.5 rounded-2xl px-4 text-xs font-semibold"
+          className="shadow-brand h-11 min-h-[44px] gap-1.5 rounded-2xl px-4 text-xs font-semibold"
         >
-          <Plus className="h-4 w-4" />
-          <span>New Quest</span>
+          <a href="/dashboard/quests?action=new">
+            <Plus className="h-4 w-4" aria-hidden="true" />
+            <span>New Quest</span>
+          </a>
         </Button>
       </div>
     </header>

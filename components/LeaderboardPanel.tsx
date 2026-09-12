@@ -79,10 +79,13 @@ export function LeaderboardPanel({
       <div className="border-border/60 flex items-center justify-between border-b pb-4">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-amber-500/20 bg-amber-500/10 text-amber-600 dark:text-amber-400">
-            <Trophy className="h-5 w-5" />
+            <Trophy className="h-5 w-5" aria-hidden="true" />
           </div>
           <div>
-            <CardTitle className="font-heading text-foreground text-lg font-bold">
+            <CardTitle
+              as="h2"
+              className="font-heading text-foreground text-lg font-bold"
+            >
               {title}
             </CardTitle>
             <CardDescription className="font-body text-muted-foreground text-xs">

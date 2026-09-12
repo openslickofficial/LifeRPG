@@ -178,12 +178,12 @@ export function LevelUpCelebration({
               initial={
                 prefersReducedMotion
                   ? { opacity: 0 }
-                  : { scale: 0.5, y: 30, opacity: 0 }
+                  : { scale: 0.85, opacity: 0, y: 20 }
               }
               animate={
                 prefersReducedMotion
                   ? { opacity: 1 }
-                  : { scale: 1, y: 0, opacity: 1 }
+                  : { scale: 1, opacity: 1, y: 0 }
               }
               exit={
                 prefersReducedMotion
@@ -198,14 +198,24 @@ export function LevelUpCelebration({
               onClick={(e) => e.stopPropagation()}
               className="border-primary/40 bg-card/95 shadow-elevated relative z-10 mx-auto flex max-w-sm flex-col items-center rounded-3xl border p-8 text-center backdrop-blur-2xl sm:max-w-md"
             >
+              {/* Screen reader live announcement */}
+              <div className="sr-only" role="status" aria-live="polite">
+                {characterLevelUp?.leveledUp
+                  ? `Level up! You ascended to Character Level ${characterLevelUp.newLevel}!`
+                  : "Level up achieved!"}
+                {attributeLevelUp?.leveledUp
+                  ? ` Your attribute ${attributeLevelUp.attributeName} ascended to Level ${attributeLevelUp.newLevel}!`
+                  : ""}
+              </div>
+
               {/* Top dismissal button */}
               <button
                 type="button"
                 onClick={onClose}
-                className="hover:bg-muted/80 text-muted-foreground absolute top-4 right-4 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full transition-colors"
+                className="hover:bg-muted/80 text-muted-foreground focus-visible:ring-primary absolute top-3 right-3 flex h-11 min-h-[44px] w-11 min-w-[44px] cursor-pointer items-center justify-center rounded-full transition-colors focus-visible:ring-2 focus-visible:outline-none"
                 aria-label="Dismiss celebration"
               >
-                <X className="h-4 w-4" />
+                <X className="h-4 w-4" aria-hidden="true" />
               </button>
 
               {/* Crown Emblem with Glow */}

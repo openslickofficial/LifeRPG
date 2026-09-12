@@ -185,10 +185,11 @@ export default async function DashboardPage() {
 
       {/* 2. Grid of 4 Reusable Stat Tiles (Reflows: 4 col -> 2 col -> 1 col) */}
       <section aria-label="Core Character Stats">
+        <h2 className="sr-only">Core Character Stats Overview</h2>
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {/* Stat 1: Character Level */}
           <StatTile
-            icon={<Shield className="h-5 w-5" />}
+            icon={<Shield className="h-5 w-5" aria-hidden="true" />}
             label="Character Level"
             value={`Lvl ${level}`}
             subvalue="Paladin of Discipline"
@@ -198,7 +199,7 @@ export default async function DashboardPage() {
 
           {/* Stat 2: Current XP with Circular Progress Ring */}
           <StatTile
-            icon={<Sparkles className="h-5 w-5" />}
+            icon={<Sparkles className="h-5 w-5" aria-hidden="true" />}
             label="Experience Points"
             value={`${currentXp.toLocaleString()}`}
             subvalue={`${xpNeededRemaining} XP to Lvl ${level + 1}`}
@@ -216,7 +217,7 @@ export default async function DashboardPage() {
 
           {/* Stat 3: Daily Activity Streak with Dynamic Flame Intensity */}
           <StatTile
-            icon={<Flame className={flameIconClass} />}
+            icon={<Flame className={flameIconClass} aria-hidden="true" />}
             label="Daily Streak"
             value={streakCount > 0 ? `${streakCount} Days` : "0 Days"}
             subvalue={
@@ -236,7 +237,7 @@ export default async function DashboardPage() {
 
           {/* Stat 4: Gold Currency */}
           <StatTile
-            icon={<Coins className="h-5 w-5" />}
+            icon={<Coins className="h-5 w-5" aria-hidden="true" />}
             label="Gold Purse"
             value={`${currency.toLocaleString()}`}
             subvalue="Spendable in Shop Vault"
@@ -248,6 +249,7 @@ export default async function DashboardPage() {
 
       {/* 2b. Streak 7-Day Activity Calendar Card */}
       <Card className="border-border/80 bg-card/80 rounded-3xl border p-5 backdrop-blur-sm sm:p-6">
+        <h2 className="sr-only">7-Day Streak Activity Calendar</h2>
         <StreakCalendar activityDates={activityDates} />
       </Card>
 
@@ -260,10 +262,10 @@ export default async function DashboardPage() {
             <div className="border-border/60 flex items-center justify-between border-b pb-4">
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-violet-500/20 bg-violet-500/10 text-violet-600 dark:text-violet-400">
-                  <Sword className="h-5 w-5" />
+                  <Sword className="h-5 w-5" aria-hidden="true" />
                 </div>
                 <div>
-                  <CardTitle className="text-xl">
+                  <CardTitle as="h2" className="text-xl">
                     Today&apos;s Quest Board
                   </CardTitle>
                   <CardDescription className="text-xs">
@@ -277,7 +279,7 @@ export default async function DashboardPage() {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="h-8.5 gap-1.5 rounded-xl text-xs"
+                  className="h-10 min-h-[44px] gap-1.5 rounded-xl text-xs sm:h-8.5 sm:min-h-0"
                 >
                   <span>View All</span>
                   <ArrowRight className="h-3.5 w-3.5" />
@@ -354,10 +356,10 @@ export default async function DashboardPage() {
           <Card className="rounded-3xl p-6">
             <div className="border-border/60 flex items-center justify-between border-b pb-3">
               <div className="flex items-center gap-2.5">
-                <Zap className="h-4 w-4 text-cyan-500" />
-                <span className="font-heading text-foreground text-sm font-bold">
+                <Zap className="h-4 w-4 text-cyan-500" aria-hidden="true" />
+                <h2 className="font-heading text-foreground text-sm font-bold">
                   Attribute Mastery Summary
-                </span>
+                </h2>
               </div>
               <Link
                 href="/dashboard/attributes"

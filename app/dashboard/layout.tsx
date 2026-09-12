@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Sidebar } from "@/components/Sidebar";
+import { OfflineBanner } from "@/components/OfflineBanner";
 
 export default function DashboardLayout({
   children,
@@ -8,6 +9,9 @@ export default function DashboardLayout({
 }) {
   return (
     <div className="bg-background text-foreground selection:bg-primary/20 selection:text-primary relative min-h-screen">
+      {/* Offline Connectivity Banner */}
+      <OfflineBanner />
+
       {/* Slim Icon-Only Desktop Sidebar + Mobile Bottom Tab Bar */}
       <Sidebar />
 

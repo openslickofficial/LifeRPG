@@ -40,7 +40,7 @@ function DialogContent({
       <DialogPrimitive.Content
         data-slot="dialog-content"
         className={cn(
-          "border-border/80 bg-card/95 shadow-elevated data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] fixed top-[50%] left-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 rounded-3xl border p-6 backdrop-blur-xl duration-200 sm:p-8",
+          "border-border/80 bg-card/95 shadow-elevated data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] fixed top-[50%] left-[50%] z-50 grid max-h-[90vh] w-[calc(100%-2rem)] max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 overflow-y-auto rounded-3xl border p-5 backdrop-blur-xl duration-200 sm:p-8",
           className
         )}
         {...props}
@@ -48,9 +48,10 @@ function DialogContent({
         {children}
         <DialogPrimitive.Close
           data-slot="dialog-close"
-          className="text-muted-foreground hover:bg-secondary/80 hover:text-foreground focus:ring-primary absolute top-5 right-5 cursor-pointer rounded-xl p-1.5 transition-colors focus:ring-2 focus:outline-none"
+          aria-label="Close dialog"
+          className="text-muted-foreground hover:bg-secondary/80 hover:text-foreground focus:ring-primary absolute top-4 right-4 flex min-h-[44px] min-w-[44px] cursor-pointer items-center justify-center rounded-xl p-1.5 transition-colors focus:ring-2 focus:outline-none"
         >
-          <X className="h-4 w-4" />
+          <X className="h-4 w-4" aria-hidden="true" />
           <span className="sr-only">Close</span>
         </DialogPrimitive.Close>
       </DialogPrimitive.Content>

@@ -24,6 +24,8 @@ import { Card, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   LevelUpCelebration,
   CharacterLevelUpData,
@@ -51,6 +53,7 @@ import {
   createTaskAction,
   completeTaskAction,
   deleteTaskAction,
+  ActionResult,
 } from "@/lib/actions/tasks";
 import { createClient } from "@/lib/supabase/client";
 
@@ -167,6 +170,7 @@ export default function QuestsPage() {
   const [toastMessage, setToastMessage] = React.useState<{
     type: "success" | "error" | "rate_limit";
     text: string;
+    onRetry?: () => void;
   } | null>(null);
 
   // Level Up Celebration state
@@ -278,10 +282,11 @@ export default function QuestsPage() {
   // Toast notification helper
   const showToast = (
     text: string,
-    type: "success" | "error" | "rate_limit" = "success"
+    type: "success" | "error" | "rate_limit" = "success",
+    onRetry?: () => void
   ) => {
-    setToastMessage({ type, text });
-    setTimeout(() => setToastMessage(null), 3500);
+    setToastMessage({ type, text, onRetry });
+    setTimeout(() => setToastMessage(null), onRetry ? 6000 : 3500);
   };
 
   // React Hook Form for New Quest
@@ -384,8 +389,17 @@ export default function QuestsPage() {
       "success"
     );
 
-    // 2. Call server action / RPC
-    const res = await completeTaskAction(quest.id);
+    // 2. Call server action / RPC with network error guard
+    const res: ActionResult = await completeTaskAction(quest.id).catch(
+      (err) => {
+        console.error("Network error during task completion:", err);
+        return {
+          success: false,
+          error: "Network connection lost. Please try again.",
+          isRateLimited: false,
+        };
+      }
+    );
 
     if (res.success && res.data) {
       const rpcData = res.data as {
@@ -435,7 +449,8 @@ export default function QuestsPage() {
       setQuests(previousQuests);
       showToast(
         res.error || "Failed to complete quest.",
-        res.isRateLimited ? "rate_limit" : "error"
+        res.isRateLimited ? "rate_limit" : "error",
+        () => handleCompleteQuest(quest)
       );
     }
   };
@@ -466,6 +481,7 @@ export default function QuestsPage() {
       {toastMessage && (
         <div
           role="status"
+          aria-live="polite"
           className={`shadow-elevated fixed right-4 bottom-20 z-50 flex items-center gap-3 rounded-2xl border p-4 backdrop-blur-xl md:bottom-8 ${
             toastMessage.type === "success"
               ? "border-emerald-500/40 bg-emerald-500/15 text-emerald-800 dark:text-emerald-200"
@@ -475,13 +491,30 @@ export default function QuestsPage() {
           }`}
         >
           {toastMessage.type === "success" ? (
-            <Sparkles className="h-5 w-5 shrink-0 text-emerald-500" />
+            <Sparkles
+              className="h-5 w-5 shrink-0 text-emerald-500"
+              aria-hidden="true"
+            />
           ) : (
-            <AlertCircle className="h-5 w-5 shrink-0 text-amber-500" />
+            <AlertCircle
+              className="h-5 w-5 shrink-0 text-amber-500"
+              aria-hidden="true"
+            />
           )}
           <span className="font-body text-xs font-semibold">
             {toastMessage.text}
           </span>
+          {toastMessage.onRetry && (
+            <Button
+              size="xs"
+              variant="outline"
+              onClick={toastMessage.onRetry}
+              className="ml-2 h-7 min-h-[36px] gap-1 rounded-lg px-2.5 text-xs font-bold"
+            >
+              <RefreshCw className="h-3 w-3" aria-hidden="true" />
+              <span>Retry</span>
+            </Button>
+          )}
         </div>
       )}
 
@@ -563,16 +596,44 @@ export default function QuestsPage() {
       </div>
 
       {/* Quests Display Container */}
+      <h2 className="sr-only">
+        {activeTab === "active"
+          ? "Active Quests List"
+          : "Completed Quests Archive"}
+      </h2>
       {loading ? (
-        <div className="flex min-h-[16rem] items-center justify-center">
-          <Loader2 className="text-primary h-8 w-8 animate-spin" />
+        <div
+          role="status"
+          aria-label="Loading quests..."
+          className="grid gap-4 sm:grid-cols-1 md:grid-cols-2"
+        >
+          {[1, 2, 3, 4].map((n) => (
+            <Card key={n} className="rounded-3xl p-6">
+              <div className="flex items-center justify-between">
+                <Skeleton className="h-6 w-24 rounded-full" />
+                <Skeleton className="h-4 w-28 rounded-lg" />
+              </div>
+              <div className="mt-4 space-y-2">
+                <Skeleton className="h-5 w-3/4 rounded-xl" />
+                <Skeleton className="h-3.5 w-full rounded-lg" />
+              </div>
+              <div className="border-border/60 mt-6 flex items-center justify-between border-t pt-4">
+                <Skeleton className="h-4 w-20 rounded-md" />
+                <div className="flex gap-2">
+                  <Skeleton className="h-9 w-9 rounded-xl" />
+                  <Skeleton className="h-9 w-24 rounded-xl" />
+                </div>
+              </div>
+            </Card>
+          ))}
+          <span className="sr-only">Loading quest cards...</span>
         </div>
       ) : activeTab === "active" ? (
         activeQuests.length === 0 ? (
           /* Empty State */
           <Card className="flex flex-col items-center justify-center rounded-3xl border-2 border-dashed p-12 text-center">
             <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-violet-500/10 text-violet-600 dark:text-violet-400">
-              <Sword className="h-8 w-8" />
+              <Sword className="h-8 w-8" aria-hidden="true" />
             </div>
             <CardTitle className="text-xl">
               All Daily Quests Conquered
@@ -585,9 +646,9 @@ export default function QuestsPage() {
               onClick={() => setIsDialogOpen(true)}
               variant="outline"
               size="sm"
-              className="mt-6 gap-2 rounded-xl text-xs font-semibold"
+              className="mt-6 min-h-[44px] gap-2 rounded-xl text-xs font-semibold"
             >
-              <Plus className="h-3.5 w-3.5" />
+              <Plus className="h-3.5 w-3.5" aria-hidden="true" />
               <span>Forge Another Quest</span>
             </Button>
           </Card>
@@ -621,7 +682,7 @@ export default function QuestsPage() {
                         </span>
                         <span>•</span>
                         <span className="flex items-center gap-0.5 font-bold text-amber-600 dark:text-amber-400">
-                          <Coins className="h-3 w-3" />
+                          <Coins className="h-3 w-3" aria-hidden="true" />
                           {quest.currency_reward}
                         </span>
                       </div>
@@ -643,7 +704,7 @@ export default function QuestsPage() {
                   {/* Bottom Action Footer */}
                   <div className="border-border/60 mt-6 flex items-center justify-between border-t pt-4">
                     <div className="text-muted-foreground flex items-center gap-2 font-mono text-[11px]">
-                      <Calendar className="h-3.5 w-3.5" />
+                      <Calendar className="h-3.5 w-3.5" aria-hidden="true" />
                       <span>
                         {quest.due_date
                           ? new Date(quest.due_date).toLocaleDateString()
@@ -657,18 +718,18 @@ export default function QuestsPage() {
                         type="button"
                         onClick={() => handleDeleteQuest(quest.id)}
                         aria-label={`Delete ${quest.title}`}
-                        className="text-muted-foreground flex h-8.5 w-8.5 cursor-pointer items-center justify-center rounded-xl transition-colors hover:bg-rose-500/10 hover:text-rose-600"
+                        className="text-muted-foreground focus-visible:ring-primary flex h-11 min-h-[44px] w-11 min-w-[44px] cursor-pointer items-center justify-center rounded-xl transition-colors hover:bg-rose-500/10 hover:text-rose-600 focus-visible:ring-2 focus-visible:outline-none"
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <Trash2 className="h-4 w-4" aria-hidden="true" />
                       </button>
 
                       {/* Complete Button */}
                       <Button
                         size="sm"
                         onClick={() => handleCompleteQuest(quest)}
-                        className="h-8.5 gap-1.5 rounded-xl px-3.5 text-xs font-semibold shadow-xs active:scale-95"
+                        className="h-11 min-h-[44px] gap-1.5 rounded-xl px-4 text-xs font-semibold shadow-xs active:scale-95"
                       >
-                        <Circle className="h-3.5 w-3.5" />
+                        <Circle className="h-3.5 w-3.5" aria-hidden="true" />
                         <span>Complete</span>
                       </Button>
                     </div>
@@ -696,11 +757,14 @@ export default function QuestsPage() {
               className="flex items-center justify-between rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-4 transition-all"
             >
               <div className="flex items-center gap-3.5">
-                <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-500" />
+                <CheckCircle2
+                  className="h-5 w-5 shrink-0 text-emerald-500"
+                  aria-hidden="true"
+                />
                 <div>
-                  <h4 className="font-heading text-muted-foreground text-xs font-semibold line-through sm:text-sm">
+                  <h3 className="font-heading text-muted-foreground text-xs font-semibold line-through sm:text-sm">
                     {quest.title}
-                  </h4>
+                  </h3>
                   <div className="text-muted-foreground mt-0.5 flex items-center gap-2 font-mono text-[11px]">
                     <span className="font-semibold text-emerald-600 dark:text-emerald-400">
                       {quest.category}
@@ -724,10 +788,10 @@ export default function QuestsPage() {
                 <button
                   type="button"
                   onClick={() => handleDeleteQuest(quest.id)}
-                  aria-label="Delete completed quest"
-                  className="text-muted-foreground flex h-7 w-7 cursor-pointer items-center justify-center rounded-lg hover:bg-rose-500/10 hover:text-rose-600"
+                  aria-label={`Delete completed quest ${quest.title}`}
+                  className="text-muted-foreground focus-visible:ring-primary flex h-11 min-h-[44px] w-11 min-w-[44px] cursor-pointer items-center justify-center rounded-xl hover:bg-rose-500/10 hover:text-rose-600 focus-visible:ring-2 focus-visible:outline-none"
                 >
-                  <Trash2 className="h-3.5 w-3.5" />
+                  <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
                 </button>
               </div>
             </div>
@@ -754,20 +818,25 @@ export default function QuestsPage() {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 py-2">
             {/* Title Field */}
             <div className="space-y-1.5">
-              <label
-                htmlFor="quest-title"
-                className="font-heading text-muted-foreground text-xs font-semibold tracking-wider uppercase"
-              >
+              <Label htmlFor="quest-title" error={!!errors.title}>
                 Quest Title <span className="text-rose-500">*</span>
-              </label>
+              </Label>
               <Input
                 id="quest-title"
                 placeholder="e.g. Deep Work Sprint (90m) or 10k Steps"
                 {...register("title")}
                 aria-invalid={!!errors.title}
+                aria-describedby={
+                  errors.title ? "quest-title-error" : undefined
+                }
+                className="h-11 rounded-xl"
               />
               {errors.title && (
-                <p className="font-body text-xs text-rose-500">
+                <p
+                  id="quest-title-error"
+                  role="alert"
+                  className="font-body text-xs text-rose-500"
+                >
                   {errors.title.message}
                 </p>
               )}
@@ -775,19 +844,23 @@ export default function QuestsPage() {
 
             {/* Category Selection Pills */}
             <div className="space-y-1.5">
-              <label className="font-heading text-muted-foreground text-xs font-semibold tracking-wider uppercase">
-                Target Attribute
-              </label>
-              <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+              <Label>Target Attribute</Label>
+              <div
+                role="radiogroup"
+                aria-label="Target Attribute"
+                className="grid grid-cols-2 gap-2 sm:grid-cols-4"
+              >
                 {TASK_CATEGORIES.map((cat) => {
                   const isSelected = selectedCategory === cat;
                   const Icon = CATEGORY_ICONS[cat];
                   return (
                     <button
                       type="button"
+                      role="radio"
+                      aria-checked={isSelected}
                       key={cat}
                       onClick={() => setValue("category", cat)}
-                      className={`font-heading flex cursor-pointer items-center justify-center gap-1.5 rounded-xl border p-2.5 text-xs font-bold transition-all ${
+                      className={`font-heading focus-visible:ring-primary flex min-h-[44px] cursor-pointer items-center justify-center gap-1.5 rounded-xl border p-2.5 text-xs font-bold transition-all focus-visible:ring-2 focus-visible:outline-none ${
                         isSelected
                           ? "border-primary bg-primary/10 text-primary ring-primary/20 ring-2"
                           : "border-border/80 bg-card hover:bg-secondary/60 text-muted-foreground hover:text-foreground"
@@ -804,9 +877,7 @@ export default function QuestsPage() {
             {/* Difficulty Tier & Server Reward Preview */}
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <label className="font-heading text-muted-foreground text-xs font-semibold tracking-wider uppercase">
-                  Difficulty & Reward
-                </label>
+                <Label>Difficulty & Reward</Label>
                 <div className="flex items-center gap-2 font-mono text-xs">
                   <span className="font-bold text-emerald-600 dark:text-emerald-400">
                     +{rewardPreview.xp} XP
@@ -818,15 +889,21 @@ export default function QuestsPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-2">
+              <div
+                role="radiogroup"
+                aria-label="Difficulty level"
+                className="grid grid-cols-3 gap-2"
+              >
                 {TASK_DIFFICULTIES.map((diff) => {
                   const isSelected = selectedDifficulty === diff;
                   return (
                     <button
                       type="button"
+                      role="radio"
+                      aria-checked={isSelected}
                       key={diff}
                       onClick={() => setValue("difficulty", diff)}
-                      className={`font-heading cursor-pointer rounded-xl border p-2 text-center text-xs font-bold uppercase transition-all ${
+                      className={`font-heading focus-visible:ring-primary flex min-h-[44px] cursor-pointer items-center justify-center rounded-xl border p-2 text-center text-xs font-bold uppercase transition-all focus-visible:ring-2 focus-visible:outline-none ${
                         isSelected
                           ? "border-primary bg-primary/10 text-primary ring-primary/20 ring-1"
                           : "border-border/80 bg-card hover:bg-secondary/60 text-muted-foreground"
@@ -841,20 +918,16 @@ export default function QuestsPage() {
 
             {/* Description Field */}
             <div className="space-y-1.5">
-              <label
-                htmlFor="quest-desc"
-                className="font-heading text-muted-foreground text-xs font-semibold tracking-wider uppercase"
-              >
-                Objective Details (Optional)
-              </label>
+              <Label htmlFor="quest-desc">Objective Details (Optional)</Label>
               <Textarea
                 id="quest-desc"
                 placeholder="Specific success criteria, sprint notes, or rules..."
                 rows={2}
                 {...register("description")}
+                className="rounded-xl"
               />
               {errors.description && (
-                <p className="font-body text-xs text-rose-500">
+                <p role="alert" className="font-body text-xs text-rose-500">
                   {errors.description.message}
                 </p>
               )}
@@ -862,15 +935,15 @@ export default function QuestsPage() {
 
             {/* Due Date Field */}
             <div className="space-y-1.5">
-              <label
-                htmlFor="quest-due"
-                className="font-heading text-muted-foreground text-xs font-semibold tracking-wider uppercase"
-              >
-                Due Date (Optional)
-              </label>
-              <Input id="quest-due" type="date" {...register("due_date")} />
+              <Label htmlFor="quest-due">Due Date (Optional)</Label>
+              <Input
+                id="quest-due"
+                type="date"
+                {...register("due_date")}
+                className="h-11 rounded-xl"
+              />
               {errors.due_date && (
-                <p className="font-body text-xs text-rose-500">
+                <p role="alert" className="font-body text-xs text-rose-500">
                   {errors.due_date.message}
                 </p>
               )}

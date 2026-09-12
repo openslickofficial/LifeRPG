@@ -221,18 +221,18 @@ export default async function AttributesPage() {
             <Button
               variant="outline"
               size="sm"
-              className="gap-2 rounded-xl text-xs font-semibold"
+              className="h-11 min-h-[44px] gap-2 rounded-xl text-xs font-semibold"
             >
-              <ArrowLeft className="h-3.5 w-3.5" />
+              <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
               <span>Dashboard</span>
             </Button>
           </Link>
           <Link href="/dashboard/quests">
             <Button
               size="sm"
-              className="shadow-brand gap-2 rounded-xl text-xs font-semibold"
+              className="shadow-brand h-11 min-h-[44px] gap-2 rounded-xl text-xs font-semibold"
             >
-              <Plus className="h-3.5 w-3.5" />
+              <Plus className="h-3.5 w-3.5" aria-hidden="true" />
               <span>Forge Quest</span>
             </Button>
           </Link>
@@ -297,6 +297,7 @@ export default async function AttributesPage() {
       </div>
 
       {/* 3. 4-Attribute Cards Grid */}
+      <h2 className="sr-only">Four Specialized Attribute Trees</h2>
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {ATTRIBUTE_DEFINITIONS.map((attr) => {
           const live = liveAttributesMap.get(attr.name);
@@ -430,7 +431,9 @@ export default async function AttributesPage() {
                           }`}
                         >
                           <div className="flex items-center justify-between font-semibold">
-                            <span>{perk.name}</span>
+                            <h4 className="font-heading text-xs font-bold">
+                              {perk.name}
+                            </h4>
                             <span className="font-mono text-[10px]">
                               {isUnlocked ? "ACTIVE" : `Lvl ${perk.level}`}
                             </span>
@@ -454,10 +457,10 @@ export default async function AttributesPage() {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className={`h-8 gap-1.5 rounded-xl text-xs font-bold hover:${attr.bgTint} ${attr.textColor}`}
+                    className={`h-11 min-h-[44px] gap-1.5 rounded-xl text-xs font-bold hover:${attr.bgTint} ${attr.textColor}`}
                   >
                     <span>Forge {attr.name} Quest</span>
-                    <Plus className="h-3.5 w-3.5" />
+                    <Plus className="h-3.5 w-3.5" aria-hidden="true" />
                   </Button>
                 </Link>
               </div>

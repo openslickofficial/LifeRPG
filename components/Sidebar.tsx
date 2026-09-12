@@ -97,13 +97,14 @@ export function Sidebar() {
                   key={item.href}
                   href={item.href}
                   aria-label={item.label}
-                  className={`group focus-visible:ring-primary relative flex h-11 w-11 items-center justify-center rounded-2xl transition-all duration-200 focus-visible:ring-2 focus-visible:outline-none ${
+                  aria-current={isActive ? "page" : undefined}
+                  className={`group focus-visible:ring-primary relative flex h-11 min-h-[44px] w-11 min-w-[44px] items-center justify-center rounded-2xl transition-all duration-200 focus-visible:ring-2 focus-visible:outline-none ${
                     isActive
                       ? "shadow-brand bg-gradient-to-tr from-violet-600 to-indigo-600 text-white"
                       : "text-muted-foreground hover:bg-secondary/70 hover:text-foreground active:scale-95"
                   }`}
                 >
-                  <Icon className="h-5 w-5" />
+                  <Icon className="h-5 w-5" aria-hidden="true" />
 
                   {/* Accessible Hover/Focus Tooltip */}
                   <span
@@ -128,9 +129,9 @@ export function Sidebar() {
               type="submit"
               aria-label="Sign Out"
               title="Sign Out"
-              className="group text-muted-foreground relative flex h-10 w-10 cursor-pointer items-center justify-center rounded-2xl transition-all duration-200 hover:bg-rose-500/10 hover:text-rose-600 focus-visible:ring-2 focus-visible:ring-rose-500 focus-visible:outline-none active:scale-95 dark:hover:text-rose-400"
+              className="group text-muted-foreground relative flex h-11 min-h-[44px] w-11 min-w-[44px] cursor-pointer items-center justify-center rounded-2xl transition-all duration-200 hover:bg-rose-500/10 hover:text-rose-600 focus-visible:ring-2 focus-visible:ring-rose-500 focus-visible:outline-none active:scale-95 dark:hover:text-rose-400"
             >
-              <LogOut className="h-4 w-4" />
+              <LogOut className="h-4 w-4" aria-hidden="true" />
               <span
                 role="tooltip"
                 className="border-border/80 bg-popover font-heading text-popover-foreground shadow-elevated pointer-events-none absolute left-16 z-50 -translate-x-2 rounded-xl border px-3 py-1.5 text-xs font-bold whitespace-nowrap opacity-0 transition-all duration-200 group-hover:translate-x-0 group-hover:opacity-100 group-focus-visible:translate-x-0 group-focus-visible:opacity-100"
@@ -147,7 +148,7 @@ export function Sidebar() {
       {/* ========================================================================= */}
       <nav
         aria-label="Mobile Navigation Bar"
-        className="border-border/70 bg-card/95 fixed right-0 bottom-0 left-0 z-40 flex items-center justify-around border-t px-2 py-2 backdrop-blur-xl md:hidden"
+        className="border-border/70 bg-card/95 fixed right-0 bottom-0 left-0 z-40 flex items-center justify-around border-t px-1 py-1 backdrop-blur-xl md:hidden"
       >
         {navItems.map((item) => {
           const Icon = item.icon;
@@ -161,22 +162,23 @@ export function Sidebar() {
               key={item.href}
               href={item.href}
               aria-label={item.label}
-              className={`focus-visible:ring-primary flex flex-col items-center gap-1 rounded-xl px-3 py-1.5 text-[10px] font-semibold transition-all duration-150 focus-visible:ring-2 focus-visible:outline-none ${
+              aria-current={isActive ? "page" : undefined}
+              className={`focus-visible:ring-primary flex min-h-[44px] min-w-[44px] flex-col items-center justify-center rounded-xl px-2 py-1 text-[10px] font-semibold transition-all duration-150 focus-visible:ring-2 focus-visible:outline-none ${
                 isActive
-                  ? "text-primary"
+                  ? "text-primary font-bold"
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
               <div
-                className={`flex h-8 w-8 items-center justify-center rounded-xl transition-all ${
+                className={`flex h-7 w-7 items-center justify-center rounded-xl transition-all ${
                   isActive
                     ? "bg-primary/10 text-primary"
                     : "text-muted-foreground"
                 }`}
               >
-                <Icon className="h-4 w-4" />
+                <Icon className="h-4 w-4" aria-hidden="true" />
               </div>
-              <span className="font-heading">{item.label}</span>
+              <span className="font-heading tracking-tight">{item.label}</span>
             </Link>
           );
         })}

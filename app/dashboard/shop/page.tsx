@@ -20,6 +20,7 @@ import {
 import { Card, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -113,6 +114,7 @@ export default function ShopPage() {
   const [pendingPurchaseItem, setPendingPurchaseItem] =
     React.useState<ShopItem | null>(null);
   const [isPurchasing, setIsPurchasing] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
 
   // Toast state
   const [toastMessage, setToastMessage] = React.useState<{
@@ -134,6 +136,7 @@ export default function ShopPage() {
   React.useEffect(() => {
     let ignore = false;
     async function fetchShopData() {
+      setLoading(true);
       try {
         const {
           data: { user },
@@ -174,6 +177,10 @@ export default function ShopPage() {
         }
       } catch {
         // Keep offline preview defaults
+      } finally {
+        if (!ignore) {
+          setLoading(false);
+        }
       }
     }
 
@@ -258,6 +265,7 @@ export default function ShopPage() {
       {toastMessage && (
         <div
           role="status"
+          aria-live="polite"
           className={`shadow-elevated fixed right-4 bottom-20 z-50 flex items-center gap-3 rounded-2xl border p-4 backdrop-blur-xl md:bottom-8 ${
             toastMessage.type === "success"
               ? "border-emerald-500/40 bg-emerald-500/15 text-emerald-800 dark:text-emerald-200"
@@ -267,9 +275,15 @@ export default function ShopPage() {
           }`}
         >
           {toastMessage.type === "success" ? (
-            <Check className="h-5 w-5 shrink-0 text-emerald-500" />
+            <Check
+              className="h-5 w-5 shrink-0 text-emerald-500"
+              aria-hidden="true"
+            />
           ) : (
-            <AlertCircle className="h-5 w-5 shrink-0 text-rose-500" />
+            <AlertCircle
+              className="h-5 w-5 shrink-0 text-rose-500"
+              aria-hidden="true"
+            />
           )}
           <span className="font-body text-xs font-semibold sm:text-sm">
             {toastMessage.text}
@@ -296,7 +310,7 @@ export default function ShopPage() {
           {/* Gold Purse Indicator */}
           <div className="flex items-center gap-2.5 rounded-2xl border border-amber-500/30 bg-amber-500/10 px-4 py-2 shadow-xs">
             <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-amber-500/20 text-amber-500">
-              <Coins className="h-4 w-4" />
+              <Coins className="h-4 w-4" aria-hidden="true" />
             </div>
             <div>
               <span className="text-muted-foreground font-mono text-[10px] tracking-wider uppercase">
@@ -312,9 +326,9 @@ export default function ShopPage() {
             <Button
               variant="outline"
               size="sm"
-              className="gap-2 rounded-xl text-xs font-semibold"
+              className="h-11 min-h-[44px] gap-2 rounded-xl text-xs font-semibold"
             >
-              <ArrowLeft className="h-3.5 w-3.5" />
+              <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
               <span>Dashboard</span>
             </Button>
           </Link>
@@ -323,11 +337,17 @@ export default function ShopPage() {
 
       {/* 2. Filter Tabs & Active Theme Reset */}
       <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-        <div className="bg-muted/60 border-border/80 flex w-fit items-center gap-1 rounded-2xl border p-1">
+        <div
+          role="tablist"
+          aria-label="Shop Item Categories"
+          className="bg-muted/60 border-border/80 flex flex-wrap items-center gap-1 rounded-2xl border p-1"
+        >
           <button
             type="button"
+            role="tab"
+            aria-selected={selectedFilter === "all"}
             onClick={() => setSelectedFilter("all")}
-            className={`font-heading cursor-pointer rounded-xl px-3.5 py-1.5 text-xs font-bold transition-all ${
+            className={`font-heading focus-visible:ring-primary flex min-h-[44px] cursor-pointer items-center rounded-xl px-3.5 py-1.5 text-xs font-bold transition-all focus-visible:ring-2 focus-visible:outline-none ${
               selectedFilter === "all"
                 ? "bg-primary text-primary-foreground shadow-xs"
                 : "text-muted-foreground hover:text-foreground"
@@ -337,8 +357,10 @@ export default function ShopPage() {
           </button>
           <button
             type="button"
+            role="tab"
+            aria-selected={selectedFilter === "theme"}
             onClick={() => setSelectedFilter("theme")}
-            className={`font-heading cursor-pointer rounded-xl px-3.5 py-1.5 text-xs font-bold transition-all ${
+            className={`font-heading focus-visible:ring-primary flex min-h-[44px] cursor-pointer items-center rounded-xl px-3.5 py-1.5 text-xs font-bold transition-all focus-visible:ring-2 focus-visible:outline-none ${
               selectedFilter === "theme"
                 ? "bg-primary text-primary-foreground shadow-xs"
                 : "text-muted-foreground hover:text-foreground"
@@ -348,8 +370,10 @@ export default function ShopPage() {
           </button>
           <button
             type="button"
+            role="tab"
+            aria-selected={selectedFilter === "badge"}
             onClick={() => setSelectedFilter("badge")}
-            className={`font-heading cursor-pointer rounded-xl px-3.5 py-1.5 text-xs font-bold transition-all ${
+            className={`font-heading focus-visible:ring-primary flex min-h-[44px] cursor-pointer items-center rounded-xl px-3.5 py-1.5 text-xs font-bold transition-all focus-visible:ring-2 focus-visible:outline-none ${
               selectedFilter === "badge"
                 ? "bg-primary text-primary-foreground shadow-xs"
                 : "text-muted-foreground hover:text-foreground"
@@ -359,8 +383,10 @@ export default function ShopPage() {
           </button>
           <button
             type="button"
+            role="tab"
+            aria-selected={selectedFilter === "cosmetic"}
             onClick={() => setSelectedFilter("cosmetic")}
-            className={`font-heading cursor-pointer rounded-xl px-3.5 py-1.5 text-xs font-bold transition-all ${
+            className={`font-heading focus-visible:ring-primary flex min-h-[44px] cursor-pointer items-center rounded-xl px-3.5 py-1.5 text-xs font-bold transition-all focus-visible:ring-2 focus-visible:outline-none ${
               selectedFilter === "cosmetic"
                 ? "bg-primary text-primary-foreground shadow-xs"
                 : "text-muted-foreground hover:text-foreground"
@@ -375,174 +401,214 @@ export default function ShopPage() {
             variant="outline"
             size="sm"
             onClick={() => handleApplyTheme(null)}
-            className="gap-2 rounded-xl text-xs font-semibold"
+            className="h-11 min-h-[44px] gap-2 rounded-xl text-xs font-semibold"
           >
-            <RotateCcw className="h-3 w-3" />
+            <RotateCcw className="h-3 w-3" aria-hidden="true" />
             <span>Reset to Default Violet Theme</span>
           </Button>
         )}
       </div>
 
       {/* 3. Items Grid */}
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {filteredItems.map((item) => {
-          const isOwned = ownedItemIds.has(item.id);
-          const isAffordable = currency >= item.price;
-          const isThemeActive =
-            item.type === "theme" && appliedThemeId === item.id;
-
-          // Theme Preview Styles
-          const isCyberpunk = item.name.includes("Cyberpunk");
-          const isObsidian = item.name.includes("Obsidian");
-
-          return (
+      <h2 className="sr-only">Available Vault Merchandise</h2>
+      {loading ? (
+        <div
+          role="status"
+          aria-label="Loading merchandise..."
+          className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
+        >
+          {[1, 2, 3, 4, 5, 6].map((i) => (
             <Card
-              key={item.id}
-              className={`flex flex-col justify-between rounded-3xl border p-6 transition-all duration-200 sm:p-7 ${
-                isThemeActive
-                  ? "border-primary/80 ring-primary/30 shadow-elevated ring-2"
-                  : "border-border/80 hover:border-border"
-              }`}
+              key={i}
+              className="flex flex-col justify-between rounded-3xl p-6 sm:p-7"
             >
               <div className="space-y-4">
-                {/* Top Row: Type Badge and Price Tag */}
                 <div className="flex items-center justify-between">
-                  <Badge
-                    variant={
-                      item.type === "theme"
-                        ? "mana"
-                        : item.type === "badge"
-                          ? "gold"
-                          : "brand"
-                    }
-                    className="text-xs uppercase"
+                  <Skeleton className="h-6 w-20 rounded-full" />
+                  <Skeleton className="h-5 w-24 rounded-lg" />
+                </div>
+                <Skeleton className="h-28 w-full rounded-2xl" />
+                <div className="space-y-2">
+                  <Skeleton className="h-6 w-44 rounded-xl" />
+                  <Skeleton className="h-4 w-full rounded-lg" />
+                </div>
+              </div>
+              <div className="border-border/60 mt-6 border-t pt-4">
+                <Skeleton className="h-11 w-full rounded-xl" />
+              </div>
+            </Card>
+          ))}
+          <span className="sr-only">Loading merchandise cards...</span>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {filteredItems.map((item) => {
+            const isOwned = ownedItemIds.has(item.id);
+            const isAffordable = currency >= item.price;
+            const isThemeActive =
+              item.type === "theme" && appliedThemeId === item.id;
+
+            // Theme Preview Styles
+            const isCyberpunk = item.name.includes("Cyberpunk");
+            const isObsidian = item.name.includes("Obsidian");
+
+            return (
+              <Card
+                key={item.id}
+                className={`flex flex-col justify-between rounded-3xl border p-6 transition-all duration-200 sm:p-7 ${
+                  isThemeActive
+                    ? "border-primary/80 ring-primary/30 shadow-elevated ring-2"
+                    : "border-border/80 hover:border-border"
+                }`}
+              >
+                <div className="space-y-4">
+                  {/* Top Row: Type Badge and Price Tag */}
+                  <div className="flex items-center justify-between">
+                    <Badge
+                      variant={
+                        item.type === "theme"
+                          ? "mana"
+                          : item.type === "badge"
+                            ? "gold"
+                            : "brand"
+                      }
+                      className="text-xs uppercase"
+                    >
+                      {item.type === "theme" && (
+                        <Palette className="mr-1 h-3 w-3" />
+                      )}
+                      {item.type === "badge" && (
+                        <Award className="mr-1 h-3 w-3" />
+                      )}
+                      {item.type === "cosmetic" && (
+                        <Sparkles className="mr-1 h-3 w-3" />
+                      )}
+                      {item.type}
+                    </Badge>
+
+                    <div className="flex items-center gap-1.5 font-mono text-sm font-extrabold text-amber-600 dark:text-amber-400">
+                      <Coins className="h-4 w-4" />
+                      <span>{item.price} Gold</span>
+                    </div>
+                  </div>
+
+                  {/* Visual Swatch / Icon Banner */}
+                  <div
+                    className={`flex h-28 w-full items-center justify-center rounded-2xl border ${
+                      isCyberpunk
+                        ? "border-cyan-500/40 bg-gradient-to-br from-cyan-950/40 via-cyan-900/20 to-blue-950/40 shadow-[0_0_20px_rgba(6,182,212,0.2)]"
+                        : isObsidian
+                          ? "border-amber-500/40 bg-gradient-to-br from-zinc-950 via-zinc-900 to-amber-950/30 shadow-[0_0_20px_rgba(245,158,11,0.2)]"
+                          : item.type === "badge"
+                            ? "border-amber-500/30 bg-amber-500/10"
+                            : "border-violet-500/30 bg-violet-500/10"
+                    }`}
                   >
-                    {item.type === "theme" && (
-                      <Palette className="mr-1 h-3 w-3" />
+                    {isCyberpunk && (
+                      <div className="flex flex-col items-center gap-1.5">
+                        <Zap className="h-8 w-8 animate-pulse text-cyan-400 drop-shadow-md" />
+                        <span className="font-heading text-xs font-bold tracking-wider text-cyan-400 uppercase">
+                          Cyan HUD Glow
+                        </span>
+                      </div>
+                    )}
+                    {isObsidian && (
+                      <div className="flex flex-col items-center gap-1.5">
+                        <Moon className="h-8 w-8 text-amber-400 drop-shadow-md" />
+                        <span className="font-heading text-xs font-bold tracking-wider text-amber-400 uppercase">
+                          OLED Gold Contrast
+                        </span>
+                      </div>
                     )}
                     {item.type === "badge" && (
-                      <Award className="mr-1 h-3 w-3" />
+                      <div className="flex flex-col items-center gap-1.5">
+                        <Shield className="h-8 w-8 text-amber-500 drop-shadow-md" />
+                        <span className="font-heading text-xs font-bold tracking-wider text-amber-500 uppercase">
+                          Paladin Emblem
+                        </span>
+                      </div>
                     )}
-                    {item.type === "cosmetic" && (
-                      <Sparkles className="mr-1 h-3 w-3" />
-                    )}
-                    {item.type}
-                  </Badge>
+                    {item.type === "cosmetic" &&
+                      !isCyberpunk &&
+                      !isObsidian && (
+                        <div className="flex flex-col items-center gap-1.5">
+                          <Sparkles className="animate-spin-slow h-8 w-8 text-violet-500 drop-shadow-md" />
+                          <span className="font-heading text-xs font-bold tracking-wider text-violet-500 uppercase">
+                            Arcane Particles
+                          </span>
+                        </div>
+                      )}
+                  </div>
 
-                  <div className="flex items-center gap-1.5 font-mono text-sm font-extrabold text-amber-600 dark:text-amber-400">
-                    <Coins className="h-4 w-4" />
-                    <span>{item.price} Gold</span>
+                  {/* Title and Description */}
+                  <div>
+                    <CardTitle
+                      as="h3"
+                      className="font-heading text-foreground text-lg font-bold"
+                    >
+                      {item.name}
+                    </CardTitle>
+                    <CardDescription className="font-body text-muted-foreground mt-1.5 text-xs leading-relaxed">
+                      {item.description}
+                    </CardDescription>
                   </div>
                 </div>
 
-                {/* Visual Swatch / Icon Banner */}
-                <div
-                  className={`flex h-28 w-full items-center justify-center rounded-2xl border ${
-                    isCyberpunk
-                      ? "border-cyan-500/40 bg-gradient-to-br from-cyan-950/40 via-cyan-900/20 to-blue-950/40 shadow-[0_0_20px_rgba(6,182,212,0.2)]"
-                      : isObsidian
-                        ? "border-amber-500/40 bg-gradient-to-br from-zinc-950 via-zinc-900 to-amber-950/30 shadow-[0_0_20px_rgba(245,158,11,0.2)]"
-                        : item.type === "badge"
-                          ? "border-amber-500/30 bg-amber-500/10"
-                          : "border-violet-500/30 bg-violet-500/10"
-                  }`}
-                >
-                  {isCyberpunk && (
-                    <div className="flex flex-col items-center gap-1.5">
-                      <Zap className="h-8 w-8 animate-pulse text-cyan-400 drop-shadow-md" />
-                      <span className="font-heading text-xs font-bold tracking-wider text-cyan-400 uppercase">
-                        Cyan HUD Glow
-                      </span>
-                    </div>
-                  )}
-                  {isObsidian && (
-                    <div className="flex flex-col items-center gap-1.5">
-                      <Moon className="h-8 w-8 text-amber-400 drop-shadow-md" />
-                      <span className="font-heading text-xs font-bold tracking-wider text-amber-400 uppercase">
-                        OLED Gold Contrast
-                      </span>
-                    </div>
-                  )}
-                  {item.type === "badge" && (
-                    <div className="flex flex-col items-center gap-1.5">
-                      <Shield className="h-8 w-8 text-amber-500 drop-shadow-md" />
-                      <span className="font-heading text-xs font-bold tracking-wider text-amber-500 uppercase">
-                        Paladin Emblem
-                      </span>
-                    </div>
-                  )}
-                  {item.type === "cosmetic" && !isCyberpunk && !isObsidian && (
-                    <div className="flex flex-col items-center gap-1.5">
-                      <Sparkles className="animate-spin-slow h-8 w-8 text-violet-500 drop-shadow-md" />
-                      <span className="font-heading text-xs font-bold tracking-wider text-violet-500 uppercase">
-                        Arcane Particles
-                      </span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Title and Description */}
-                <div>
-                  <CardTitle className="font-heading text-foreground text-lg font-bold">
-                    {item.name}
-                  </CardTitle>
-                  <CardDescription className="font-body text-muted-foreground mt-1.5 text-xs leading-relaxed">
-                    {item.description}
-                  </CardDescription>
-                </div>
-              </div>
-
-              {/* Bottom Action Footer */}
-              <div className="border-border/60 mt-6 border-t pt-4">
-                {isOwned ? (
-                  item.type === "theme" ? (
-                    isThemeActive ? (
-                      <div className="flex h-10 w-full items-center justify-center gap-2 rounded-xl border border-emerald-500/40 bg-emerald-500/15 font-mono text-xs font-bold text-emerald-700 dark:text-emerald-300">
-                        <Check className="h-4 w-4" />
-                        <span>Active Theme</span>
-                      </div>
+                {/* Bottom Action Footer */}
+                <div className="border-border/60 mt-6 border-t pt-4">
+                  {isOwned ? (
+                    item.type === "theme" ? (
+                      isThemeActive ? (
+                        <div className="flex h-11 min-h-[44px] w-full items-center justify-center gap-2 rounded-xl border border-emerald-500/40 bg-emerald-500/15 font-mono text-xs font-bold text-emerald-700 dark:text-emerald-300">
+                          <Check className="h-4 w-4" aria-hidden="true" />
+                          <span>Active Theme</span>
+                        </div>
+                      ) : (
+                        <Button
+                          type="button"
+                          onClick={() => handleApplyTheme(item)}
+                          className="shadow-brand h-11 min-h-[44px] w-full rounded-xl text-xs font-bold"
+                        >
+                          <Palette
+                            className="mr-1.5 h-3.5 w-3.5"
+                            aria-hidden="true"
+                          />
+                          <span>Apply Theme</span>
+                        </Button>
+                      )
                     ) : (
-                      <Button
-                        type="button"
-                        onClick={() => handleApplyTheme(item)}
-                        className="shadow-brand h-10 w-full rounded-xl text-xs font-bold"
-                      >
-                        <Palette className="mr-1.5 h-3.5 w-3.5" />
-                        <span>Apply Theme</span>
-                      </Button>
+                      <div className="flex h-11 min-h-[44px] w-full items-center justify-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 font-mono text-xs font-bold text-emerald-700 dark:text-emerald-300">
+                        <Check className="h-4 w-4" aria-hidden="true" />
+                        <span>Owned in Inventory</span>
+                      </div>
                     )
                   ) : (
-                    <div className="flex h-10 w-full items-center justify-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 font-mono text-xs font-bold text-emerald-700 dark:text-emerald-300">
-                      <Check className="h-4 w-4" />
-                      <span>Owned in Inventory</span>
-                    </div>
-                  )
-                ) : (
-                  <Button
-                    type="button"
-                    disabled={!isAffordable}
-                    onClick={() => setPendingPurchaseItem(item)}
-                    className={`h-10 w-full rounded-xl text-xs font-bold transition-all ${
-                      isAffordable
-                        ? "shadow-brand bg-primary text-primary-foreground hover:opacity-90"
-                        : "bg-muted text-muted-foreground cursor-not-allowed opacity-60"
-                    }`}
-                  >
-                    {isAffordable ? (
-                      <>
-                        <ShoppingBag className="mr-1.5 h-3.5 w-3.5" />
-                        <span>Buy for {item.price} Gold</span>
-                      </>
-                    ) : (
-                      <span>Not enough coins</span>
-                    )}
-                  </Button>
-                )}
-              </div>
-            </Card>
-          );
-        })}
-      </div>
+                    <Button
+                      type="button"
+                      disabled={!isAffordable}
+                      onClick={() => setPendingPurchaseItem(item)}
+                      className={`h-11 min-h-[44px] w-full rounded-xl text-xs font-bold transition-all ${
+                        isAffordable
+                          ? "shadow-brand bg-primary text-primary-foreground hover:opacity-90"
+                          : "bg-muted text-muted-foreground cursor-not-allowed opacity-60"
+                      }`}
+                    >
+                      {isAffordable ? (
+                        <>
+                          <ShoppingBag className="mr-1.5 h-3.5 w-3.5" />
+                          <span>Buy for {item.price} Gold</span>
+                        </>
+                      ) : (
+                        <span>Not enough coins</span>
+                      )}
+                    </Button>
+                  )}
+                </div>
+              </Card>
+            );
+          })}
+        </div>
+      )}
 
       {/* 4. Purchase Confirmation AlertDialog */}
       <AlertDialog
