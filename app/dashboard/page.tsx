@@ -20,6 +20,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
 import { getLevelProgress } from "@/lib/rpg/leveling";
+import { StreakCalendar } from "@/components/StreakCalendar";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -36,6 +37,8 @@ export default async function DashboardPage() {
   let currency = 1450;
   let streakCount = 7;
   let longestStreak = 14;
+  let lastActivityDate: string | null = null;
+  let activityDates: string[] = [];
   let isAuthenticatedUser = false;
 
   if (user) {
@@ -65,6 +68,51 @@ export default async function DashboardPage() {
     if (streak) {
       streakCount = streak.current_streak;
       longestStreak = streak.longest_streak;
+      lastActivityDate = streak.last_activity_date;
+    }
+
+    // Fetch completed tasks in last 7 days for the streak calendar
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    const { data: recentTasks } = await supabase
+      .from("tasks")
+      .select("completed_at")
+      .eq("profile_id", user.id)
+      .eq("status", "completed")
+      .gte("completed_at", sevenDaysAgo.toISOString());
+
+    if (recentTasks) {
+      activityDates = recentTasks
+        .map((t) => (t.completed_at ? t.completed_at.slice(0, 10) : ""))
+        .filter(Boolean);
+    }
+  } else {
+    // Demo fallback activity dates for preview mode
+    const today = new Date();
+    const d1 = new Date(today);
+    d1.setDate(d1.getDate() - 1);
+    const d2 = new Date(today);
+    d2.setDate(d2.getDate() - 2);
+    activityDates = [
+      today.toISOString().slice(0, 10),
+      d1.toISOString().slice(0, 10),
+      d2.toISOString().slice(0, 10),
+    ];
+    lastActivityDate = today.toISOString().slice(0, 10);
+  }
+
+  // Check gentle streak decay: if last activity was 2 days ago (missed yesterday)
+  let isStreakFading = false;
+  if (lastActivityDate) {
+    const last = new Date(lastActivityDate);
+    const today = new Date();
+    last.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
+    const daysDiff = Math.round(
+      (today.getTime() - last.getTime()) / (1000 * 60 * 60 * 24)
+    );
+    if (daysDiff === 2) {
+      isStreakFading = true;
     }
   }
 
@@ -76,10 +124,48 @@ export default async function DashboardPage() {
   );
   const xpProgressPercentage = progress.percentage;
 
+  // Flame icon visual intensity based on streak duration
+  const flameIconClass =
+    streakCount >= 30
+      ? "h-5 w-5 text-rose-500 scale-125 drop-shadow-[0_0_12px_rgba(244,63,94,0.85)] animate-pulse"
+      : streakCount >= 7
+        ? "h-5 w-5 text-amber-500 scale-110 drop-shadow-[0_0_8px_rgba(245,158,11,0.6)] animate-pulse"
+        : streakCount > 0
+          ? "h-5 w-5 text-amber-500"
+          : "h-5 w-5 text-muted-foreground/60";
+
   return (
     <div className="space-y-8">
       {/* 1. Top Header Area (Greeting, Search Bar, Notification Bell, Action) */}
       <DashboardHeader username={username} />
+
+      {/* Gentle Streak Decay Nudge Banner */}
+      {isStreakFading && (
+        <div className="flex items-center justify-between gap-3 rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4 text-xs text-amber-900 dark:text-amber-200">
+          <div className="flex items-center gap-3">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-500/20 text-amber-500">
+              <Flame className="h-5 w-5 animate-pulse" />
+            </div>
+            <div>
+              <p className="font-heading text-xs font-bold sm:text-sm">
+                Your streak is fading!
+              </p>
+              <p className="font-body text-muted-foreground mt-0.5 text-xs">
+                You missed yesterday — complete a quest today to keep your
+                discipline flame burning bright.
+              </p>
+            </div>
+          </div>
+          <Link href="/dashboard/quests">
+            <Button
+              size="sm"
+              className="shadow-brand rounded-xl text-xs font-semibold"
+            >
+              Save Streak
+            </Button>
+          </Link>
+        </div>
+      )}
 
       {/* Auth verification banner if logged in */}
       {isAuthenticatedUser && (
@@ -128,14 +214,24 @@ export default async function DashboardPage() {
             />
           </StatTile>
 
-          {/* Stat 3: Daily Activity Streak */}
+          {/* Stat 3: Daily Activity Streak with Dynamic Flame Intensity */}
           <StatTile
-            icon={<Flame className="h-5 w-5" />}
+            icon={<Flame className={flameIconClass} />}
             label="Daily Streak"
-            value={`${streakCount} Days`}
-            subvalue={`Best Record: ${longestStreak} Days`}
+            value={streakCount > 0 ? `${streakCount} Days` : "0 Days"}
+            subvalue={
+              streakCount > 0
+                ? `Best Record: ${longestStreak} Days`
+                : "Fresh start — begin a new streak today"
+            }
             accentColor="rose"
-            trend="🔥 1.5x Streak Multiplier Active"
+            trend={
+              streakCount >= 7
+                ? "🔥 1.5x Streak Multiplier Active"
+                : streakCount > 0
+                  ? "⚡ Streak active · Complete today to maintain"
+                  : "🌱 Complete any quest to ignite streak"
+            }
           />
 
           {/* Stat 4: Gold Currency */}
@@ -149,6 +245,11 @@ export default async function DashboardPage() {
           />
         </div>
       </section>
+
+      {/* 2b. Streak 7-Day Activity Calendar Card */}
+      <Card className="border-border/80 bg-card/80 rounded-3xl border p-5 backdrop-blur-sm sm:p-6">
+        <StreakCalendar activityDates={activityDates} />
+      </Card>
 
       {/* 3. Main Dashboard Body: Asymmetric Grid (Quests & Habits vs Leaderboard) */}
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">

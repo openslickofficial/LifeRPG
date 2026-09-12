@@ -171,3 +171,58 @@ body {
 .shadow-brand {
   box-shadow: var(--shadow-brand);
 }
+
+/* ==========================================================================
+   RPG APPLIED THEMES: Cyberpunk Neon & Midnight Obsidian
+   ========================================================================== */
+
+/* 1. Cyberpunk Neon Theme (Electric Cyan & Neon Pulse) */
+[data-theme="cyberpunk"],
+:root[data-theme="cyberpunk"],
+body[data-theme="cyberpunk"] {
+  --primary: hsl(189 94% 43%);
+  --primary-foreground: hsl(0 0% 100%);
+  --secondary: hsl(190 35% 95%);
+  --secondary-foreground: hsl(189 94% 35%);
+  --ring: hsl(189 94% 43%);
+  --shadow-brand: 0 8px 25px -4px rgba(6, 182, 212, 0.45);
+}
+
+.dark[data-theme="cyberpunk"],
+.dark [data-theme="cyberpunk"],
+:root.dark[data-theme="cyberpunk"] {
+  --primary: hsl(189 95% 55%);
+  --primary-foreground: hsl(0 0% 100%);
+  --secondary: hsl(190 30% 12%);
+  --secondary-foreground: hsl(189 95% 75%);
+  --ring: hsl(189 95% 55%);
+  --shadow-brand: 0 8px 30px -4px rgba(6, 182, 212, 0.55);
+}
+
+/* 2. Midnight Obsidian Theme (Pure Black & Luminescent Amber Gold) */
+[data-theme="obsidian"],
+:root[data-theme="obsidian"],
+body[data-theme="obsidian"] {
+  --primary: hsl(43 96% 48%);
+  --primary-foreground: hsl(0 0% 100%);
+  --secondary: hsl(45 35% 95%);
+  --secondary-foreground: hsl(43 96% 35%);
+  --ring: hsl(43 96% 48%);
+  --shadow-brand: 0 8px 25px -4px rgba(245, 158, 11, 0.45);
+}
+
+.dark[data-theme="obsidian"],
+.dark [data-theme="obsidian"],
+:root.dark[data-theme="obsidian"] {
+  --primary: hsl(45 100% 55%);
+  --primary-foreground: hsl(0 0% 0%);
+  --secondary: hsl(45 30% 12%);
+  --secondary-foreground: hsl(45 100% 75%);
+  --background: hsl(0 0% 4%);
+  --card: hsl(0 0% 7%);
+  --popover: hsl(0 0% 7%);
+  --border: hsl(0 0% 14%);
+  --input: hsl(0 0% 14%);
+  --ring: hsl(45 100% 55%);
+  --shadow-brand: 0 8px 30px -4px rgba(245, 158, 11, 0.55);
+}
