@@ -43,6 +43,8 @@ export const createTaskSchema = z.object({
       { message: "Due date cannot be in the past" }
     )
     .or(z.literal("")),
+  focus_started_at: z.string().optional().nullable(),
+  started_at: z.string().optional().nullable(),
 });
 
 export const updateTaskSchema = z.object({
@@ -60,6 +62,8 @@ export const updateTaskSchema = z.object({
   category: taskCategorySchema.optional(),
   difficulty: taskDifficultySchema.optional(),
   status: z.enum(["pending", "completed"]).optional(),
+  focus_started_at: z.string().optional().nullable(),
+  started_at: z.string().optional().nullable(),
   due_date: z
     .string()
     .optional()

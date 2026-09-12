@@ -4,25 +4,25 @@ import { cn } from "cn";
 import { Slot } from "radix-ui";
 
 const badgeVariants = cva(
-  "inline-flex w-fit shrink-0 items-center justify-center gap-1.5 overflow-hidden rounded-full border px-2.5 py-0.5 text-xs font-semibold whitespace-nowrap transition-colors select-none [&>svg]:pointer-events-none [&>svg]:size-3",
+  "inline-flex w-fit shrink-0 items-center justify-center gap-1.5 overflow-hidden rounded-xl border px-3 py-1 text-xs font-heading font-black tracking-wider uppercase whitespace-nowrap transition-colors select-none [&>svg]:pointer-events-none [&>svg]:size-3.5 shadow-xs",
   {
     variants: {
       variant: {
         default:
-          "border-transparent bg-primary text-primary-foreground [a&]:hover:bg-primary/90",
+          "border-violet-700 bg-violet-600 text-white shadow-[0_2px_0_0_#4c1d95]",
         secondary:
-          "border-transparent bg-secondary text-secondary-foreground [a&]:hover:bg-secondary/90",
+          "border-slate-300 dark:border-slate-700 bg-secondary text-secondary-foreground shadow-[0_2px_0_0_rgba(0,0,0,0.1)]",
         destructive:
-          "border-transparent bg-destructive text-white [a&]:hover:bg-destructive/90",
+          "border-rose-700 bg-rose-600 text-white shadow-[0_2px_0_0_#9f1239]",
         outline:
-          "border-border/80 text-foreground bg-card/60 backdrop-blur-xs [a&]:hover:bg-accent",
-        xp: "border-emerald-500/20 bg-emerald-500/10 text-emerald-700 dark:border-emerald-400/30 dark:bg-emerald-400/15 dark:text-emerald-300 font-mono",
-        mana: "border-sky-500/20 bg-sky-500/10 text-sky-700 dark:border-cyan-400/30 dark:bg-cyan-400/15 dark:text-cyan-300 font-mono",
-        gold: "border-amber-500/20 bg-amber-500/10 text-amber-700 dark:border-amber-400/30 dark:bg-amber-400/15 dark:text-amber-300 font-mono",
+          "border-2 border-border text-foreground bg-card shadow-[0_2px_0_0_rgba(0,0,0,0.06)]",
+        xp: "border-emerald-700 bg-emerald-500 text-white font-mono shadow-[0_2px_0_0_#065f46]",
+        mana: "border-blue-700 bg-blue-600 text-white font-mono shadow-[0_2px_0_0_#1e40af]",
+        gold: "border-amber-600 bg-amber-400 text-slate-950 font-mono shadow-[0_2px_0_0_#b45309]",
         brand:
-          "border-violet-500/20 bg-violet-500/10 text-violet-700 dark:border-violet-400/30 dark:bg-violet-400/15 dark:text-violet-300",
+          "border-violet-700 bg-violet-600 text-white shadow-[0_2px_0_0_#4c1d95]",
         streak:
-          "border-rose-500/20 bg-rose-500/10 text-rose-700 dark:border-rose-400/30 dark:bg-rose-400/15 dark:text-rose-300 font-mono",
+          "border-rose-700 bg-rose-600 text-white font-mono shadow-[0_2px_0_0_#9f1239]",
       },
     },
     defaultVariants: {

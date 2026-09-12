@@ -322,13 +322,13 @@ export default async function AttributesPage() {
           return (
             <Card
               key={attr.name}
-              className={`flex flex-col justify-between rounded-3xl border p-6 transition-all duration-200 sm:p-7 ${attr.borderColor} ${attr.bgTint}`}
+              className="border-border bg-card shadow-layered hover:shadow-elevated flex flex-col justify-between rounded-3xl border-2 p-6 transition-all duration-150 hover:-translate-y-1 sm:p-7"
             >
               <div>
                 {/* Top Row: Name, Level Badge, and Circular Progress Ring */}
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex items-center gap-3.5">
-                    <div className="border-border/60 bg-background/80 flex h-14 w-14 items-center justify-center rounded-2xl border shadow-sm">
+                    <div className="border-border bg-secondary/60 flex h-14 w-14 items-center justify-center rounded-2xl border-2 shadow-xs">
                       {attr.icon}
                     </div>
                     <div>
@@ -340,7 +340,7 @@ export default async function AttributesPage() {
                           Lvl {currentLevel}
                         </Badge>
                       </div>
-                      <p className="font-body text-muted-foreground mt-0.5 text-xs font-medium">
+                      <p className="font-body text-muted-foreground mt-0.5 text-xs font-semibold">
                         {attr.title}
                       </p>
                     </div>
@@ -371,40 +371,43 @@ export default async function AttributesPage() {
                     </span>
                   </div>
 
-                  <div className="bg-muted/80 h-2.5 w-full overflow-hidden rounded-full">
+                  {/* Visual Progress Track */}
+                  <div className="bg-muted/80 h-3 w-full overflow-hidden rounded-full p-0.5">
                     <div
-                      className={`h-full rounded-full transition-all duration-700 ${
+                      className={`h-full rounded-full transition-all duration-500 ${
                         attr.accentColor === "cyan"
-                          ? "bg-cyan-500"
+                          ? "bg-blue-600 dark:bg-blue-500"
                           : attr.accentColor === "rose"
-                            ? "bg-rose-500"
+                            ? "bg-rose-600 dark:bg-rose-500"
                             : attr.accentColor === "violet"
-                              ? "bg-violet-500"
-                              : "bg-amber-500"
+                              ? "bg-violet-600 dark:bg-violet-500"
+                              : "bg-amber-500 dark:bg-amber-400"
                       }`}
                       style={{ width: `${progress.percentage}%` }}
                     />
                   </div>
-                  <p className="text-muted-foreground font-mono text-[11px]">
-                    {xpRemaining} XP needed to reach Level {currentLevel + 1}
-                  </p>
+                  <div className="text-right">
+                    <span className="text-muted-foreground font-mono text-[10px]">
+                      {xpRemaining} XP remaining to Level {currentLevel + 1}
+                    </span>
+                  </div>
                 </div>
 
-                {/* Description */}
-                <p className="font-body text-foreground/80 mt-4 text-xs leading-relaxed sm:text-sm">
+                {/* Attribute Narrative Description */}
+                <p className="font-body text-muted-foreground mt-4 text-xs leading-relaxed">
                   {attr.description}
                 </p>
 
-                {/* How to advance */}
-                <div className="mt-4 space-y-2">
+                {/* Real-Life Activities */}
+                <div className="mt-5 space-y-2">
                   <span className="font-heading text-muted-foreground text-[11px] font-bold tracking-wider uppercase">
-                    Catalyst Actions
+                    Eligible Activities & Quests
                   </span>
                   <ul className="space-y-1.5">
                     {attr.actions.map((act, i) => (
                       <li
                         key={i}
-                        className="text-muted-foreground flex items-start gap-2 text-xs"
+                        className="text-foreground/80 flex items-start gap-2 text-xs"
                       >
                         <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-500" />
                         <span>{act}</span>
@@ -424,17 +427,17 @@ export default async function AttributesPage() {
                       return (
                         <div
                           key={i}
-                          className={`rounded-2xl border p-3 text-xs ${
+                          className={`rounded-2xl border-2 p-3 text-xs ${
                             isUnlocked
-                              ? "border-primary/40 bg-card/80 text-foreground"
-                              : "border-border/40 bg-muted/30 text-muted-foreground opacity-60"
+                              ? "text-foreground border-violet-500/40 bg-violet-500/5 shadow-xs"
+                              : "border-border/60 bg-muted/20 text-muted-foreground opacity-60"
                           }`}
                         >
                           <div className="flex items-center justify-between font-semibold">
-                            <h4 className="font-heading text-xs font-bold">
+                            <h4 className="font-heading text-xs font-black">
                               {perk.name}
                             </h4>
-                            <span className="font-mono text-[10px]">
+                            <span className="font-mono text-[10px] font-bold">
                               {isUnlocked ? "ACTIVE" : `Lvl ${perk.level}`}
                             </span>
                           </div>
@@ -450,14 +453,14 @@ export default async function AttributesPage() {
 
               {/* Bottom Action Card Footer */}
               <div className="border-border/50 mt-6 flex items-center justify-between border-t pt-4">
-                <span className="text-muted-foreground font-mono text-[11px]">
+                <span className="text-muted-foreground font-mono text-[11px] font-bold">
                   Curve: 50 × (Level)^1.5
                 </span>
                 <Link href={`/dashboard/quests?category=${attr.name}`}>
                   <Button
-                    variant="ghost"
+                    variant="default"
                     size="sm"
-                    className={`h-11 min-h-[44px] gap-1.5 rounded-xl text-xs font-bold hover:${attr.bgTint} ${attr.textColor}`}
+                    className="h-10 min-h-[44px] gap-1.5 rounded-2xl px-4 text-xs font-black tracking-wider uppercase"
                   >
                     <span>Forge {attr.name} Quest</span>
                     <Plus className="h-3.5 w-3.5" aria-hidden="true" />

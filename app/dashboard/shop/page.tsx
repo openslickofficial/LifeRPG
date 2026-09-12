@@ -455,10 +455,10 @@ export default function ShopPage() {
             return (
               <Card
                 key={item.id}
-                className={`flex flex-col justify-between rounded-3xl border p-6 transition-all duration-200 sm:p-7 ${
+                className={`shadow-layered flex flex-col justify-between rounded-3xl border-2 p-6 transition-all duration-150 hover:-translate-y-1 sm:p-7 ${
                   isThemeActive
-                    ? "border-primary/80 ring-primary/30 shadow-elevated ring-2"
-                    : "border-border/80 hover:border-border"
+                    ? "border-amber-500 bg-amber-500/5 shadow-[0_6px_0_0_#b45309]"
+                    : "border-border bg-card hover:border-border hover:shadow-elevated"
                 }`}
               >
                 <div className="space-y-4">
@@ -483,47 +483,37 @@ export default function ShopPage() {
                       {item.type === "cosmetic" && (
                         <Sparkles className="mr-1 h-3 w-3" />
                       )}
-                      {item.type}
+                      <span>{item.type}</span>
                     </Badge>
 
-                    <div className="flex items-center gap-1.5 font-mono text-sm font-extrabold text-amber-600 dark:text-amber-400">
-                      <Coins className="h-4 w-4" />
+                    <div className="flex items-center gap-1.5 rounded-xl border-2 border-amber-500 bg-amber-400 px-3 py-1 font-mono text-xs font-black text-slate-950 shadow-[0_2px_0_0_#b45309]">
+                      <Coins className="h-3.5 w-3.5" aria-hidden="true" />
                       <span>{item.price} Gold</span>
                     </div>
                   </div>
 
-                  {/* Visual Swatch / Icon Banner */}
-                  <div
-                    className={`flex h-28 w-full items-center justify-center rounded-2xl border ${
-                      isCyberpunk
-                        ? "border-cyan-500/40 bg-gradient-to-br from-cyan-950/40 via-cyan-900/20 to-blue-950/40 shadow-[0_0_20px_rgba(6,182,212,0.2)]"
-                        : isObsidian
-                          ? "border-amber-500/40 bg-gradient-to-br from-zinc-950 via-zinc-900 to-amber-950/30 shadow-[0_0_20px_rgba(245,158,11,0.2)]"
-                          : item.type === "badge"
-                            ? "border-amber-500/30 bg-amber-500/10"
-                            : "border-violet-500/30 bg-violet-500/10"
-                    }`}
-                  >
+                  {/* Theme / Cosmetic Preview Container */}
+                  <div className="border-border/80 bg-secondary/50 relative flex h-28 w-full items-center justify-center overflow-hidden rounded-2xl border-2 p-4">
                     {isCyberpunk && (
                       <div className="flex flex-col items-center gap-1.5">
-                        <Zap className="h-8 w-8 animate-pulse text-cyan-400 drop-shadow-md" />
-                        <span className="font-heading text-xs font-bold tracking-wider text-cyan-400 uppercase">
-                          Cyan HUD Glow
+                        <Zap className="h-8 w-8 text-cyan-500 drop-shadow-md" />
+                        <span className="font-heading text-xs font-black tracking-wider text-cyan-500 uppercase">
+                          Neon Cyan & Magenta HUD
                         </span>
                       </div>
                     )}
                     {isObsidian && (
                       <div className="flex flex-col items-center gap-1.5">
-                        <Moon className="h-8 w-8 text-amber-400 drop-shadow-md" />
-                        <span className="font-heading text-xs font-bold tracking-wider text-amber-400 uppercase">
-                          OLED Gold Contrast
+                        <Moon className="h-8 w-8 text-amber-500 drop-shadow-md" />
+                        <span className="font-heading text-xs font-black tracking-wider text-amber-500 uppercase">
+                          Pure Obsidian & Gold Runes
                         </span>
                       </div>
                     )}
                     {item.type === "badge" && (
                       <div className="flex flex-col items-center gap-1.5">
                         <Shield className="h-8 w-8 text-amber-500 drop-shadow-md" />
-                        <span className="font-heading text-xs font-bold tracking-wider text-amber-500 uppercase">
+                        <span className="font-heading text-xs font-black tracking-wider text-amber-500 uppercase">
                           Paladin Emblem
                         </span>
                       </div>
@@ -532,8 +522,8 @@ export default function ShopPage() {
                       !isCyberpunk &&
                       !isObsidian && (
                         <div className="flex flex-col items-center gap-1.5">
-                          <Sparkles className="animate-spin-slow h-8 w-8 text-violet-500 drop-shadow-md" />
-                          <span className="font-heading text-xs font-bold tracking-wider text-violet-500 uppercase">
+                          <Sparkles className="h-8 w-8 animate-spin text-violet-500 drop-shadow-md" />
+                          <span className="font-heading text-xs font-black tracking-wider text-violet-500 uppercase">
                             Arcane Particles
                           </span>
                         </div>
@@ -544,11 +534,11 @@ export default function ShopPage() {
                   <div>
                     <CardTitle
                       as="h3"
-                      className="font-heading text-foreground text-lg font-bold"
+                      className="font-heading text-foreground text-lg font-black"
                     >
                       {item.name}
                     </CardTitle>
-                    <CardDescription className="font-body text-muted-foreground mt-1.5 text-xs leading-relaxed">
+                    <CardDescription className="font-body text-muted-foreground mt-1.5 text-xs leading-relaxed font-medium">
                       {item.description}
                     </CardDescription>
                   </div>
@@ -559,15 +549,19 @@ export default function ShopPage() {
                   {isOwned ? (
                     item.type === "theme" ? (
                       isThemeActive ? (
-                        <div className="flex h-11 min-h-[44px] w-full items-center justify-center gap-2 rounded-xl border border-emerald-500/40 bg-emerald-500/15 font-mono text-xs font-bold text-emerald-700 dark:text-emerald-300">
-                          <Check className="h-4 w-4" aria-hidden="true" />
+                        <div className="font-heading flex h-11 min-h-[44px] w-full items-center justify-center gap-2 rounded-2xl border-2 border-emerald-600 bg-emerald-500 text-xs font-black tracking-wider text-white uppercase shadow-[0_3px_0_0_#065f46]">
+                          <Check
+                            className="h-4 w-4 stroke-[3]"
+                            aria-hidden="true"
+                          />
                           <span>Active Theme</span>
                         </div>
                       ) : (
                         <Button
                           type="button"
+                          variant="default"
                           onClick={() => handleApplyTheme(item)}
-                          className="shadow-brand h-11 min-h-[44px] w-full rounded-xl text-xs font-bold"
+                          className="h-11 min-h-[44px] w-full rounded-2xl text-xs font-black tracking-wider uppercase"
                         >
                           <Palette
                             className="mr-1.5 h-3.5 w-3.5"
@@ -577,21 +571,21 @@ export default function ShopPage() {
                         </Button>
                       )
                     ) : (
-                      <div className="flex h-11 min-h-[44px] w-full items-center justify-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 font-mono text-xs font-bold text-emerald-700 dark:text-emerald-300">
-                        <Check className="h-4 w-4" aria-hidden="true" />
-                        <span>Owned in Inventory</span>
+                      <div className="font-heading flex h-11 min-h-[44px] w-full items-center justify-center gap-2 rounded-2xl border-2 border-emerald-600 bg-emerald-500 text-xs font-black tracking-wider text-white uppercase shadow-[0_3px_0_0_#065f46]">
+                        <Check
+                          className="h-4 w-4 stroke-[3]"
+                          aria-hidden="true"
+                        />
+                        <span>Owned in Vault</span>
                       </div>
                     )
                   ) : (
                     <Button
                       type="button"
+                      variant={isAffordable ? "gold" : "secondary"}
                       disabled={!isAffordable}
                       onClick={() => setPendingPurchaseItem(item)}
-                      className={`h-11 min-h-[44px] w-full rounded-xl text-xs font-bold transition-all ${
-                        isAffordable
-                          ? "shadow-brand bg-primary text-primary-foreground hover:opacity-90"
-                          : "bg-muted text-muted-foreground cursor-not-allowed opacity-60"
-                      }`}
+                      className="h-11 min-h-[44px] w-full rounded-2xl text-xs font-black tracking-wider uppercase"
                     >
                       {isAffordable ? (
                         <>
@@ -599,7 +593,7 @@ export default function ShopPage() {
                           <span>Buy for {item.price} Gold</span>
                         </>
                       ) : (
-                        <span>Not enough coins</span>
+                        <span>Needs {item.price - currency} More Gold</span>
                       )}
                     </Button>
                   )}

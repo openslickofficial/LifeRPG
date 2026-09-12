@@ -12,6 +12,8 @@ interface CircularProgressProps {
   label?: string;
   value?: string | number;
   sublabel?: string;
+  valueClassName?: string;
+  sublabelClassName?: string;
   className?: string;
 }
 
@@ -24,6 +26,8 @@ export function CircularProgress({
   label,
   value,
   sublabel,
+  valueClassName = "",
+  sublabelClassName = "",
   className = "",
 }: CircularProgressProps) {
   const radius = (size - strokeWidth) / 2;
@@ -76,11 +80,19 @@ export function CircularProgress({
 
       {/* Center Label / Value */}
       <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-        <span className="text-foreground font-mono text-sm font-bold tracking-tight sm:text-base">
+        <span
+          className={`font-mono text-sm font-black tracking-tight tabular-nums sm:text-base ${
+            valueClassName || "text-foreground"
+          }`}
+        >
           {value !== undefined ? value : `${Math.round(clampedPercentage)}%`}
         </span>
         {sublabel && (
-          <span className="text-muted-foreground font-mono text-[9px] tracking-wider uppercase">
+          <span
+            className={`font-mono text-[9px] font-bold tracking-wider uppercase ${
+              sublabelClassName || "text-muted-foreground"
+            }`}
+          >
             {sublabel}
           </span>
         )}

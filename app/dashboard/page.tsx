@@ -19,7 +19,7 @@ import { Card, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
-import { getLevelProgress } from "@/lib/rpg/leveling";
+import { getLevelProgress, getRankTitle } from "@/lib/rpg/leveling";
 import { StreakCalendar } from "@/components/StreakCalendar";
 
 export default async function DashboardPage() {
@@ -37,6 +37,7 @@ export default async function DashboardPage() {
   let currency = 1450;
   let streakCount = 7;
   let longestStreak = 14;
+  let streakShields = 2;
   let lastActivityDate: string | null = null;
   let activityDates: string[] = [];
   let isAuthenticatedUser = false;
@@ -56,6 +57,7 @@ export default async function DashboardPage() {
       level = profile.level;
       currentXp = profile.current_xp;
       currency = profile.currency;
+      streakShields = profile.streak_shields ?? 0;
     }
 
     // Fetch streak records
@@ -192,7 +194,7 @@ export default async function DashboardPage() {
             icon={<Shield className="h-5 w-5" aria-hidden="true" />}
             label="Character Level"
             value={`Lvl ${level}`}
-            subvalue="Paladin of Discipline"
+            subvalue={getRankTitle(level)}
             accentColor="violet"
             trend="Rank #42 · Season 1 Bracket"
           />
@@ -210,22 +212,28 @@ export default async function DashboardPage() {
               percentage={xpProgressPercentage}
               size={64}
               strokeWidth={6}
+              color="text-white"
+              trackColor="text-emerald-700/70"
+              valueClassName="text-white font-black"
+              sublabelClassName="text-emerald-100"
               value={`${xpProgressPercentage}%`}
               sublabel="XP"
             />
           </StatTile>
 
-          {/* Stat 3: Daily Activity Streak with Dynamic Flame Intensity */}
+          {/* Stat 3: Daily Activity Streak with Dynamic Flame Intensity & Shields */}
           <StatTile
             icon={<Flame className={flameIconClass} aria-hidden="true" />}
             label="Daily Streak"
             value={streakCount > 0 ? `${streakCount} Days` : "0 Days"}
             subvalue={
-              streakCount > 0
-                ? `Best Record: ${longestStreak} Days`
-                : "Fresh start — begin a new streak today"
+              streakShields > 0
+                ? `🛡️ ${streakShields} Shield${streakShields > 1 ? "s" : ""} Active · Best: ${longestStreak}d`
+                : streakCount > 0
+                  ? `Best Record: ${longestStreak} Days`
+                  : "Fresh start — begin a new streak today"
             }
-            accentColor="rose"
+            accentColor="amber"
             trend={
               streakCount >= 7
                 ? "🔥 1.5x Streak Multiplier Active"
@@ -241,7 +249,7 @@ export default async function DashboardPage() {
             label="Gold Purse"
             value={`${currency.toLocaleString()}`}
             subvalue="Spendable in Shop Vault"
-            accentColor="amber"
+            accentColor="cyan"
             trend="+40 Gold earned today"
           />
         </div>

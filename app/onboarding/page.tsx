@@ -49,21 +49,59 @@ export default function OnboardingPage() {
         return;
       }
 
-      // Update profile username
-      const { error: updateError } = await supabase
-        .from("profiles")
-        .update({ username: cleanUsername })
-        .eq("id", user.id);
+      // Upsert profile username to handle both fresh accounts and pre-existing trigger accounts
+      const { error: updateError } = await supabase.from("profiles").upsert(
+        {
+          id: user.id,
+          username: cleanUsername,
+          avatar_url: user.user_metadata?.avatar_url || null,
+        },
+        { onConflict: "id" }
+      );
 
       if (updateError) {
         if (updateError.code === "23505") {
           setError("That username is already claimed by another adventurer.");
+        } else if (
+          updateError.message?.toLowerCase().includes("schema cache") ||
+          updateError.message?.toLowerCase().includes("does not exist")
+        ) {
+          setError(
+            "Supabase database tables not found. Please run supabase/full_schema.sql in your Supabase project's SQL Editor to initialize the database."
+          );
         } else {
           setError(updateError.message);
         }
         setLoading(false);
         return;
       }
+
+      // Ensure starter attributes exist
+      const defaultAttributes = [
+        "Strength",
+        "Intellect",
+        "Discipline",
+        "Creativity",
+      ];
+      const attrInserts = defaultAttributes.map((name) => ({
+        profile_id: user.id,
+        name,
+        level: 1,
+        current_xp: 0,
+      }));
+      await supabase
+        .from("attributes")
+        .upsert(attrInserts, { onConflict: "profile_id,name" });
+
+      // Ensure starter streak row exists
+      await supabase.from("streaks").upsert(
+        {
+          profile_id: user.id,
+          current_streak: 0,
+          longest_streak: 0,
+        },
+        { onConflict: "profile_id" }
+      );
 
       router.push("/dashboard");
     } catch (err: unknown) {
@@ -121,9 +159,9 @@ export default function OnboardingPage() {
                     onChange={(e) => setUsername(e.target.value)}
                     placeholder="e.g. shadow_blade"
                     maxLength={20}
-                    className="border-border/90 bg-background/80 text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:ring-primary/20 h-12 w-full rounded-xl border px-4 font-mono text-sm transition-all outline-none focus:ring-2"
+                    className="border-border bg-background text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:ring-primary/20 h-12 w-full rounded-2xl border-2 px-4 font-mono text-sm transition-all outline-none focus:ring-2"
                   />
-                  <span className="text-muted-foreground absolute top-3.5 right-3.5 font-mono text-xs">
+                  <span className="text-muted-foreground absolute top-3.5 right-3.5 font-mono text-xs font-bold">
                     {username.length}/20
                   </span>
                 </div>
@@ -133,9 +171,10 @@ export default function OnboardingPage() {
             <CardFooter className="border-border/60 bg-muted/20 flex flex-col gap-3 border-t p-6">
               <Button
                 type="submit"
+                variant="success"
                 size="lg"
                 disabled={loading || !username.trim()}
-                className="shadow-brand h-12 w-full rounded-xl text-base font-semibold"
+                className="h-13 w-full rounded-2xl text-sm font-black tracking-wider uppercase"
               >
                 {loading ? (
                   <>

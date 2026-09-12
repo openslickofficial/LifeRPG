@@ -1,5 +1,4 @@
 import * as React from "react";
-import { Card } from "@/components/ui/card";
 
 export type AccentColor = "violet" | "cyan" | "emerald" | "amber" | "rose";
 
@@ -14,42 +13,56 @@ interface StatTileProps {
   className?: string;
 }
 
-const accentColorStyles: Record<
+const badgeColorStyles: Record<
   AccentColor,
   {
-    iconBg: string;
-    iconText: string;
-    borderHover: string;
-    valueColor?: string;
+    card: string;
+    label: string;
+    iconPill: string;
+    value: string;
+    subvalue: string;
+    trend: string;
   }
 > = {
   violet: {
-    iconBg: "bg-violet-500/10 dark:bg-violet-500/15 border-violet-500/20",
-    iconText: "text-violet-600 dark:text-violet-400",
-    borderHover: "hover:border-violet-500/40",
+    card: "bg-violet-600 text-white shadow-[0_6px_0_0_#4c1d95] border-2 border-violet-700",
+    label: "text-violet-200",
+    iconPill: "bg-white/20 text-white border border-white/30",
+    value: "text-white",
+    subvalue: "text-violet-100",
+    trend: "border-violet-500/40 text-violet-200",
   },
   cyan: {
-    iconBg: "bg-cyan-500/10 dark:bg-cyan-500/15 border-cyan-500/20",
-    iconText: "text-cyan-600 dark:text-cyan-400",
-    borderHover: "hover:border-cyan-500/40",
+    card: "bg-blue-600 text-white shadow-[0_6px_0_0_#1e40af] border-2 border-blue-700",
+    label: "text-blue-200",
+    iconPill: "bg-white/20 text-white border border-white/30",
+    value: "text-white",
+    subvalue: "text-blue-100",
+    trend: "border-blue-500/40 text-blue-200",
   },
   emerald: {
-    iconBg: "bg-emerald-500/10 dark:bg-emerald-500/15 border-emerald-500/20",
-    iconText: "text-emerald-600 dark:text-emerald-400",
-    borderHover: "hover:border-emerald-500/40",
-    valueColor: "text-emerald-600 dark:text-emerald-400",
+    card: "bg-emerald-500 text-white shadow-[0_6px_0_0_#065f46] border-2 border-emerald-600",
+    label: "text-emerald-100",
+    iconPill: "bg-white/20 text-white border border-white/30",
+    value: "text-white",
+    subvalue: "text-emerald-100",
+    trend: "border-emerald-600/50 text-emerald-100",
   },
   amber: {
-    iconBg: "bg-amber-500/10 dark:bg-amber-500/15 border-amber-500/20",
-    iconText: "text-amber-600 dark:text-amber-400",
-    borderHover: "hover:border-amber-500/40",
-    valueColor: "text-amber-600 dark:text-amber-400",
+    card: "bg-amber-400 text-slate-950 shadow-[0_6px_0_0_#b45309] border-2 border-amber-500",
+    label: "text-amber-950/80",
+    iconPill: "bg-black/15 text-slate-950 border border-black/10",
+    value: "text-slate-950",
+    subvalue: "text-amber-950 font-medium",
+    trend: "border-amber-600/40 text-amber-950 font-bold",
   },
   rose: {
-    iconBg: "bg-rose-500/10 dark:bg-rose-500/15 border-rose-500/20",
-    iconText: "text-rose-600 dark:text-rose-400",
-    borderHover: "hover:border-rose-500/40",
-    valueColor: "text-rose-600 dark:text-rose-400",
+    card: "bg-rose-600 text-white shadow-[0_6px_0_0_#9f1239] border-2 border-rose-700",
+    label: "text-rose-200",
+    iconPill: "bg-white/20 text-white border border-white/30",
+    value: "text-white",
+    subvalue: "text-rose-100",
+    trend: "border-rose-500/40 text-rose-200",
   },
 };
 
@@ -63,36 +76,38 @@ export function StatTile({
   children,
   className = "",
 }: StatTileProps) {
-  const styles = accentColorStyles[accentColor];
+  const styles = badgeColorStyles[accentColor];
 
   return (
-    <Card
-      className={`group border-border/80 bg-card/95 shadow-layered hover:shadow-elevated relative flex flex-col justify-between overflow-hidden rounded-3xl border p-6 backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 ${styles.borderHover} ${className}`}
+    <div
+      className={`group relative flex flex-col justify-between overflow-hidden rounded-3xl p-6 transition-all duration-150 select-none hover:-translate-y-1 ${styles.card} ${className}`}
     >
       {/* Top Row: Label & Icon */}
       <div className="flex items-center justify-between gap-2">
-        <span className="font-heading text-muted-foreground text-xs font-semibold tracking-wider uppercase">
+        <span
+          className={`font-heading text-xs font-black tracking-wider uppercase ${styles.label}`}
+        >
           {label}
         </span>
         <div
-          className={`flex h-10 w-10 items-center justify-center rounded-2xl border ${styles.iconBg} ${styles.iconText} transition-transform duration-200 group-hover:scale-105`}
+          className={`flex h-11 w-11 items-center justify-center rounded-2xl shadow-xs transition-transform duration-150 group-hover:scale-110 ${styles.iconPill}`}
         >
           {icon}
         </div>
       </div>
 
-      {/* Main Content Area: Number and optional children (like circular ring) */}
+      {/* Main Score Area */}
       <div className="mt-4 flex items-baseline justify-between gap-3">
         <div>
           <div
-            className={`font-mono text-3xl font-extrabold tracking-tight ${
-              styles.valueColor || "text-foreground"
-            }`}
+            className={`font-mono text-3xl font-black tracking-tight tabular-nums sm:text-4xl ${styles.value}`}
           >
             {value}
           </div>
           {subvalue && (
-            <p className="font-body text-muted-foreground mt-1 text-xs">
+            <p
+              className={`font-body mt-1 text-xs font-semibold ${styles.subvalue}`}
+            >
               {subvalue}
             </p>
           )}
@@ -101,12 +116,14 @@ export function StatTile({
         {children && <div className="shrink-0">{children}</div>}
       </div>
 
-      {/* Optional Trend or Footer Note */}
+      {/* Optional Trend or Bracket Footer */}
       {trend && (
-        <div className="border-border/50 text-muted-foreground mt-3 flex items-center gap-1.5 border-t pt-3 font-mono text-[11px] font-medium">
+        <div
+          className={`mt-4 flex items-center gap-1.5 border-t pt-3 font-mono text-[11px] font-bold ${styles.trend}`}
+        >
           <span>{trend}</span>
         </div>
       )}
-    </Card>
+    </div>
   );
 }

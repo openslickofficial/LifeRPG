@@ -55,12 +55,13 @@ BEGIN
     NULL
   );
 
-  -- 3. Initialize default starter attributes (Strength, Intellect, Discipline)
+  -- 3. Initialize default starter attributes (Strength, Intellect, Discipline, Creativity)
   INSERT INTO public.attributes (profile_id, name, level, current_xp)
   VALUES
     (NEW.id, 'Strength', 1, 0),
     (NEW.id, 'Intellect', 1, 0),
-    (NEW.id, 'Discipline', 1, 0)
+    (NEW.id, 'Discipline', 1, 0),
+    (NEW.id, 'Creativity', 1, 0)
   ON CONFLICT (profile_id, name) DO NOTHING;
 
   RETURN NEW;

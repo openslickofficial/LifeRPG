@@ -86,3 +86,36 @@ export function checkLevelUp(
     remainingXp: xp,
   };
 }
+
+export interface RankTier {
+  minLevel: number;
+  maxLevel: number;
+  title: string;
+}
+
+export const RANK_TIERS: RankTier[] = [
+  { minLevel: 1, maxLevel: 4, title: "Novice" },
+  { minLevel: 5, maxLevel: 9, title: "Adventurer" },
+  { minLevel: 10, maxLevel: 19, title: "Veteran" },
+  { minLevel: 20, maxLevel: 34, title: "Hero" },
+  { minLevel: 35, maxLevel: Infinity, title: "Legend" },
+];
+
+/**
+ * Maps a character level to their prestigious RPG title/rank.
+ *
+ * Tiers:
+ * - 1-4: Novice
+ * - 5-9: Adventurer
+ * - 10-19: Veteran
+ * - 20-34: Hero
+ * - 35+: Legend
+ */
+export function getRankTitle(level: number): string {
+  const normalizedLevel = Math.max(1, Math.floor(level));
+  const tier = RANK_TIERS.find(
+    (t) => normalizedLevel >= t.minLevel && normalizedLevel <= t.maxLevel
+  );
+  return tier ? tier.title : "Novice";
+}
+

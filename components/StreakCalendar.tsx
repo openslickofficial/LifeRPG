@@ -72,32 +72,34 @@ export function StreakCalendar({
         {days.map((d) => (
           <div
             key={d.dateStr}
-            className={`flex flex-col items-center justify-center rounded-xl border p-1.5 transition-all sm:p-2 ${
+            className={`flex flex-col items-center justify-center rounded-2xl p-1.5 transition-all select-none sm:p-2 ${
               d.hasActivity
-                ? "border-rose-500/50 bg-rose-500/15 text-rose-600 shadow-[0_0_12px_rgba(244,63,94,0.2)] dark:text-rose-400"
+                ? "border-2 border-amber-600 bg-amber-400 text-slate-950 shadow-[0_3px_0_0_#b45309]"
                 : d.isToday
-                  ? "border-primary/50 bg-primary/10 text-primary"
-                  : "border-border/60 bg-muted/30 text-muted-foreground/60"
+                  ? "border-2 border-violet-500 bg-violet-500/15 font-bold text-violet-600 dark:text-violet-400"
+                  : "border-border/70 bg-secondary/30 text-muted-foreground/60 border-2"
             }`}
             title={`${d.dateStr}: ${d.hasActivity ? "Quest Completed!" : "No Activity"}`}
           >
-            <span className="font-heading text-[10px] font-bold uppercase">
+            <span className="font-heading text-[10px] font-black uppercase">
               {d.dayLabel}
             </span>
-            <div className="my-1 flex h-4 w-4 items-center justify-center">
+            <div className="my-1 flex h-5 w-5 items-center justify-center">
               {d.hasActivity ? (
-                <Check className="h-3.5 w-3.5 stroke-[3] text-rose-500 drop-shadow-xs" />
+                <Check className="h-4 w-4 stroke-[3] text-slate-950" />
               ) : (
-                <span className="font-mono text-[11px] font-semibold">
+                <span className="font-mono text-xs font-bold">
                   {d.dayNumber}
                 </span>
               )}
             </div>
             <span
-              className={`font-mono text-[9px] tracking-tighter ${
+              className={`font-mono text-[9px] font-black tracking-wider uppercase ${
                 d.isToday
-                  ? "text-primary font-bold"
-                  : "text-muted-foreground/60"
+                  ? d.hasActivity
+                    ? "font-extrabold text-amber-950"
+                    : "font-extrabold text-violet-600 dark:text-violet-400"
+                  : "text-muted-foreground/50"
               }`}
             >
               {d.isToday ? "Today" : ""}

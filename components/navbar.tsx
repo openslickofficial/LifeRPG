@@ -70,8 +70,9 @@ export function Navbar() {
           {/* Sign In CTA */}
           <Link href="/login">
             <Button
+              variant="default"
               size="sm"
-              className="h-9 rounded-xl px-3.5 text-xs font-semibold"
+              className="h-9 rounded-xl px-4 text-xs font-black tracking-wider uppercase"
             >
               Sign In
             </Button>

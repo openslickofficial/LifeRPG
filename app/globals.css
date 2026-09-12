@@ -3,100 +3,100 @@
 @custom-variant dark (&:is(.dark, .dark *));
 
 :root {
-  /* Surface & Canvas (Light: Soft crisp off-white with layered depth) */
-  --background: hsl(220 20% 98%);
-  --foreground: hsl(224 71.4% 4.1%);
+  /* Surface & Canvas (Light: Warm off-white arcade canvas) */
+  --background: hsl(38 33% 97%);
+  --foreground: hsl(240 15% 9%);
 
   --card: hsl(0 0% 100%);
-  --card-foreground: hsl(224 71.4% 4.1%);
+  --card-foreground: hsl(240 15% 9%);
 
   --popover: hsl(0 0% 100%);
-  --popover-foreground: hsl(224 71.4% 4.1%);
+  --popover-foreground: hsl(240 15% 9%);
 
-  /* Primary Accent: Electric Arcane Violet (Intentional & Vibrant) */
-  --primary: hsl(262 83% 58%);
+  /* Primary Brand Accent: Saturated Vivid Violet */
+  --primary: hsl(262 88% 56%);
   --primary-foreground: hsl(0 0% 100%);
 
-  /* Secondary & Muted (Slate with subtle violet undertone) */
-  --secondary: hsl(250 35% 95%);
-  --secondary-foreground: hsl(262 83% 40%);
-  --muted: hsl(220 14% 94%);
-  --muted-foreground: hsl(220 12% 46%);
+  /* Secondary & Muted */
+  --secondary: hsl(40 25% 92%);
+  --secondary-foreground: hsl(262 88% 40%);
+  --muted: hsl(40 20% 92%);
+  --muted-foreground: hsl(240 10% 45%);
 
-  --accent: hsl(250 35% 95%);
-  --accent-foreground: hsl(262 83% 40%);
+  --accent: hsl(262 85% 94%);
+  --accent-foreground: hsl(262 88% 40%);
 
-  --destructive: hsl(0 84.2% 60.2%);
+  --destructive: hsl(350 89% 56%);
   --destructive-foreground: hsl(0 0% 100%);
 
   /* Borders & Inputs */
-  --border: hsl(220 14% 89%);
-  --input: hsl(220 14% 89%);
-  --ring: hsl(262 83% 58%);
+  --border: hsl(38 20% 86%);
+  --input: hsl(38 20% 86%);
+  --ring: hsl(262 88% 56%);
 
-  /* RPG Game Accent Tokens (Light: Vibrant flat clarity) */
-  --xp-green: hsl(152 76% 40%);
-  --mana-cyan: hsl(198 90% 44%);
-  --gold-amber: hsl(38 92% 50%);
-  --health-crimson: hsl(348 83% 54%);
+  /* Saturated High-Energy RPG Attribute Tokens (Light) */
+  --xp-green: hsl(142 76% 40%);
+  --mana-cyan: hsl(221 83% 53%);
+  --gold-amber: hsl(38 96% 50%);
+  --health-crimson: hsl(350 89% 56%);
 
-  /* Consistent Radii Scale: 16-24px for cards, 10-12px for buttons/inputs */
+  /* Chunky Game Radii Scale: 20-24px for cards, 12-14px for buttons */
   --radius-card: 1.25rem; /* 20px */
   --radius-card-lg: 1.5rem; /* 24px */
-  --radius-elem: 0.75rem; /* 12px */
+  --radius-elem: 0.875rem; /* 14px */
 
-  /* Layered Depth Shadows */
+  /* 3D Game Shadow System */
   --shadow-layered:
-    0 1px 2px 0 rgba(0, 0, 0, 0.04), 0 8px 24px -4px rgba(15, 23, 42, 0.07);
+    0 4px 0 0 rgba(0, 0, 0, 0.08), 0 8px 24px -4px rgba(0, 0, 0, 0.08);
   --shadow-elevated:
-    0 2px 4px 0 rgba(0, 0, 0, 0.04), 0 16px 40px -8px rgba(15, 23, 42, 0.12);
-  --shadow-brand: 0 8px 25px -4px rgba(124, 58, 237, 0.3);
+    0 6px 0 0 rgba(0, 0, 0, 0.1), 0 16px 36px -6px rgba(0, 0, 0, 0.14);
+  --shadow-brand: 0 5px 0 0 #5b21b6;
 }
 
 .dark {
-  /* Surface & Canvas (Dark: Deep Obsidian with Luminescent Depth) */
-  --background: hsl(228 35% 5%);
-  --foreground: hsl(210 30% 98%);
+  /* Surface & Canvas (Dark: Near-Black #0F0F14 with high-contrast neon pop) */
+  --background: hsl(240 14% 7%);
+  --foreground: hsl(0 0% 98%);
 
-  --card: hsl(228 30% 8.5%);
-  --card-foreground: hsl(210 30% 98%);
+  --card: hsl(240 16% 11%);
+  --card-foreground: hsl(0 0% 98%);
 
-  --popover: hsl(228 30% 8.5%);
-  --popover-foreground: hsl(210 30% 98%);
+  --popover: hsl(240 16% 11%);
+  --popover-foreground: hsl(0 0% 98%);
 
-  /* Primary Accent: Luminescent Neon Violet */
+  /* Primary Accent: Luminescent Saturated Violet */
   --primary: hsl(263 94% 68%);
   --primary-foreground: hsl(0 0% 100%);
 
   /* Secondary & Muted */
-  --secondary: hsl(260 25% 15%);
+  --secondary: hsl(240 14% 16%);
   --secondary-foreground: hsl(263 94% 85%);
-  --muted: hsl(228 20% 13%);
-  --muted-foreground: hsl(218 15% 65%);
+  --muted: hsl(240 14% 15%);
+  --muted-foreground: hsl(240 10% 65%);
 
-  --accent: hsl(260 25% 15%);
+  --accent: hsl(262 40% 18%);
   --accent-foreground: hsl(263 94% 85%);
 
-  --destructive: hsl(0 62.8% 30.6%);
-  --destructive-foreground: hsl(210 40% 98%);
+  --destructive: hsl(350 89% 56%);
+  --destructive-foreground: hsl(0 0% 100%);
 
-  /* Subtle Luminescent Borders */
-  --border: hsl(228 20% 16%);
-  --input: hsl(228 20% 16%);
+  /* Chunky Arcade Borders */
+  --border: hsl(240 16% 20%);
+  --input: hsl(240 16% 20%);
   --ring: hsl(263 94% 68%);
 
-  /* RPG Game Accent Tokens (Dark: Neon Glow) */
-  --xp-green: hsl(151 86% 50%);
-  --mana-cyan: hsl(190 95% 52%);
+  /* Saturated High-Energy RPG Attribute Tokens (Dark) */
+  --xp-green: hsl(142 80% 50%);
+  --mana-cyan: hsl(217 96% 62%);
   --gold-amber: hsl(43 96% 56%);
-  --health-crimson: hsl(348 90% 64%);
+  --health-crimson: hsl(350 94% 62%);
 
-  /* Layered Depth Shadows with Luminescence */
+  /* 3D Game Shadow System with Deep Contrast */
   --shadow-layered:
-    0 0 0 1px rgba(255, 255, 255, 0.07), 0 10px 30px -4px rgba(0, 0, 0, 0.65);
+    0 4px 0 0 rgba(0, 0, 0, 0.6), 0 10px 24px -4px rgba(0, 0, 0, 0.7);
   --shadow-elevated:
-    0 0 0 1px rgba(255, 255, 255, 0.1), 0 18px 48px -8px rgba(0, 0, 0, 0.8);
-  --shadow-brand: 0 0 30px -4px rgba(168, 85, 247, 0.35);
+    0 6px 0 0 rgba(0, 0, 0, 0.8), 0 20px 40px -6px rgba(0, 0, 0, 0.9);
+  --shadow-brand: 0 5px 0 0 #4c1d95;
 }
 
 @theme inline {

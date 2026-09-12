@@ -98,10 +98,10 @@ export function Sidebar() {
                   href={item.href}
                   aria-label={item.label}
                   aria-current={isActive ? "page" : undefined}
-                  className={`group focus-visible:ring-primary relative flex h-11 min-h-[44px] w-11 min-w-[44px] items-center justify-center rounded-2xl transition-all duration-200 focus-visible:ring-2 focus-visible:outline-none ${
+                  className={`group focus-visible:ring-primary relative flex h-11 min-h-[44px] w-11 min-w-[44px] items-center justify-center rounded-2xl transition-all duration-75 focus-visible:ring-2 focus-visible:outline-none ${
                     isActive
-                      ? "shadow-brand bg-gradient-to-tr from-violet-600 to-indigo-600 text-white"
-                      : "text-muted-foreground hover:bg-secondary/70 hover:text-foreground active:scale-95"
+                      ? "border-2 border-violet-700 bg-violet-600 text-white shadow-[0_4px_0_0_#4c1d95] active:translate-y-[2px] active:shadow-[0_1px_0_0_#4c1d95]"
+                      : "text-muted-foreground hover:bg-secondary hover:text-foreground border-2 border-transparent active:translate-y-[2px]"
                   }`}
                 >
                   <Icon className="h-5 w-5" aria-hidden="true" />
@@ -129,7 +129,7 @@ export function Sidebar() {
               type="submit"
               aria-label="Sign Out"
               title="Sign Out"
-              className="group text-muted-foreground relative flex h-11 min-h-[44px] w-11 min-w-[44px] cursor-pointer items-center justify-center rounded-2xl transition-all duration-200 hover:bg-rose-500/10 hover:text-rose-600 focus-visible:ring-2 focus-visible:ring-rose-500 focus-visible:outline-none active:scale-95 dark:hover:text-rose-400"
+              className="group text-muted-foreground relative flex h-11 min-h-[44px] w-11 min-w-[44px] cursor-pointer items-center justify-center rounded-2xl border-2 border-transparent transition-all duration-75 hover:border-rose-500/40 hover:bg-rose-500/15 hover:text-rose-600 focus-visible:ring-2 focus-visible:ring-rose-500 focus-visible:outline-none active:translate-y-[2px] dark:hover:text-rose-400"
             >
               <LogOut className="h-4 w-4" aria-hidden="true" />
               <span

@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { Space_Grotesk, Inter, JetBrains_Mono } from "next/font/google";
+import { Fredoka, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Navbar } from "@/components/navbar";
 import { cookies } from "next/headers";
 
-const spaceGrotesk = Space_Grotesk({
+const fredoka = Fredoka({
   variable: "--font-heading",
   subsets: ["latin"],
   weight: ["500", "600", "700"],
@@ -45,7 +45,7 @@ export default async function RootLayout({
       lang="en"
       suppressHydrationWarning
       data-theme={appliedTheme}
-      className={`${spaceGrotesk.variable} ${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
+      className={`${fredoka.variable} ${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
       <body className="bg-background font-body text-foreground selection:bg-primary/20 selection:text-primary flex min-h-full flex-col">
         <ThemeProvider

@@ -4,566 +4,395 @@ import * as React from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
-  ArrowRight,
   Zap,
   Trophy,
-  Sparkles,
   Sword,
-  CheckCircle2,
-  Circle,
+  Flame,
+  Shield,
   Star,
-  ChevronRight,
-  Compass,
   Coins,
+  Play,
+  Gamepad2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardTitle, CardDescription } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-
-interface QuestItem {
-  id: string;
-  title: string;
-  category: string;
-  xp: number;
-  gold: number;
-  completed: boolean;
-}
 
 export default function Home() {
-  // Interactive Quest state for delightful micro-interaction in the Live HUD
-  const [quests, setQuests] = React.useState<QuestItem[]>([
-    {
-      id: "q1",
-      title: "Morning 90-Min Deep Work Sprint",
-      category: "Focus",
-      xp: 250,
-      gold: 40,
-      completed: true,
-    },
-    {
-      id: "q2",
-      title: "Hit Gym (Push Routine + 10k Steps)",
-      category: "Vitality",
-      xp: 180,
-      gold: 30,
-      completed: false,
-    },
-    {
-      id: "q3",
-      title: "Read 25 Pages of Non-Fiction",
-      category: "Intellect",
-      xp: 120,
-      gold: 20,
-      completed: false,
-    },
-  ]);
-
-  const [bonusXpAlert, setBonusXpAlert] = React.useState<string | null>(null);
-
-  const toggleQuest = (id: string) => {
-    setQuests((prev) =>
-      prev.map((q) => {
-        if (q.id === id) {
-          const nextState = !q.completed;
-          if (nextState) {
-            setBonusXpAlert(`+${q.xp} XP Earned!`);
-            setTimeout(() => setBonusXpAlert(null), 2500);
-          }
-          return { ...q, completed: nextState };
-        }
-        return q;
-      })
-    );
-  };
-
-  const completedCount = quests.filter((q) => q.completed).length;
+  const [activeCardHover, setActiveCardHover] = React.useState<number | null>(
+    null
+  );
 
   return (
-    <div className="relative min-h-[calc(100vh-4rem)] overflow-hidden">
-      {/* Dynamic Ambient Background Glows */}
+    <div className="relative min-h-[calc(100vh-4rem)] overflow-hidden bg-[#0A0A0F] text-white">
+      {/* 1. Vintage Arcade Background Grid & Atmosphere */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -top-48 left-1/2 -z-10 h-[38rem] w-[58rem] -translate-x-1/2 rounded-full bg-gradient-to-b from-violet-500/12 via-cyan-400/8 to-transparent blur-3xl dark:from-violet-500/20 dark:via-cyan-500/12"
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute top-1/2 -right-48 -z-10 h-96 w-96 rounded-full bg-gradient-to-l from-cyan-400/10 to-transparent blur-3xl dark:from-cyan-500/15"
+        className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(to_right,#1f1f2e_1px,transparent_1px),linear-gradient(to_bottom,#1f1f2e_1px,transparent_1px)] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] bg-[size:4rem_4rem] opacity-30"
       />
 
-      <div className="container mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:py-20">
-        {/* Asymmetric Hero Section (2 Columns) */}
-        <section className="grid items-center gap-12 lg:grid-cols-12 lg:gap-16">
-          {/* Left Column: Asymmetric Narrative & Action */}
+      {/* Atmospheric Glowing Orbs */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -top-40 left-1/2 -z-10 h-[36rem] w-[54rem] -translate-x-1/2 rounded-full bg-gradient-to-b from-violet-600/30 via-indigo-600/20 to-transparent blur-3xl"
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute top-1/3 -right-32 -z-10 h-96 w-96 rounded-full bg-emerald-500/15 blur-3xl"
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute top-1/3 -left-32 -z-10 h-96 w-96 rounded-full bg-amber-500/15 blur-3xl"
+      />
+
+      <div className="container mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:py-16">
+        {/* ========================================================================= */}
+        {/* 2. ARCADE TITLE SCREEN HERO                                              */}
+        {/* ========================================================================= */}
+        <div className="flex flex-col items-center text-center">
+          {/* Season Badge */}
           <motion.div
-            initial={{ opacity: 0, y: 24 }}
+            initial={{ opacity: 0, y: -16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            className="flex flex-col items-start text-left lg:col-span-7"
+            transition={{ duration: 0.5 }}
+            className="font-heading mb-6 inline-flex items-center gap-2 rounded-2xl border-2 border-amber-500 bg-amber-400 px-4 py-1.5 text-xs font-black tracking-wider text-slate-950 uppercase shadow-[0_4px_0_0_#b45309]"
           >
-            {/* Live Season Chip */}
-            <div className="bg-secondary/80 mb-6 inline-flex items-center gap-2 rounded-full border border-violet-500/20 px-3.5 py-1.5 shadow-xs backdrop-blur-md">
-              <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-violet-400 opacity-75" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-violet-500" />
-              </span>
-              <span className="text-foreground/90 font-mono text-xs font-semibold">
-                SEASON 1 · THE REALM OF FOCUS
-              </span>
-            </div>
-
-            {/* Display Heading in Space Grotesk */}
-            <h1 className="font-heading text-foreground text-4xl font-extrabold tracking-tight sm:text-6xl lg:text-[4rem] lg:leading-[1.08]">
-              Turn Everyday Habits Into{" "}
-              <span className="bg-gradient-to-r from-violet-600 via-indigo-600 to-cyan-500 bg-clip-text text-transparent dark:from-violet-400 dark:via-indigo-300 dark:to-cyan-400">
-                Character Stats.
-              </span>
-            </h1>
-
-            {/* Subtitle in Inter with Generous Line Height */}
-            <p className="font-body text-muted-foreground mt-6 max-w-xl text-base leading-relaxed sm:text-lg">
-              Life RPG transforms your daily to-do lists, workouts, and deep
-              work sprints into an immersive role-playing journey. Level up your
-              real-life avatar, earn gold, and defeat the procrastination
-              dragon.
-            </p>
-
-            {/* CTA Cluster */}
-            <div className="mt-8 flex flex-wrap items-center gap-4">
-              <Link href="/login">
-                <Button
-                  size="lg"
-                  className="group shadow-brand h-12 rounded-xl px-7 text-base font-semibold hover:scale-[1.02] active:scale-[0.98]"
-                >
-                  <span>Get Started</span>
-                  <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
-                </Button>
-              </Link>
-
-              <Button
-                variant="outline"
-                size="lg"
-                className="h-12 rounded-xl px-6 text-base font-semibold"
-              >
-                <Compass className="mr-2 h-4 w-4 text-cyan-500" />
-                <span>Explore Preview</span>
-              </Button>
-            </div>
-
-            {/* Social Proof & Guild Rating Row */}
-            <div className="border-border/70 mt-10 flex flex-wrap items-center gap-4 border-t pt-6">
-              <div className="flex -space-x-2.5 overflow-hidden">
-                <div className="ring-background inline-flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-tr from-violet-600 to-indigo-500 text-[10px] font-bold text-white ring-2">
-                  AX
-                </div>
-                <div className="ring-background inline-flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-tr from-cyan-500 to-blue-600 text-[10px] font-bold text-white ring-2">
-                  KL
-                </div>
-                <div className="ring-background inline-flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-tr from-emerald-500 to-teal-600 text-[10px] font-bold text-white ring-2">
-                  MR
-                </div>
-                <div className="ring-background inline-flex h-8 w-8 items-center justify-center rounded-full bg-slate-800 text-[10px] font-bold text-slate-200 ring-2">
-                  +14k
-                </div>
-              </div>
-
-              <div className="flex flex-col">
-                <div className="flex items-center gap-1 text-amber-500">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="h-3.5 w-3.5 fill-current" />
-                  ))}
-                  <span className="text-foreground ml-1 font-mono text-xs font-bold">
-                    4.9 / 5
-                  </span>
-                </div>
-                <span className="text-muted-foreground font-body text-xs">
-                  14,200+ adventurers leveling up daily
-                </span>
-              </div>
-            </div>
+            <Gamepad2 className="h-4 w-4" />
+            <span>SEASON 1 · THE REALM OF MASTERY</span>
+            <span className="flex h-2 w-2 animate-ping rounded-full bg-emerald-700" />
           </motion.div>
 
-          {/* Right Column: Live Interactive Character HUD Card */}
+          {/* Huge Chunky Title in Fredoka */}
+          <motion.h1
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="font-heading text-5xl font-black tracking-tight sm:text-7xl lg:text-8xl"
+          >
+            LIFE{" "}
+            <span className="bg-gradient-to-r from-amber-400 via-rose-500 to-violet-500 bg-clip-text text-transparent drop-shadow-[0_4px_16px_rgba(245,158,11,0.3)]">
+              RPG
+            </span>
+          </motion.h1>
+
+          {/* Punchy Game Tagline */}
+          <motion.p
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="font-heading mt-4 max-w-2xl text-lg font-black tracking-wider text-amber-300 uppercase sm:text-xl"
+          >
+            Turn Real-Life Habits Into Level 100 Hero Stats
+          </motion.p>
+
+          <motion.p
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.25 }}
+            className="font-body mt-2 max-w-xl text-sm leading-relaxed text-slate-300 sm:text-base"
+          >
+            No more boring to-do lists. Complete real-world quests, level up
+            attributes across Intellect, Strength, and Discipline, and conquer
+            the procrastination boss.
+          </motion.p>
+
+          {/* Chunky 3D Pressable CTA Cluster */}
           <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.15, ease: "easeOut" }}
-            className="relative lg:col-span-5"
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="mt-8 flex flex-wrap items-center justify-center gap-4"
           >
-            {/* Ambient Card Backlight */}
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute -inset-1 -z-10 rounded-3xl bg-gradient-to-tr from-violet-600/20 to-cyan-500/20 opacity-75 blur-xl"
-            />
+            <Link href="/login">
+              <Button
+                variant="success"
+                size="lg"
+                className="h-14 px-8 text-base shadow-[0_6px_0_0_#065f46] active:translate-y-[4px] active:shadow-[0_2px_0_0_#065f46]"
+              >
+                <Play className="mr-2 h-5 w-5 fill-current" />
+                <span>START YOUR QUEST</span>
+              </Button>
+            </Link>
 
-            <Card className="border-border/80 bg-card/95 shadow-elevated relative overflow-hidden rounded-3xl border p-0 backdrop-blur-xl">
-              {/* HUD Header Banner */}
-              <div className="border-border/60 bg-muted/40 border-b px-6 py-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="relative flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-tr from-violet-600 to-indigo-600 p-0.5 shadow-md">
-                      <div className="bg-background text-foreground font-heading flex h-full w-full items-center justify-center rounded-[14px] text-lg font-extrabold">
-                        🛡️
-                      </div>
-                      <span className="absolute -right-1 -bottom-1 flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500 font-mono text-[9px] font-bold text-white shadow-xs">
-                        24
-                      </span>
-                    </div>
+            <Link href="/dashboard?preview=true">
+              <Button
+                variant="default"
+                size="lg"
+                className="h-14 px-8 text-base shadow-[0_6px_0_0_#4c1d95] active:translate-y-[4px] active:shadow-[0_2px_0_0_#4c1d95]"
+              >
+                <Shield className="mr-2 h-5 w-5" />
+                <span>EXPLORE PREVIEW</span>
+              </Button>
+            </Link>
+          </motion.div>
 
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-heading text-foreground font-bold">
-                          Alex Vanguard
-                        </span>
-                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                      </div>
-                      <span className="text-muted-foreground font-mono text-xs">
-                        Paladin of Focus · Rank #42
-                      </span>
-                    </div>
-                  </div>
+          {/* Social Proof Star Rating */}
+          <div className="mt-8 flex items-center gap-2 font-mono text-xs font-bold text-amber-400">
+            <div className="flex text-amber-400">
+              {[...Array(5)].map((_, i) => (
+                <Star key={i} className="h-4 w-4 fill-current" />
+              ))}
+            </div>
+            <span className="font-black text-white">4.9 / 5.0</span>
+            <span className="font-normal text-slate-400">
+              · Over 14,000 Adventurers
+            </span>
+          </div>
+        </div>
 
-                  <div className="flex items-center gap-1.5 rounded-xl border border-amber-500/20 bg-amber-500/10 px-2.5 py-1 text-amber-700 dark:text-amber-300">
-                    <Coins className="h-3.5 w-3.5" />
-                    <span className="font-mono text-xs font-bold">1,450</span>
-                  </div>
+        {/* ========================================================================= */}
+        {/* 3. FANNED CARD-HAND COMPOSITION (Trading Card Game Hand)                   */}
+        {/* ========================================================================= */}
+        <section className="mt-16 sm:mt-24">
+          <div className="mb-4 text-center">
+            <span className="font-heading text-xs font-black tracking-widest text-slate-400 uppercase">
+              ⚡ LIVE CHARACTER HUD · HAND OF DESTINY
+            </span>
+          </div>
+
+          <div className="relative mx-auto flex max-w-5xl flex-wrap items-center justify-center gap-4 py-8 sm:py-12 md:flex-nowrap md:gap-0">
+            {/* Card 1: Strength (Left, rotated -7deg) */}
+            <motion.div
+              onHoverStart={() => setActiveCardHover(1)}
+              onHoverEnd={() => setActiveCardHover(null)}
+              animate={{
+                rotate: activeCardHover === 1 ? 0 : -7,
+                y: activeCardHover === 1 ? -24 : 10,
+                scale: activeCardHover === 1 ? 1.08 : 1,
+                zIndex: activeCardHover === 1 ? 40 : 10,
+              }}
+              transition={{ type: "spring", stiffness: 350, damping: 20 }}
+              className="w-72 shrink-0 cursor-pointer rounded-3xl border-3 border-rose-700 bg-rose-600 p-6 text-white shadow-[0_14px_30px_rgba(244,63,94,0.35)] select-none md:-mr-10"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-white/30 bg-white/20">
+                  <Sword className="h-5 w-5 text-white" />
                 </div>
-              </div>
-
-              {/* Character Attributes & Progress HUD */}
-              <div className="space-y-4 p-6">
-                {/* Level Progression Bar (XP) */}
-                <div>
-                  <div className="flex items-center justify-between text-xs font-semibold">
-                    <span className="text-muted-foreground flex items-center gap-1.5">
-                      <Sparkles className="h-3.5 w-3.5 text-emerald-500" />
-                      <span>Level 24 Progression</span>
-                    </span>
-                    <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400">
-                      3,840 / 5,000 XP (76.8%)
-                    </span>
-                  </div>
-                  <div className="bg-muted/80 mt-2 h-2.5 w-full overflow-hidden rounded-full p-0.5">
-                    <div
-                      className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-teal-400 transition-all duration-500 dark:shadow-[0_0_12px_rgba(52,211,153,0.5)]"
-                      style={{ width: "76.8%" }}
-                    />
-                  </div>
-                </div>
-
-                {/* Mana / Deep Work Stamina */}
-                <div>
-                  <div className="flex items-center justify-between text-xs font-semibold">
-                    <span className="text-muted-foreground flex items-center gap-1.5">
-                      <Zap className="h-3.5 w-3.5 text-cyan-500" />
-                      <span>Focus Mana (Deep Work)</span>
-                    </span>
-                    <span className="font-mono font-bold text-cyan-600 dark:text-cyan-400">
-                      480 / 500 MP
-                    </span>
-                  </div>
-                  <div className="bg-muted/80 mt-2 h-2.5 w-full overflow-hidden rounded-full p-0.5">
-                    <div
-                      className="h-full rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 transition-all duration-500 dark:shadow-[0_0_12px_rgba(14,229,252,0.5)]"
-                      style={{ width: "96%" }}
-                    />
-                  </div>
-                </div>
-
-                {/* Interactive Daily Quests Preview */}
-                <div className="border-border/60 mt-6 border-t pt-4">
-                  <div className="mb-3 flex items-center justify-between">
-                    <span className="font-heading text-foreground text-sm font-bold">
-                      Today&apos;s Active Quests
-                    </span>
-                    <span className="text-muted-foreground font-mono text-xs">
-                      {completedCount} of {quests.length} Completed
-                    </span>
-                  </div>
-
-                  <div className="space-y-2">
-                    {quests.map((quest) => (
-                      <button
-                        key={quest.id}
-                        type="button"
-                        onClick={() => toggleQuest(quest.id)}
-                        className={`group flex w-full cursor-pointer items-center justify-between rounded-2xl border p-3 text-left transition-all duration-200 ${
-                          quest.completed
-                            ? "border-emerald-500/30 bg-emerald-500/5 dark:bg-emerald-400/5"
-                            : "border-border/70 bg-card hover:border-primary/40 hover:bg-secondary/40"
-                        }`}
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className="flex h-5 w-5 items-center justify-center transition-transform group-hover:scale-110">
-                            {quest.completed ? (
-                              <CheckCircle2 className="h-5 w-5 text-emerald-500" />
-                            ) : (
-                              <Circle className="text-muted-foreground/60 h-5 w-5" />
-                            )}
-                          </div>
-                          <div>
-                            <p
-                              className={`font-body text-xs font-semibold ${
-                                quest.completed
-                                  ? "text-muted-foreground line-through"
-                                  : "text-foreground"
-                              }`}
-                            >
-                              {quest.title}
-                            </p>
-                            <span className="text-muted-foreground font-mono text-[10px]">
-                              {quest.category}
-                            </span>
-                          </div>
-                        </div>
-
-                        <div className="flex items-center gap-1.5 font-mono text-xs font-semibold">
-                          <span className="text-emerald-600 dark:text-emerald-400">
-                            +{quest.xp} XP
-                          </span>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-
-                  {/* Moment of Delight Toast Notice */}
-                  {bonusXpAlert && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      className="mt-3 flex items-center justify-center gap-2 rounded-xl border border-emerald-500/30 bg-gradient-to-r from-emerald-500/15 to-teal-500/15 py-1.5 font-mono text-xs font-bold text-emerald-600 dark:text-emerald-300"
-                    >
-                      <Sparkles className="h-3.5 w-3.5 animate-spin" />
-                      <span>{bonusXpAlert}</span>
-                    </motion.div>
-                  )}
-                </div>
-              </div>
-
-              {/* HUD Footer */}
-              <div className="border-border/60 bg-muted/20 border-t px-6 py-3 text-center">
-                <span className="text-muted-foreground font-mono text-[11px]">
-                  Tap quest items to preview live RPG progression logic
+                <span className="rounded-xl border border-rose-800 bg-rose-700 px-2.5 py-1 font-mono text-[10px] font-black uppercase">
+                  STRENGTH
                 </span>
               </div>
-            </Card>
-          </motion.div>
+
+              <div className="mt-6">
+                <span className="font-mono text-xs font-black tracking-wider text-rose-200 uppercase">
+                  QUEST #01
+                </span>
+                <h3 className="font-heading text-xl leading-tight font-black text-white">
+                  Heavy Iron Deadlifts
+                </h3>
+                <p className="font-body mt-2 text-xs leading-relaxed text-rose-100/90">
+                  5 sets of heavy compound pulls to forge physical grit.
+                </p>
+              </div>
+
+              <div className="mt-6 flex items-center justify-between border-t border-rose-500/60 pt-4">
+                <span className="font-mono text-xs font-black text-rose-100">
+                  +180 STR XP
+                </span>
+                <span className="font-heading rounded-full bg-white px-3 py-1 text-xs font-black text-rose-600 shadow-xs">
+                  READY
+                </span>
+              </div>
+            </motion.div>
+
+            {/* Card 2: Intellect (Center-Left, rotated -2deg) */}
+            <motion.div
+              onHoverStart={() => setActiveCardHover(2)}
+              onHoverEnd={() => setActiveCardHover(null)}
+              animate={{
+                rotate: activeCardHover === 2 ? 0 : -2,
+                y: activeCardHover === 2 ? -24 : -6,
+                scale: activeCardHover === 2 ? 1.08 : 1,
+                zIndex: activeCardHover === 2 ? 40 : 20,
+              }}
+              transition={{ type: "spring", stiffness: 350, damping: 20 }}
+              className="w-72 shrink-0 cursor-pointer rounded-3xl border-3 border-blue-700 bg-blue-600 p-6 text-white shadow-[0_16px_35px_rgba(37,99,235,0.4)] select-none md:-mr-10"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-white/30 bg-white/20">
+                  <Zap className="h-5 w-5 text-white" />
+                </div>
+                <span className="rounded-xl border border-blue-800 bg-blue-700 px-2.5 py-1 font-mono text-[10px] font-black uppercase">
+                  INTELLECT
+                </span>
+              </div>
+
+              <div className="mt-6">
+                <span className="font-mono text-xs font-black tracking-wider text-blue-200 uppercase">
+                  QUEST #02
+                </span>
+                <h3 className="font-heading text-xl leading-tight font-black text-white">
+                  90-Min Deep Focus
+                </h3>
+                <p className="font-body mt-2 text-xs leading-relaxed text-blue-100/90">
+                  Zero distractions, code architecture design session.
+                </p>
+              </div>
+
+              <div className="mt-6 flex items-center justify-between border-t border-blue-500/60 pt-4">
+                <span className="font-mono text-xs font-black text-blue-100">
+                  +250 INT XP
+                </span>
+                <span className="font-heading rounded-full bg-white px-3 py-1 text-xs font-black text-blue-600 shadow-xs">
+                  IN FLOW
+                </span>
+              </div>
+            </motion.div>
+
+            {/* Card 3: Discipline / Streak (Center-Right, rotated +3deg) */}
+            <motion.div
+              onHoverStart={() => setActiveCardHover(3)}
+              onHoverEnd={() => setActiveCardHover(null)}
+              animate={{
+                rotate: activeCardHover === 3 ? 0 : 3,
+                y: activeCardHover === 3 ? -24 : -2,
+                scale: activeCardHover === 3 ? 1.08 : 1,
+                zIndex: activeCardHover === 3 ? 40 : 25,
+              }}
+              transition={{ type: "spring", stiffness: 350, damping: 20 }}
+              className="w-72 shrink-0 cursor-pointer rounded-3xl border-3 border-amber-500 bg-amber-400 p-6 text-slate-950 shadow-[0_16px_35px_rgba(245,158,11,0.45)] select-none md:-mr-10"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-black/10 bg-black/15">
+                  <Flame className="h-5 w-5 animate-pulse text-slate-950" />
+                </div>
+                <span className="rounded-xl border border-amber-600 bg-amber-500 px-2.5 py-1 font-mono text-[10px] font-black text-slate-950 uppercase">
+                  STREAK · 7 DAYS
+                </span>
+              </div>
+
+              <div className="mt-6">
+                <span className="font-mono text-xs font-black tracking-wider text-amber-900 uppercase">
+                  DISCIPLINE
+                </span>
+                <h3 className="font-heading text-xl leading-tight font-black text-slate-950">
+                  Consistency Flame
+                </h3>
+                <p className="font-body mt-2 text-xs leading-relaxed font-medium text-amber-950">
+                  3.5x XP Multiplier active. Complete today to preserve your
+                  fire.
+                </p>
+              </div>
+
+              <div className="mt-6 flex items-center justify-between border-t border-amber-500/60 pt-4">
+                <span className="font-mono text-xs font-black text-slate-950">
+                  +50 GOLD BONUS
+                </span>
+                <span className="font-heading rounded-full bg-slate-950 px-3 py-1 text-xs font-black text-amber-400 shadow-xs">
+                  BLAZING
+                </span>
+              </div>
+            </motion.div>
+
+            {/* Card 4: Creativity & Loot (Right, rotated +8deg) */}
+            <motion.div
+              onHoverStart={() => setActiveCardHover(4)}
+              onHoverEnd={() => setActiveCardHover(null)}
+              animate={{
+                rotate: activeCardHover === 4 ? 0 : 8,
+                y: activeCardHover === 4 ? -24 : 12,
+                scale: activeCardHover === 4 ? 1.08 : 1,
+                zIndex: activeCardHover === 4 ? 40 : 15,
+              }}
+              transition={{ type: "spring", stiffness: 350, damping: 20 }}
+              className="w-72 shrink-0 cursor-pointer rounded-3xl border-3 border-emerald-600 bg-emerald-500 p-6 text-white shadow-[0_14px_30px_rgba(16,185,129,0.35)] select-none"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-white/30 bg-white/20">
+                  <Coins className="h-5 w-5 text-white" />
+                </div>
+                <span className="rounded-xl border border-emerald-700 bg-emerald-600 px-2.5 py-1 font-mono text-[10px] font-black uppercase">
+                  COSMIC LOOT
+                </span>
+              </div>
+
+              <div className="mt-6">
+                <span className="font-mono text-xs font-black tracking-wider text-emerald-200 uppercase">
+                  SHOP VAULT
+                </span>
+                <h3 className="font-heading text-xl leading-tight font-black text-white">
+                  Cyberpunk HUD
+                </h3>
+                <p className="font-body mt-2 text-xs leading-relaxed text-emerald-100/90">
+                  High-energy neon theme unlocked with earned gold coins.
+                </p>
+              </div>
+
+              <div className="mt-6 flex items-center justify-between border-t border-emerald-600/60 pt-4">
+                <span className="font-mono text-xs font-black text-emerald-100">
+                  250 COINS
+                </span>
+                <span className="font-heading rounded-full bg-white px-3 py-1 text-xs font-black text-emerald-700 shadow-xs">
+                  UNLOCKED
+                </span>
+              </div>
+            </motion.div>
+          </div>
         </section>
 
-        {/* Asymmetric Showcase: The Core Game Mechanics */}
-        <section className="mt-24 sm:mt-32">
-          <div className="mb-10 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
-            <div>
-              <Badge variant="brand" className="mb-2 font-mono text-xs">
-                CORE GAME MECHANICS
-              </Badge>
-              <h2 className="font-heading text-foreground text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl">
-                Built For High Performers Who Love RPGs.
-              </h2>
-              <p className="font-body text-muted-foreground mt-2 text-base">
-                Three interwoven systems engineered to make daily consistency
-                genuinely addictive.
+        {/* ========================================================================= */}
+        {/* 4. THREE CHUNKY GAME PILLARS                                             */}
+        {/* ========================================================================= */}
+        <section className="mt-20 sm:mt-28">
+          <div className="mb-10 text-center">
+            <h2 className="font-heading text-3xl font-black text-white sm:text-4xl">
+              CORE RPG MECHANICS
+            </h2>
+            <p className="font-body mt-2 text-sm text-slate-300 sm:text-base">
+              Engineered to make daily discipline genuinely addictive.
+            </p>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-3">
+            {/* Pillar 1: Quests */}
+            <div className="rounded-3xl border-3 border-violet-700 bg-violet-600 p-6 text-white shadow-[0_6px_0_0_#4c1d95]">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/30 bg-white/20">
+                <Sword className="h-6 w-6 text-white" />
+              </div>
+              <h3 className="font-heading mt-6 text-2xl font-black text-white">
+                Tiered Quests
+              </h3>
+              <p className="font-body mt-2 text-xs leading-relaxed text-violet-100 sm:text-sm">
+                Break ambitious goals into Easy (+10 XP), Medium (+25 XP), and
+                Hard (+50 XP) battles with instant satisfaction.
               </p>
             </div>
 
-            <Button
-              variant="outline"
-              size="sm"
-              className="hidden rounded-xl font-mono text-xs sm:inline-flex"
-            >
-              <span>View Rulebook</span>
-              <ChevronRight className="ml-1 h-3.5 w-3.5" />
-            </Button>
-          </div>
-
-          {/* Asymmetric 3-Card Grid */}
-          <div className="grid gap-6 md:grid-cols-12">
-            {/* Card 1: Featured Quest Engine (Span 7) */}
-            <Card className="border-border/80 bg-card shadow-layered hover:shadow-elevated flex flex-col justify-between overflow-hidden rounded-3xl border p-6 transition-all duration-200 sm:p-8 md:col-span-7">
-              <div>
-                <div className="flex items-center justify-between">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-500/10 text-violet-600 dark:text-violet-400">
-                    <Sword className="h-6 w-6" />
-                  </div>
-                  <Badge variant="xp">STREAK MULTIPLIER 3.5X</Badge>
-                </div>
-
-                <div className="mt-6">
-                  <CardTitle className="text-2xl">
-                    The Dynamic Quest Engine
-                  </CardTitle>
-                  <CardDescription className="mt-2 text-base">
-                    Break overwhelming ambitious life goals into tiered
-                    micro-battles. Dailies give steady XP, while Epic Quests
-                    trigger boss encounters that reward rare gear.
-                  </CardDescription>
-                </div>
-
-                <div className="mt-6 grid grid-cols-3 gap-3">
-                  <div className="border-border/60 bg-muted/40 rounded-2xl border p-3.5 text-center">
-                    <span className="font-heading text-foreground text-lg font-bold">
-                      Daily
-                    </span>
-                    <p className="font-mono text-[11px] text-emerald-600 dark:text-emerald-400">
-                      +50 XP
-                    </p>
-                  </div>
-                  <div className="border-border/60 bg-muted/40 rounded-2xl border p-3.5 text-center">
-                    <span className="font-heading text-foreground text-lg font-bold">
-                      Heroic
-                    </span>
-                    <p className="font-mono text-[11px] text-cyan-600 dark:text-cyan-400">
-                      +250 XP
-                    </p>
-                  </div>
-                  <div className="border-border/60 bg-muted/40 rounded-2xl border p-3.5 text-center">
-                    <span className="font-heading text-foreground text-lg font-bold">
-                      Boss
-                    </span>
-                    <p className="font-mono text-[11px] text-violet-600 dark:text-violet-400">
-                      +1,000 XP
-                    </p>
-                  </div>
-                </div>
+            {/* Pillar 2: Attributes */}
+            <div className="rounded-3xl border-3 border-blue-700 bg-blue-600 p-6 text-white shadow-[0_6px_0_0_#1e40af]">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/30 bg-white/20">
+                <Zap className="h-6 w-6 text-white" />
               </div>
+              <h3 className="font-heading mt-6 text-2xl font-black text-white">
+                Attribute Trees
+              </h3>
+              <p className="font-body mt-2 text-xs leading-relaxed text-blue-100 sm:text-sm">
+                Workouts build Strength. Reading expands Intellect. Routines
+                forge Discipline. Every task permanently enhances your sheet.
+              </p>
+            </div>
 
-              <div className="border-border/60 mt-8 flex items-center justify-between border-t pt-4">
-                <span className="text-muted-foreground font-mono text-xs">
-                  Calibrated for focus sprints
-                </span>
-                <span className="text-primary font-mono text-xs font-bold">
-                  Level 1 - 100 System
-                </span>
+            {/* Pillar 3: Loot Economy */}
+            <div className="rounded-3xl border-3 border-amber-500 bg-amber-400 p-6 text-slate-950 shadow-[0_6px_0_0_#b45309]">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-black/10 bg-black/15">
+                <Trophy className="h-6 w-6 text-slate-950" />
               </div>
-            </Card>
-
-            {/* Card 2: Skill Trees & Attributes (Span 5) */}
-            <Card className="border-border/80 bg-card shadow-layered hover:shadow-elevated flex flex-col justify-between overflow-hidden rounded-3xl border p-6 transition-all duration-200 sm:p-8 md:col-span-5">
-              <div>
-                <div className="flex items-center justify-between">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-500/10 text-cyan-600 dark:text-cyan-400">
-                    <Zap className="h-6 w-6" />
-                  </div>
-                  <Badge variant="mana">STAT MASTERY</Badge>
-                </div>
-
-                <div className="mt-6">
-                  <CardTitle className="text-2xl">Attribute Synergy</CardTitle>
-                  <CardDescription className="mt-2 text-base">
-                    Every task points to a real-life attribute. Workouts
-                    increase Strength, reading expands Intellect, meditation
-                    bolsters Willpower.
-                  </CardDescription>
-                </div>
-
-                <div className="mt-6 space-y-2.5">
-                  <div className="bg-muted/40 flex items-center justify-between rounded-xl px-3.5 py-2">
-                    <span className="font-body text-xs font-semibold">
-                      ⚔️ Strength & Stamina
-                    </span>
-                    <span className="text-foreground font-mono text-xs font-bold">
-                      +24 STR
-                    </span>
-                  </div>
-                  <div className="bg-muted/40 flex items-center justify-between rounded-xl px-3.5 py-2">
-                    <span className="font-body text-xs font-semibold">
-                      🔮 Intellect & Logic
-                    </span>
-                    <span className="text-foreground font-mono text-xs font-bold">
-                      +38 INT
-                    </span>
-                  </div>
-                  <div className="bg-muted/40 flex items-center justify-between rounded-xl px-3.5 py-2">
-                    <span className="font-body text-xs font-semibold">
-                      🛡️ Discipline & Resolve
-                    </span>
-                    <span className="text-foreground font-mono text-xs font-bold">
-                      +52 RES
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="border-border/60 mt-8 border-t pt-4">
-                <span className="text-muted-foreground font-mono text-xs">
-                  Dynamic attribute scaling
-                </span>
-              </div>
-            </Card>
-
-            {/* Card 3: Real-World Loot Vault (Span 12) */}
-            <Card className="border-border/80 bg-card shadow-layered hover:shadow-elevated overflow-hidden rounded-3xl border p-6 transition-all duration-200 sm:p-8 md:col-span-12">
-              <div className="grid gap-6 md:grid-cols-12 md:items-center">
-                <div className="md:col-span-8">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
-                      <Trophy className="h-6 w-6" />
-                    </div>
-                    <Badge variant="gold">REAL-WORLD REWARDS</Badge>
-                  </div>
-
-                  <h3 className="font-heading text-foreground mt-4 text-2xl font-bold tracking-tight">
-                    Guilt-Free Real-Life Rewards
-                  </h3>
-                  <p className="font-body text-muted-foreground mt-2 max-w-2xl text-base">
-                    Gold isn&apos;t meaningless score. Spend earned gold on
-                    custom real-life indulgences — video games, sushi nights, or
-                    books — without feeling a single shred of procrastination
-                    guilt.
-                  </p>
-                </div>
-
-                <div className="flex flex-col justify-end gap-3 sm:flex-row md:col-span-4 md:flex-col">
-                  <div className="flex items-center justify-between rounded-2xl border border-amber-500/30 bg-amber-500/5 p-4">
-                    <div>
-                      <p className="font-heading text-foreground text-xs font-bold">
-                        Weekend Gaming Session
-                      </p>
-                      <p className="text-muted-foreground font-mono text-[11px]">
-                        Real-Life Leisure
-                      </p>
-                    </div>
-                    <span className="font-mono text-xs font-bold text-amber-600 dark:text-amber-400">
-                      350 Gold
-                    </span>
-                  </div>
-
-                  <div className="border-border/60 bg-muted/30 flex items-center justify-between rounded-2xl border p-4">
-                    <div>
-                      <p className="font-heading text-foreground text-xs font-bold">
-                        Coffee & Pastry Sprint
-                      </p>
-                      <p className="text-muted-foreground font-mono text-[11px]">
-                        Energy Boost
-                      </p>
-                    </div>
-                    <span className="font-mono text-xs font-bold text-amber-600 dark:text-amber-400">
-                      120 Gold
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </Card>
+              <h3 className="font-heading mt-6 text-2xl font-black text-slate-950">
+                Guilt-Free Loot
+              </h3>
+              <p className="font-body mt-2 text-xs leading-relaxed font-medium text-amber-950 sm:text-sm">
+                Earn gold coins solely by finishing tasks. Spend them in the
+                shop for cosmetic themes and custom real-life rewards.
+              </p>
+            </div>
           </div>
         </section>
 
-        {/* Phase 1 Status & Tech Stack Footer */}
-        <footer className="border-border/60 mt-24 border-t pt-8 pb-12 text-center">
-          <div className="flex flex-col items-center justify-center gap-2 sm:flex-row sm:gap-6">
-            <span className="font-heading text-foreground text-sm font-bold">
-              Life RPG
-            </span>
-            <span className="text-muted-foreground/40 hidden sm:inline">•</span>
-            <span className="font-body text-muted-foreground text-xs">
-              Phase 1 Visual Foundation Active
-            </span>
-            <span className="text-muted-foreground/40 hidden sm:inline">•</span>
-            <span className="text-muted-foreground font-mono text-xs">
-              Next.js 16 · Tailwind v4 · shadcn/ui · next-themes
-            </span>
-          </div>
-          <p className="font-body text-muted-foreground/80 mt-2 text-xs">
-            Database models and Supabase authentication scheduled for Phase 2.
+        {/* Footer */}
+        <footer className="mt-24 border-t border-slate-800 pt-8 pb-12 text-center text-xs text-slate-400">
+          <p className="font-heading text-base font-black text-white">
+            LIFE RPG · 2026 HACKATHON EDITION
+          </p>
+          <p className="mt-1 font-mono text-[11px] text-slate-500">
+            Powered by Next.js 16, Supabase, Tailwind CSS, and Framer Motion
           </p>
         </footer>
       </div>
