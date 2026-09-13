@@ -281,7 +281,7 @@ export default function Home() {
               onCanPlay={() => setIsHeroVideoReady(true)}
               className={`absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-1000 ${isHeroVideoReady ? "opacity-20 dark:opacity-40" : "opacity-0"}`}
             >
-              <source src="/hero2.mp4" type="video/mp4" />
+              <source src="https://res.cloudinary.com/sf0vublu/video/upload/v1789267800/hero2.mp4" type="video/mp4" />
             </video>
           )}
 

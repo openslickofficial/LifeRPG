@@ -1,6 +1,8 @@
-# ⚔️ Revel — Gamified Real-Life Productivity
+# Revel
 
-> **Level up your life, one quest at a time.** Turn daily habits, personal goals, and real-world tasks into an engaging role-playing game with dynamic leveling, attributes, streaks, and an in-game cosmetic economy.
+> Turn your to-do list into an RPG.
+
+🔗 Live Demo: https://revel-rpg.vercel.app
 
 [![Next.js](https://img.shields.io/badge/Next.js-16.3-black?style=flat&logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=flat&logo=typescript)](https://www.typescriptlang.org/)
@@ -10,215 +12,170 @@
 
 ---
 
-## 📖 About Revel
+## About Revel
 
-**Revel** bridges the gap between task management and gaming psychology. By framing everyday responsibilities as epic quests, it leverages intrinsic motivation, real-time positive feedback loops, and RPG character progression to help you beat procrastination and build lasting discipline.
+Revel is a gamified productivity app that turns everyday tasks into quests, character progression, and reward loops. It tackles the problem of delayed gratification in productivity tools by making progress visible, motivating, and immediate: users complete real-world actions, gain XP, unlock upgrades, and build momentum through streaks, loot, and level-ups.
 
-Whether you are studying for exams, hitting the gym, writing code, or practicing an instrument, every completed task yields **Experience Points (XP)** and **Gold Coins**, elevating your core character attributes across **Intellect**, **Strength**, **Discipline**, and **Creativity**.
-
----
-
-## 📸 Screenshots & UI Showcase
-
-|     Character Dashboard & Stat Rings      |        Active Quests & Quest Modal        |
-| :---------------------------------------: | :---------------------------------------: |
-| ![Dashboard](./screenshots/dashboard.png) | ![Quests Board](./screenshots/quests.png) |
-
-|      Level-Up Celebration Overlay       |          Shop & Cosmetic Themes          |
-| :-------------------------------------: | :--------------------------------------: |
-| ![Level Up](./screenshots/level_up.png) | ![Currency Shop](./screenshots/shop.png) |
-
-> 💡 **Live Preview Mode**: Revel includes an instant evaluation mode (`?preview=true`) across all routes (`/dashboard?preview=true`, `/dashboard/quests?preview=true`, `/dashboard/shop?preview=true`, `/dashboard/attributes?preview=true`), enabling judges and reviewers to immediately test all interactive mechanics with sample state even before configuring live Supabase keys.
+This project was built as a hackathon submission for Tech Zephyr 4.0 under the Life RPG problem statement, focused on turning habit-building and task execution into a playful but disciplined growth system.
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
-- **Framework**: [Next.js 16](https://nextjs.org/) (App Router, Server Actions, Turbopack, Route Handlers)
-- **Language**: [TypeScript 5](https://www.typescriptlang.org/) (Strict type-checking and end-to-end interface contracts)
-- **Styling**: [Tailwind CSS v4](https://tailwindcss.com/) with a curated design system (custom color tokens, CSS variables, glassmorphism)
-- **Component Library**: [shadcn/ui](https://ui.shadcn.com/) (New York style) backed by headless [Radix UI](https://www.radix-ui.com/) accessible primitives
-- **Animations**: [Framer Motion](https://www.framer.com/motion/) (micro-interactions, level-up particles, animated circular progress rings)
-- **Database & Backend**: [Supabase](https://supabase.com/) (PostgreSQL, Row Level Security, Atomic RPC Stored Procedures, Real-Time Auth)
-- **Validation**: [Zod](https://zod.dev/) (Isomorphic schema validation on forms and server mutations)
-- **Theme Engine**: `next-themes` (Dark/Light mode + custom cosmetic themes: _Arcane Violet_, _Cyberpunk Neon_, _Midnight Obsidian_)
-- **Typography**: [Fontshare](https://www.fontshare.com/) — General Sans & Satoshi (hero display font), Fredoka (headings), Inter (body), JetBrains Mono (mono)
-- **Rate Limiting**: Custom token-bucket sliding-window engine (`lib/rate-limit.ts`) with zero external infrastructure dependencies
-- **Icons**: [Lucide React](https://lucide.dev/)
+This project was verified against the actual dependencies in package.json and current app setup:
 
----
-
-## ✨ Core Features
-
-### 🛡️ 1. Character Progression & Leveling Engine
-
-- **Mathematical Leveling Curve**: Uses a non-linear exponential formula:
-  $$\text{XP Required}(L) = \lfloor 50 \times L^{1.5} \rfloor$$
-- **Multi-Level Rollover**: Handles multi-level jumps when completing high-reward quests, rolling leftover XP seamlessly into consecutive levels.
-- **Celebration Modal**: Fullscreen particle confetti, animated badge transitions, stat summary, and celebratory sound-ready visual cues upon leveling up.
-- **Circular SVG Progress Ring**: Framer Motion-driven radial meter tracking exact percentage progress to the next rank.
-
-### 📜 2. Quests Management (Tasks CRUD)
-
-- **Attribute-Linked Tasks**: Quests contribute directly to corresponding attribute stats: _Intellect_, _Strength_, _Discipline_, or _Creativity_.
-- **Difficulty Multipliers**:
-  - _Easy_: 10 XP / 2 Coins
-  - _Medium_: 25 XP / 5 Coins
-  - _Hard_: 50 XP / 10 Coins
-- **Zod-Powered Validation**: Real-time client and server validation with accessible inline error alerts and ISO due date constraints.
-- **Filtering & Search**: Instant categorization by Active, Completed, or Attribute tag.
-
-### 🧬 3. Core Attributes & Mastery Perks
-
-- Dedicated attribute progression tracking individual ranks and XP for each life discipline.
-- Milestone perk unlocks at Levels 5, 10, and 25 with visual unlock status.
-
-### 🔥 4. Visible Streak System
-
-- **Dynamic Flame Intensity**: Visual flame indicators scale and glow based on streak milestones (Bronze, Silver, Gold at 7+ and 30+ days).
-- **7-Day Activity Matrix**: Row of the past 7 days displaying completed activity.
-- **Non-Punitive Decay**: Gentle encouragement nudges rather than harsh demotions if a day is missed.
-
-### 🪙 5. Shop & Economy
-
-- **Earn & Spend Gold**: Gain coins solely by accomplishing real-world tasks.
-- **Cosmetic Unlocks**: Purchase custom interface themes (_Cyberpunk Neon_, _Arcane Violet_, _Midnight Obsidian_) and character titles (_Novice_, _Grandmaster_).
-- **Atomic Balance Verification**: Prevents double-purchasing or negative coin balances via database RPC transactions.
-
-### ♿ 6. Accessibility & Mobile Resilience (WCAG 2.1 AA)
-
-- **100% Keyboard Accessible**: Logical Tab indexing, visible focus rings using active theme `--ring`, and Radix UI focus trapping.
-- **Screen Reader Support**: `<Label>` associations, `role="radiogroup"`, `role="tablist"`, and `aria-live="polite"` dynamic notification regions.
-- **Adaptive Responsive Layout**: Custom bottom navigation bar on mobile viewports ($\ge 44\times 44\text{px}$ touch targets), 2-column tablet reflow, and 4-column desktop grid.
-- **Resilience**: Offline banner detection (`components/OfflineBanner.tsx`) and root/dashboard error boundaries with retry mechanisms.
+- Framework: Next.js 16 (App Router, TypeScript)
+- Styling: Tailwind CSS, shadcn/ui
+- Fonts: General Sans + Satoshi via Fontshare, with Fredoka for headings and Inter + JetBrains Mono used in the app font setup
+- Animation: Framer Motion
+- Database & Auth: Supabase (Postgres, Row Level Security, Google/GitHub social auth support)
+- Validation: Zod
+- Rate Limiting: Upstash Redis with @upstash/ratelimit and @upstash/redis
+- Deployment: Vercel
 
 ---
 
-## 🚀 Getting Started
+## Features
 
-Follow these steps to run Revel locally on your machine:
+- Social authentication with Google and GitHub via Supabase Auth
+- XP and leveling system with a non-linear progression curve
+- Four core attributes tied to task categories: Intellect, Strength, Discipline, and Creativity
+- Quest/task system with difficulty tiers and timed work sessions
+- Start, pause, resume, and complete flows for active task sessions
+- Streak tracking with shield/comeback gameplay mechanics
+- Variable rewards, combo multipliers, critical-hit styling, and loot drops
+- Daily quest rotation and structured gameplay loop
+- Currency-based shop with purchasable themes and cosmetics
+- Anti-cheat protections including server-authoritative timing, diminishing returns on repetitive tasks, daily caps, and anomaly throttling
+- Five illustrated companion characters with idle, happy, and sad states
+- Full accessibility support including keyboard navigation, screen reader labels, reduced-motion handling, and responsive layouts
+- Responsive UI designed for desktop, tablet, and mobile use
 
-### 1. Prerequisites
+---
 
-- [Node.js](https://nodejs.org/) (v18.17 or later recommended)
-- `npm`, `pnpm`, or `yarn`
-- A free [Supabase](https://supabase.com/) account (or Docker for local Supabase)
+## Setup Instructions
 
-### 2. Clone the Repository
+### 1. Clone the repository
 
 ```bash
-git clone https://github.com/your-username/revel.git
-cd revel
+git clone <your-repo-url>
+cd Web Hackathon_IITB
 ```
 
-### 3. Install Dependencies
+### 2. Install dependencies
 
 ```bash
 npm install
 ```
 
-### 4. Configure Environment Variables
+### 3. Configure environment variables
 
-Copy the `.env.example` file to create your local `.env.local`:
+Copy the sample file to your local environment file:
 
 ```bash
 cp .env.example .env.local
 ```
 
-Open `.env.local` and add your Supabase project credentials:
+Then fill in the required values in `.env.local`.
 
-```env
-NEXT_PUBLIC_SUPABASE_URL=https://your-project-ref.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
-```
+### 4. Set up the Supabase database
 
-### 5. Initialize the Database Schema
+This project is configured around manual schema setup in the Supabase SQL Editor rather than a repository-local `supabase db push` workflow. The actual SQL schema is stored in:
 
-1. Go to your **[Supabase Dashboard](https://supabase.com/dashboard)** and select your project.
-2. Navigate to the **SQL Editor** in the left sidebar.
-3. Open [`supabase/full_schema.sql`](./supabase/full_schema.sql) in your code editor, copy its contents, paste into the Supabase SQL Editor, and click **Run**.
-   _(Alternatively, run the migration files in [`supabase/migrations/`](./supabase/migrations/) in numerical order)._
-4. _(Optional)_ Run [`supabase/seed.sql`](./supabase/seed.sql) to populate initial cosmetic shop items and default badges.
+- `supabase/full_schema.sql`
+- `supabase/seed.sql`
+- `supabase/migrations/`
 
-### 6. Run the Development Server
+Recommended setup:
+
+1. Open your Supabase project in the Supabase Dashboard.
+2. Go to SQL Editor.
+3. Run the contents of `supabase/full_schema.sql`.
+4. Optionally run `supabase/seed.sql` to add starter shop data.
+5. If you prefer migration files, run the SQL in `supabase/migrations/` in order.
+
+### 5. Run the app
 
 ```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+Open the local app in your browser at:
 
-> **Tip**: You can immediately jump into the dashboard preview at `http://localhost:3000/dashboard?preview=true`.
-
----
-
-## 🔑 Environment Variables Reference
-
-| Variable Name                   | Description                           | Source / How to Obtain                                                                                                           | Required?                  |
-| ------------------------------- | ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- | -------------------------- |
-| `NEXT_PUBLIC_SUPABASE_URL`      | Supabase API URL endpoint             | Supabase Dashboard $\rightarrow$ **Project Settings** $\rightarrow$ **API** $\rightarrow$ **Project URL**                        | **Yes** (for live backend) |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Public anonymous API key              | Supabase Dashboard $\rightarrow$ **Project Settings** $\rightarrow$ **API** $\rightarrow$ **Project API Keys** (`anon` `public`) | **Yes** (for live backend) |
-| `NEXT_PUBLIC_APP_URL`           | Canonical app URL for OAuth redirects | Your production URL (e.g. `https://revel.vercel.app`). Defaults dynamically to `window.location.origin` if omitted.           | Optional                   |
-| `UPSTASH_REDIS_REST_URL`        | Upstash Redis REST endpoint           | Upstash Console $\rightarrow$ **Databases** $\rightarrow$ **REST API** (Optional for distributed multi-region rate-limiting)     | Optional                   |
-| `UPSTASH_REDIS_REST_TOKEN`      | Upstash Redis REST Token              | Upstash Console $\rightarrow$ **Databases** $\rightarrow$ **REST API**                                                           | Optional                   |
-
-> 🔒 **OAuth Note**: In accordance with modern security standards, Google and GitHub OAuth client secrets are configured directly in your Supabase Dashboard under **Authentication** $\rightarrow$ **Providers**. No client secrets are stored or exposed in this repository.
+```text
+http://localhost:3000
+```
 
 ---
 
-## 📜 Available Scripts
+## Environment Variables
 
-| Command                | Description                                                 |
-| ---------------------- | ----------------------------------------------------------- |
-| `npm run dev`          | Starts local Next.js development server with Turbopack      |
-| `npm run build`        | Generates an optimized production build                     |
-| `npm run start`        | Starts the production server                                |
-| `npm run lint`         | Runs ESLint 9 checks across all source files                |
-| `npm run format`       | Formats all code files using Prettier                       |
-| `npm run format:check` | Verifies code formatting compliance without modifying files |
+This table matches the real `.env.example` file currently present in the repo.
 
----
-
-## 🌐 Deployment
-
-### Deploying to Vercel
-
-Revel is optimized for zero-configuration deployment on Vercel:
-
-1. Push your repository to GitHub / GitLab / Bitbucket.
-2. Import the repository into [Vercel](https://vercel.com/new).
-3. Under **Environment Variables**, add:
-   - `NEXT_PUBLIC_SUPABASE_URL`
-   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-4. Click **Deploy**. Vercel will automatically build and serve the App Router application.
-5. In your **Supabase Dashboard** under **Authentication** $\rightarrow$ **URL Configuration**, add your Vercel URL (e.g. `https://your-app.vercel.app/auth/callback`) to the **Redirect URLs** whitelist.
+| Variable | Description | Where to get it |
+|---|---|---|
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL | Supabase Dashboard > Project Settings > API |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase public anon key | Supabase Dashboard > Project Settings > API |
+| `UPSTASH_REDIS_REST_URL` | Upstash Redis REST endpoint | Upstash Console > your database > REST API |
+| `UPSTASH_REDIS_REST_TOKEN` | Upstash Redis REST token | Upstash Console > your database > REST API |
+| `NEXT_PUBLIC_APP_URL` | Deployed app URL used for app-level redirects | Your Vercel deployment URL |
 
 ---
 
-## 📋 Hackathon Disclosures & Attributions
+## OAuth Setup Note
 
-Per hackathon competition guidelines, the following disclosures and attributions are provided:
+Google and GitHub OAuth must be configured with redirect URIs that match the deployed app URL, usually in the format:
 
-- **Third-Party Libraries**:
-  - [Next.js](https://nextjs.org/) (Vercel) & [React](https://react.dev/)
-  - [Tailwind CSS](https://tailwindcss.com/) & `@tailwindcss/postcss`
-  - [shadcn/ui](https://ui.shadcn.com/) & [Radix UI](https://www.radix-ui.com/) accessible primitives
-  - [Framer Motion](https://www.framer.com/motion/) for fluid motion physics
-  - [Lucide Icons](https://lucide.dev/) for clean UI iconography
-  - [Supabase JS & SSR SDKs](https://supabase.com/) for authentication and database management
-  - [Zod](https://zod.dev/) for type-safe runtime validations
-  - [next-themes](https://github.com/pacocoursey/next-themes) for theme switching
-  - [Fontshare](https://www.fontshare.com/) — General Sans & Satoshi display fonts (free for commercial use via CDN)
-- **Media Assets**:
-  - Hero cinematic background video (`/public/hero.mp4`) — original project asset used as ambient background with scrim overlay
-  - Blob companion illustrations — original project character assets
-- **AI Development Tools**:
-  - **Google Antigravity IDE / Gemini AI**: Utilized during development as an intelligent pair programmer for rapid scaffolding, refactoring, SQL migration crafting, and WCAG accessibility verification.
-- **Design Inspiration**:
-  - Inspired by the gamified mechanics of _Habitica_, the hunter level-up aesthetics of _Solo Leveling_, and the typography and polish of modern dark-mode developer tools like _Linear_. All UI implementations, styles, CSS variable mappings, and components are original custom code.
+```text
+https://your-domain/auth/callback
+```
+
+This needs to be added in:
+
+- each provider's developer console (Google / GitHub)
+- Supabase Auth > URL Configuration
+
+This is a common setup gotcha and is important for both local debugging and production deployment.
 
 ---
 
-## 📄 License
+## Screenshots
 
-Distributed under the **MIT License**. See `LICENSE` for more information.
+> Screenshots have not been added to the repo yet. Placeholder image paths are included below and should be replaced with the final assets before submission.
+
+```md
+![Dashboard](./screenshots/dashboard.png)
+![Quests](./screenshots/quests.png)
+![Level Up](./screenshots/level_up.png)
+![Shop](./screenshots/shop.png)
+```
+
+---
+
+## Disclosures
+
+- Third-party services and libraries used:
+  - Supabase for auth and database services
+  - Upstash Redis and Upstash Rate Limit for distributed rate limiting
+  - shadcn/ui component primitives
+  - Framer Motion for animation
+  - Fontshare fonts (General Sans, Satoshi)
+- No external UI template or boilerplate codebase was used beyond shadcn/ui's component primitives.
+- UI direction was shaped by modern dark-mode productivity dashboards and game-like dashboard aesthetics, but the implementation is custom-built in this repository.
+- No explicit AI tooling metadata is stored in the repo itself; any AI-assisted development was informal and not persisted as project configuration.
+
+---
+
+## Known Limitations / Future Work
+
+This version intentionally scopes the project to a hackathon-ready MVP.
+
+- Admin dashboard is not implemented yet and remains future work.
+- A full boss battle or PvP mechanic is not a live gameplay feature in the current build; any teaser content is conceptual rather than playable.
+- Some deeper progression systems and moderation tools are intentionally deferred for later development.
+
+---
+
+## License
+
+This project is licensed under the MIT License. See the `LICENSE` file for details.
