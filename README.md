@@ -59,7 +59,7 @@ This project was verified against the actual dependencies in package.json and cu
 
 ```bash
 git clone <your-repo-url>
-cd Web Hackathon_IITB
+cd revel
 ```
 
 ### 2. Install dependencies
@@ -141,19 +141,22 @@ This is a common setup gotcha and is important for both local debugging and prod
 
 ## Screenshots
 
-> Screenshots have not been added to the repo yet. Placeholder image paths are included below and should be replaced with the final assets before submission.
+> Screenshots are stored in the project under `public/screenshots`.
 
 ```md
-![Dashboard](./screenshots/dashboard.png)
-![Quests](./screenshots/quests.png)
-![Level Up](./screenshots/level_up.png)
-![Shop](./screenshots/shop.png)
+![Dashboard](./public/screenshots/1.png)
+![Quest Flow](./public/screenshots/2.png)
+![Character Progression](./public/screenshots/3.png)
+![Shop & Themes](./public/screenshots/4.png)
+![Gameplay Overview](./public/screenshots/5.png)
+![Onboarding / App Preview](./public/screenshots/6.png)
 ```
 
 ---
 
 ## Disclosures
 
+- This project was built with substantial assistance from Claude (Anthropic), used throughout development for architecture planning, generating implementation code via detailed prompts, debugging, and UI/UX design guidance. All AI-assisted output was reviewed, tested, and integrated by the team.
 - Third-party services and libraries used:
   - Supabase for auth and database services
   - Upstash Redis and Upstash Rate Limit for distributed rate limiting
@@ -161,8 +164,7 @@ This is a common setup gotcha and is important for both local debugging and prod
   - Framer Motion for animation
   - Fontshare fonts (General Sans, Satoshi)
 - No external UI template or boilerplate codebase was used beyond shadcn/ui's component primitives.
-- UI direction was shaped by modern dark-mode productivity dashboards and game-like dashboard aesthetics, but the implementation is custom-built in this repository.
-- No explicit AI tooling metadata is stored in the repo itself; any AI-assisted development was informal and not persisted as project configuration.
+- UI direction was informed by modern dark-mode productivity dashboards and game-style interfaces referenced during design, but all implementation is custom-built in this repository.
 
 ---
 
@@ -171,6 +173,7 @@ This is a common setup gotcha and is important for both local debugging and prod
 This version intentionally scopes the project to a hackathon-ready MVP.
 
 - Admin dashboard is not implemented yet and remains future work.
+- Database schema already includes a `role` column on profiles and an `activity_flags` table, intentionally scaffolded now to support a future admin dashboard without requiring a schema migration later.
 - A full boss battle or PvP mechanic is not a live gameplay feature in the current build; any teaser content is conceptual rather than playable.
 - Some deeper progression systems and moderation tools are intentionally deferred for later development.
 
