@@ -1,4 +1,4 @@
--- Life RPG: Sample Shop Items Seed Data
+-- Revel: Sample Shop Items Seed Data
 -- 5 Starter items: themes, badges, and cosmetics for the in-game shop
 
 INSERT INTO public.shop_items (id, name, description, price, type)

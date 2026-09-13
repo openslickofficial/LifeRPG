@@ -4,7 +4,6 @@ import {
   Sword,
   Shield,
   Palette,
-  ArrowLeft,
   Sparkles,
   Plus,
   CheckCircle2,
@@ -15,6 +14,8 @@ import { Button } from "@/components/ui/button";
 import { CircularProgress } from "@/components/CircularProgress";
 import { createClient } from "@/lib/supabase/server";
 import { getLevelProgress } from "@/lib/rpg/leveling";
+import { BlobCharacter } from "@/components/BlobCharacter";
+import { getBlobByAttribute } from "@/lib/blobs";
 
 interface AttributeDefinition {
   name: "Strength" | "Intellect" | "Discipline" | "Creativity";
@@ -159,6 +160,29 @@ const ATTRIBUTE_DEFINITIONS: AttributeDefinition[] = [
   },
 ];
 
+function computeActivityState(
+  lastActivity: Date | undefined,
+  hasUser: boolean,
+  isProgressMax: boolean
+): { state: "idle" | "celebrating" | "sad"; daysAgo: number | null } {
+  if (!lastActivity) {
+    return {
+      state: hasUser ? "sad" : "idle",
+      daysAgo: null,
+    };
+  }
+  const diffDays = Math.floor(
+    (Date.now() - lastActivity.getTime()) / (1000 * 60 * 60 * 24)
+  );
+  if (diffDays >= 3) {
+    return { state: "sad", daysAgo: diffDays };
+  }
+  if (isProgressMax) {
+    return { state: "celebrating", daysAgo: diffDays };
+  }
+  return { state: "idle", daysAgo: diffDays };
+}
+
 export default async function AttributesPage() {
   const supabase = await createClient();
   const {
@@ -167,6 +191,7 @@ export default async function AttributesPage() {
 
   // Fetch live attributes if user is authenticated
   const liveAttributesMap = new Map<string, { level: number; xp: number }>();
+  const lastActivityPerCategory = new Map<string, Date>();
 
   if (user) {
     const { data: dbAttrs } = await supabase
@@ -180,6 +205,21 @@ export default async function AttributesPage() {
           level: row.level,
           xp: row.current_xp,
         });
+      }
+    }
+
+    const { data: recentTasks } = await supabase
+      .from("tasks")
+      .select("category, completed_at")
+      .eq("profile_id", user.id)
+      .eq("status", "completed")
+      .order("completed_at", { ascending: false });
+
+    if (recentTasks) {
+      for (const t of recentTasks) {
+        if (!lastActivityPerCategory.has(t.category) && t.completed_at) {
+          lastActivityPerCategory.set(t.category, new Date(t.completed_at));
+        }
       }
     }
   }
@@ -217,16 +257,6 @@ export default async function AttributesPage() {
         </div>
 
         <div className="flex items-center gap-2.5">
-          <Link href="/dashboard">
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-11 min-h-[44px] gap-2 rounded-xl text-xs font-semibold"
-            >
-              <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
-              <span>Dashboard</span>
-            </Button>
-          </Link>
           <Link href="/dashboard/quests">
             <Button
               size="sm"
@@ -309,6 +339,15 @@ export default async function AttributesPage() {
             progress.xpNeededForNextLevel - progress.xpIntoLevel
           );
 
+          // Companion Blob metadata and dynamic activity state
+          const companionBlob = getBlobByAttribute(attr.name.toLowerCase());
+          const lastActivity = lastActivityPerCategory.get(attr.name);
+          const { state: blobState, daysAgo } = computeActivityState(
+            lastActivity,
+            Boolean(user),
+            progress.percentage >= 100
+          );
+
           // Get progress ring color
           const ringColor =
             attr.accentColor === "cyan"
@@ -325,11 +364,15 @@ export default async function AttributesPage() {
               className="border-border bg-card shadow-layered hover:shadow-elevated flex flex-col justify-between rounded-3xl border-2 p-6 transition-all duration-150 hover:-translate-y-1 sm:p-7"
             >
               <div>
-                {/* Top Row: Name, Level Badge, and Circular Progress Ring */}
+                {/* Top Row: Blob Companion, Level Badge, and Circular Progress Ring */}
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex items-center gap-3.5">
-                    <div className="border-border bg-secondary/60 flex h-14 w-14 items-center justify-center rounded-2xl border-2 shadow-xs">
-                      {attr.icon}
+                    <div className="relative shrink-0 flex items-center justify-center">
+                      <BlobCharacter
+                        attribute={attr.name.toLowerCase()}
+                        size="sm"
+                        state={blobState}
+                      />
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
@@ -358,6 +401,48 @@ export default async function AttributesPage() {
                     />
                   </div>
                 </div>
+
+                {/* Companion Name & Flavor Power Description */}
+                {companionBlob && (
+                  <div
+                    className="mt-4 flex items-center gap-3 rounded-2xl border-2 p-3 text-xs shadow-xs"
+                    style={{
+                      borderColor: `${companionBlob.accentColor}35`,
+                      backgroundColor: `${companionBlob.accentColor}12`,
+                    }}
+                  >
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="font-heading font-black text-foreground text-sm">
+                            {companionBlob.name}
+                          </span>
+                          <span
+                            className="text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-full"
+                            style={{
+                              backgroundColor: `${companionBlob.accentColor}25`,
+                              color: companionBlob.accentColor,
+                            }}
+                          >
+                            {blobState === "celebrating"
+                              ? "⚡ Energized"
+                              : blobState === "sad"
+                                ? "💤 Needs XP"
+                                : "✨ Companion"}
+                          </span>
+                        </div>
+                        <span className="font-mono text-[10px] text-muted-foreground">
+                          {daysAgo !== null
+                            ? `Active ${daysAgo}d ago`
+                            : "No recent quests"}
+                        </span>
+                      </div>
+                      <p className="mt-1 text-muted-foreground italic text-[11px] leading-snug">
+                        &ldquo;{companionBlob.powerText}&rdquo;
+                      </p>
+                    </div>
+                  </div>
+                )}
 
                 {/* Level Progress Bar & Numbers */}
                 <div className="mt-5 space-y-1.5">

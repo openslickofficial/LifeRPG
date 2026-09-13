@@ -1,84 +1,200 @@
 "use client";
 
+import * as React from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Shield, Sparkles } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { Menu, X } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+
+/**
+ * Modern 6-spoke rounded asterisk starburst logo mark
+ */
+export function AsteriskLogo({ className = "h-5 w-5" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 32 32"
+      fill="currentColor"
+      className={className}
+      aria-label="Revel Logo"
+    >
+      <rect x="13.6" y="3" width="4.8" height="26" rx="2.4" />
+      <rect
+        x="13.6"
+        y="3"
+        width="4.8"
+        height="26"
+        rx="2.4"
+        transform="rotate(60 16 16)"
+      />
+      <rect
+        x="13.6"
+        y="3"
+        width="4.8"
+        height="26"
+        rx="2.4"
+        transform="rotate(120 16 16)"
+      />
+    </svg>
+  );
+}
 
 export function Navbar() {
   const pathname = usePathname();
+  const router = useRouter();
+  const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
 
-  // Dashboard layout has its own Sidebar and DashboardHeader
+  // Dashboard layout has its own dedicated Sidebar and SiteHeader
   if (pathname.startsWith("/dashboard")) {
     return null;
   }
+
+  const navLinks = [
+    { label: "Home", href: "/", targetId: "top" },
+    { label: "Features", href: "/#features", targetId: "features" },
+    { label: "Cinematic", href: "/#cinematic", targetId: "cinematic" },
+    { label: "Companions", href: "/#companions", targetId: "companions" },
+    { label: "Pricing", href: "/pricing" },
+  ];
+
+  const handleNavClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    link: { label: string; href: string; targetId?: string }
+  ) => {
+    setMobileMenuOpen(false);
+
+    if (link.label === "Home") {
+      if (pathname === "/") {
+        e.preventDefault();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        if (window.location.hash) {
+          window.history.pushState(null, "", "/");
+        }
+      }
+      return;
+    }
+
+    if (link.targetId) {
+      if (pathname === "/") {
+        e.preventDefault();
+        const element = document.getElementById(link.targetId);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth" });
+          window.history.pushState(null, "", `/#${link.targetId}`);
+        }
+      } else {
+        e.preventDefault();
+        router.push(link.href);
+      }
+    }
+  };
+
   return (
-    <header className="border-border/70 bg-background/85 sticky top-0 z-50 w-full border-b backdrop-blur-xl transition-colors duration-200">
-      <div className="container mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
-        {/* Brand Logo & Name */}
+    <header className="sticky top-0 z-50 w-full bg-[#F5F1EB] dark:bg-[#0A0A0F] border-b border-slate-900/[0.08] dark:border-white/[0.06] text-slate-900 dark:text-white transition-colors duration-300">
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3.5 sm:px-8">
+        {/* Left: Simple logo mark + wordmark in new heading font */}
         <Link
           href="/"
-          className="group flex items-center gap-3 transition-opacity duration-150 hover:opacity-95"
+          onClick={(e) => {
+            if (pathname === "/") {
+              e.preventDefault();
+              window.scrollTo({ top: 0, behavior: "smooth" });
+              if (window.location.hash) {
+                window.history.pushState(null, "", "/");
+              }
+            }
+          }}
+          className="flex items-center gap-2.5 text-slate-900 dark:text-white transition-opacity hover:opacity-90"
+          aria-label="Revel Home"
         >
-          <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-violet-600 via-indigo-600 to-cyan-500 p-0.5 shadow-md shadow-violet-500/25 transition-transform duration-200 group-hover:scale-105 active:scale-95 dark:shadow-[0_0_20px_rgba(168,85,247,0.35)]">
-            <div className="bg-background/20 flex h-full w-full items-center justify-center rounded-[10px] text-white backdrop-blur-xs">
-              <Shield className="h-5 w-5" />
-            </div>
-          </div>
-          <div className="flex flex-col">
-            <div className="flex items-center gap-2">
-              <span className="font-heading text-foreground text-lg font-bold tracking-tight sm:text-xl">
-                Life RPG
-              </span>
-              <span className="hidden rounded-md bg-violet-500/10 px-1.5 py-0.5 font-mono text-[10px] font-semibold text-violet-600 sm:inline-block dark:bg-violet-400/15 dark:text-violet-300">
-                ALPHA
-              </span>
-            </div>
-            <span className="font-body text-muted-foreground text-[11px] font-medium">
-              Turn Habits Into Hero Stats
-            </span>
-          </div>
+          <AsteriskLogo className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+          <span className="font-display text-base font-bold tracking-tight text-slate-900 dark:text-white">
+            Revel
+          </span>
         </Link>
 
-        {/* Right Navigation Controls */}
-        <div className="flex items-center gap-3">
-          {/* Live Online Adventurers Indicator */}
-          <div className="border-border/80 bg-card/60 hidden items-center gap-2 rounded-xl border px-3 py-1.5 backdrop-blur-xs sm:flex">
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
-            </span>
-            <span className="text-foreground/80 font-mono text-xs font-semibold">
-              14,280{" "}
-              <span className="text-muted-foreground font-normal">Active</span>
-            </span>
-          </div>
-
-          <Badge
-            variant="brand"
-            className="hidden items-center gap-1 font-mono text-[11px] md:inline-flex"
-          >
-            <Sparkles className="h-3 w-3" />
-            <span>Season 1</span>
-          </Badge>
-
-          {/* Animated Theme Switcher */}
-          <ThemeToggle />
-
-          {/* Sign In CTA */}
-          <Link href="/login">
-            <Button
-              variant="default"
-              size="sm"
-              className="h-9 rounded-xl px-4 text-xs font-black tracking-wider uppercase"
+        {/* Center: Nav links — plain white/gray text, subtle hover color shift using primary accent */}
+        <nav aria-label="Main Navigation" className="hidden md:flex items-center gap-8">
+          {navLinks.map((link) => (
+            <Link
+              key={link.label}
+              href={link.href}
+              onClick={(e) => handleNavClick(e, link)}
+              className="text-sm font-medium text-slate-600 dark:text-slate-400 transition-colors hover:text-emerald-600 dark:hover:text-emerald-400"
             >
-              Sign In
-            </Button>
+              {link.label}
+            </Link>
+          ))}
+        </nav>
+
+        {/* Right: Theme Toggle + Login text link + Small Solid Primary Accent Pill Button */}
+        <div className="hidden md:flex items-center gap-4">
+          <ThemeToggle className="h-8 w-8 rounded-lg border-slate-300 dark:border-white/10 bg-slate-100 dark:bg-white/[0.05] hover:bg-slate-200 dark:hover:bg-white/[0.1] hover:border-emerald-500/40" />
+
+          <Link
+            href="/login"
+            className="text-sm font-medium text-slate-600 dark:text-slate-300 transition-colors hover:text-slate-900 dark:hover:text-white"
+          >
+            Login
+          </Link>
+
+          <Link href="/login">
+            <button
+              type="button"
+              className="inline-flex items-center justify-center rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold text-xs px-4 py-2 shadow-[0_0_16px_rgba(16,185,129,0.3)] transition-all active:scale-95 cursor-pointer"
+            >
+              Start Your Quest
+            </button>
           </Link>
         </div>
+
+        {/* Mobile Hamburger Toggle */}
+        <button
+          type="button"
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          className="flex h-9 w-9 items-center justify-center rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white md:hidden"
+          aria-label="Toggle navigation menu"
+        >
+          {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+        </button>
       </div>
+
+      {/* Mobile Menu Dropdown */}
+      {mobileMenuOpen && (
+        <div className="border-t border-slate-900/[0.08] dark:border-white/[0.06] bg-[#F5F1EB] dark:bg-[#0A0A0F] px-6 py-4 md:hidden">
+          <nav className="flex flex-col gap-3">
+            {navLinks.map((link) => (
+              <Link
+                key={link.label}
+                href={link.href}
+                onClick={(e) => handleNavClick(e, link)}
+                className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
+              >
+                {link.label}
+              </Link>
+            ))}
+            <div className="mt-2 flex items-center justify-between border-t border-slate-900/[0.08] dark:border-white/[0.06] pt-3">
+              <div className="flex items-center gap-3">
+                <ThemeToggle className="h-8 w-8 rounded-lg border-slate-300 dark:border-white/10 bg-slate-100 dark:bg-white/[0.05] hover:bg-slate-200 dark:hover:bg-white/[0.1] hover:border-emerald-500/40" />
+                <Link
+                  href="/login"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white"
+                >
+                  Login
+                </Link>
+              </div>
+              <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
+                <button
+                  type="button"
+                  className="inline-flex items-center justify-center rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold text-xs px-4 py-1.5"
+                >
+                  Start Your Quest
+                </button>
+              </Link>
+            </div>
+          </nav>
+        </div>
+      )}
     </header>
   );
 }

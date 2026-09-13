@@ -1,5 +1,5 @@
 -- =============================================================================
--- Life RPG: Complete Supabase Database Setup Script
+-- Revel: Complete Supabase Database Setup Script
 -- Paste this entire script into the Supabase Dashboard SQL Editor to initialize:
 -- 1. Tables (profiles, attributes, tasks, streaks, shop_items, inventory)
 -- 2. Row Level Security (RLS) on all tables with explicit policies

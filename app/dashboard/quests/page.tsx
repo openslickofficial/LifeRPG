@@ -36,6 +36,8 @@ import {
   AttributeLevelUpData,
 } from "@/components/LevelUpCelebration";
 import { checkLevelUp } from "@/lib/rpg/leveling";
+import { BlobCharacter } from "@/components/BlobCharacter";
+import { GroupBlobImage } from "@/components/GroupBlobImage";
 import {
   Dialog,
   DialogContent,
@@ -1117,6 +1119,21 @@ export default function QuestsPage() {
   const activeQuests = quests.filter((q) => q.status === "pending");
   const completedQuests = quests.filter((q) => q.status === "completed");
 
+  const isLongInactive = React.useMemo(() => {
+    if (completedQuests.length === 0) return false;
+    const sorted = [...completedQuests].sort((a, b) => {
+      const timeA = new Date(a.completed_at || a.created_at || 0).getTime();
+      const timeB = new Date(b.completed_at || b.created_at || 0).getTime();
+      return timeB - timeA;
+    });
+    const latestTime = new Date(
+      sorted[0]?.completed_at || sorted[0]?.created_at || 0
+    ).getTime();
+    const currentTimestamp = nowSeconds * 1000;
+    const diffDays = (currentTimestamp - latestTime) / (1000 * 60 * 60 * 24);
+    return diffDays >= 7;
+  }, [completedQuests, nowSeconds]);
+
   return (
     <div className="space-y-8">
       {/* Toast Notification Banner */}
@@ -1273,27 +1290,55 @@ export default function QuestsPage() {
       ) : activeTab === "active" ? (
         activeQuests.length === 0 ? (
           /* Empty State */
-          <Card className="flex flex-col items-center justify-center rounded-3xl border-2 border-dashed p-12 text-center">
-            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-violet-500/10 text-violet-600 dark:text-violet-400">
-              <Sword className="h-8 w-8" aria-hidden="true" />
-            </div>
-            <CardTitle className="text-xl">
-              All Daily Quests Conquered
-            </CardTitle>
-            <CardDescription className="mt-1.5 max-w-md text-xs leading-relaxed">
-              You have completed every active quest on your board. Forge a new
-              quest or rest to preserve your mana.
-            </CardDescription>
-            <Button
-              onClick={() => setIsDialogOpen(true)}
-              variant="outline"
-              size="sm"
-              className="mt-6 min-h-[44px] gap-2 rounded-xl text-xs font-semibold"
-            >
-              <Plus className="h-3.5 w-3.5" aria-hidden="true" />
-              <span>Forge Another Quest</span>
-            </Button>
-          </Card>
+          isLongInactive ? (
+            <Card className="flex flex-col items-center justify-center rounded-3xl border-2 border-dashed border-rose-500/20 bg-rose-500/5 p-10 sm:p-12 text-center">
+              <div className="relative h-28 w-44 sm:h-36 sm:w-56 mb-4">
+                <GroupBlobImage
+                  src="/blobs/blobs-hurt.png"
+                  alt="Your companions have missed you"
+                  fill
+                  sizes="(max-width: 640px) 176px, 224px"
+                  className="filter drop-shadow-md"
+                  fallbackTitle="Companions Miss You"
+                />
+              </div>
+              <CardTitle className="text-xl font-heading font-black">
+                Your companions have missed you. Let&apos;s get back to it.
+              </CardTitle>
+              <CardDescription className="font-body mt-1.5 max-w-md text-xs sm:text-sm leading-relaxed text-muted-foreground">
+                It&apos;s been over a week since your last completed quest. Forge a new quest today to jump back into action together!
+              </CardDescription>
+              <Button
+                onClick={() => setIsDialogOpen(true)}
+                variant="outline"
+                size="sm"
+                className="mt-6 min-h-[44px] gap-2 rounded-xl text-xs font-semibold"
+              >
+                <Plus className="h-3.5 w-3.5" aria-hidden="true" />
+                <span>Forge a Quest</span>
+              </Button>
+            </Card>
+          ) : (
+            <Card className="flex flex-col items-center justify-center rounded-3xl border-2 border-dashed p-12 text-center">
+              <BlobCharacter blobId="mascot" size="md" state="idle" />
+              <CardTitle className="mt-4 text-xl font-heading font-black">
+                All Daily Quests Conquered!
+              </CardTitle>
+              <CardDescription className="font-body mt-1.5 max-w-md text-xs leading-relaxed">
+                Pip is thrilled — you have completed every active quest on your
+                board! Forge a new quest or take a well-deserved breather.
+              </CardDescription>
+              <Button
+                onClick={() => setIsDialogOpen(true)}
+                variant="outline"
+                size="sm"
+                className="mt-6 min-h-[44px] gap-2 rounded-xl text-xs font-semibold"
+              >
+                <Plus className="h-3.5 w-3.5" aria-hidden="true" />
+                <span>Forge Another Quest</span>
+              </Button>
+            </Card>
+          )
         ) : (
           <div className="space-y-8">
             {/* 24-Hour Rotating Featured Daily Quests */}
@@ -1782,10 +1827,12 @@ export default function QuestsPage() {
       ) : completedQuests.length === 0 ? (
         /* Empty Completed State */
         <Card className="flex flex-col items-center justify-center rounded-3xl border-2 border-dashed p-12 text-center">
-          <CardTitle className="text-xl">No Quests Completed Yet</CardTitle>
-          <CardDescription className="mt-1 text-xs">
-            Mark your first active quest complete to see it logged in your
-            adventure history.
+          <BlobCharacter blobId="mascot" size="md" state="idle" />
+          <CardTitle className="mt-4 text-xl font-heading font-black">
+            No Quests Completed Yet
+          </CardTitle>
+          <CardDescription className="font-body mt-1.5 max-w-md text-xs leading-relaxed">
+            Pip is standing by to celebrate your victories! Mark your first active quest complete to see it logged in your adventure history.
           </CardDescription>
         </Card>
       ) : (

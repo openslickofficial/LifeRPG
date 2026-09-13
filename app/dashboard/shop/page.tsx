@@ -1,10 +1,8 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
 import {
   ShoppingBag,
-  ArrowLeft,
   Coins,
   Check,
   Palette,
@@ -33,6 +31,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { purchaseItemAction, applyThemeAction } from "@/lib/actions/shop";
 import { createClient } from "@/lib/supabase/client";
+import { BlobCharacter } from "@/components/BlobCharacter";
 
 export interface ShopItem {
   id: string;
@@ -107,7 +106,7 @@ export default function ShopPage() {
     }
   );
   const [selectedFilter, setSelectedFilter] = React.useState<
-    "all" | "theme" | "badge" | "cosmetic"
+    "all" | "theme" | "badge" | "cosmetic" | "owned"
   >("all");
 
   // Purchase modal dialog state
@@ -256,6 +255,7 @@ export default function ShopPage() {
 
   const filteredItems = items.filter((item) => {
     if (selectedFilter === "all") return true;
+    if (selectedFilter === "owned") return ownedItemIds.has(item.id);
     return item.type === selectedFilter;
   });
 
@@ -321,17 +321,6 @@ export default function ShopPage() {
               </p>
             </div>
           </div>
-
-          <Link href="/dashboard">
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-11 min-h-[44px] gap-2 rounded-xl text-xs font-semibold"
-            >
-              <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
-              <span>Dashboard</span>
-            </Button>
-          </Link>
         </div>
       </div>
 
@@ -394,6 +383,19 @@ export default function ShopPage() {
           >
             Cosmetics ({items.filter((i) => i.type === "cosmetic").length})
           </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={selectedFilter === "owned"}
+            onClick={() => setSelectedFilter("owned")}
+            className={`font-heading focus-visible:ring-primary flex min-h-[44px] cursor-pointer items-center rounded-xl px-3.5 py-1.5 text-xs font-bold transition-all focus-visible:ring-2 focus-visible:outline-none ${
+              selectedFilter === "owned"
+                ? "bg-primary text-primary-foreground shadow-xs"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            My Purchases ({items.filter((i) => ownedItemIds.has(i.id)).length})
+          </button>
         </div>
 
         {appliedThemeId && (
@@ -440,6 +442,20 @@ export default function ShopPage() {
           ))}
           <span className="sr-only">Loading merchandise cards...</span>
         </div>
+      ) : filteredItems.length === 0 ? (
+        <Card className="flex flex-col items-center justify-center rounded-3xl border-2 border-dashed p-12 text-center">
+          <BlobCharacter blobId="mascot" size="md" state="idle" />
+          <CardTitle className="mt-4 text-xl font-heading font-black">
+            {selectedFilter === "owned"
+              ? "No Vault Purchases Yet"
+              : "No Items Found"}
+          </CardTitle>
+          <CardDescription className="mt-1.5 max-w-md text-xs leading-relaxed font-body">
+            {selectedFilter === "owned"
+              ? "Pip is guarding an empty vault! Complete quests to earn gold and unlock custom themes and cosmetic badges."
+              : "Pip inspected every shelf, but found nothing here right now. Check back soon for new treasures!"}
+          </CardDescription>
+        </Card>
       ) : (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {filteredItems.map((item) => {

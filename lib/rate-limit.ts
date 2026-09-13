@@ -1,4 +1,4 @@
-// Life RPG: Reusable In-Memory Sliding Window Rate Limiter
+// Revel: Reusable In-Memory Sliding Window Rate Limiter
 // Enforces limits per user to prevent quest spam and rapid-fire exploits.
 
 export interface RateLimitResult {

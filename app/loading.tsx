@@ -6,7 +6,7 @@ export default function RootLoading() {
     <div
       role="status"
       aria-live="polite"
-      aria-label="Loading Life RPG..."
+      aria-label="Loading Revel..."
       className="bg-background flex min-h-screen flex-col items-center justify-center p-4"
     >
       <div className="relative flex items-center justify-center">

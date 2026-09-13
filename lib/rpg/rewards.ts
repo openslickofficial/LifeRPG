@@ -1,4 +1,4 @@
-// Life RPG: Server-Side Anti-Cheat Reward Engine
+// Revel: Server-Side Anti-Cheat Reward Engine
 // Computes XP and currency rewards server-side to prevent client tampering.
 // Supports task timing validation, minimum age floors, diminishing returns on repeat tasks,
 // daily difficulty caps, soft anomaly throttle, combo streak bonuses, variable variance, and critical hits.

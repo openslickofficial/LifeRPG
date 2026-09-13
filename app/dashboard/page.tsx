@@ -10,6 +10,7 @@ import {
   ArrowRight,
   Zap,
   Sword,
+  Plus,
 } from "lucide-react";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { StatTile } from "@/components/StatTile";
@@ -21,8 +22,15 @@ import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
 import { getLevelProgress, getRankTitle } from "@/lib/rpg/leveling";
 import { StreakCalendar } from "@/components/StreakCalendar";
+import { BlobCharacter } from "@/components/BlobCharacter";
+import { GroupBlobImage } from "@/components/GroupBlobImage";
 
-export default async function DashboardPage() {
+interface DashboardPageProps {
+  searchParams?: Promise<{ demo?: string }>;
+}
+
+export default async function DashboardPage({ searchParams }: DashboardPageProps) {
+  const resolvedParams = searchParams ? await searchParams : {};
   const supabase = await createClient();
 
   // 1. Fetch authenticated user from Supabase server session
@@ -105,17 +113,42 @@ export default async function DashboardPage() {
 
   // Check gentle streak decay: if last activity was 2 days ago (missed yesterday)
   let isStreakFading = false;
+  let isStreakReset = false;
+  let isLongInactive = false;
+
+  let daysDiff = 0;
   if (lastActivityDate) {
     const last = new Date(lastActivityDate);
     const today = new Date();
     last.setHours(0, 0, 0, 0);
     today.setHours(0, 0, 0, 0);
-    const daysDiff = Math.round(
+    daysDiff = Math.round(
       (today.getTime() - last.getTime()) / (1000 * 60 * 60 * 24)
     );
     if (daysDiff === 2) {
       isStreakFading = true;
+    } else if (daysDiff > 2 && streakCount === 0 && (longestStreak > 0 || daysDiff < 60)) {
+      // Streak was lost/reset after having a prior streak
+      isStreakReset = true;
     }
+
+    if (daysDiff >= 7) {
+      isLongInactive = true;
+    }
+  } else if (isAuthenticatedUser && longestStreak > 0 && streakCount === 0) {
+    isStreakReset = true;
+  }
+
+  // Allow preview demo overrides via URL searchParams (e.g. ?demo=streak-reset or ?demo=inactive)
+  if (resolvedParams.demo === "streak-reset") {
+    streakCount = 0;
+    longestStreak = 14;
+    isStreakReset = true;
+    isStreakFading = false;
+  } else if (resolvedParams.demo === "inactive") {
+    isLongInactive = true;
+    isStreakReset = true;
+    streakCount = 0;
   }
 
   // Calculate non-linear XP progress towards next level using pure leveling curve
@@ -136,34 +169,74 @@ export default async function DashboardPage() {
           ? "h-5 w-5 text-amber-500"
           : "h-5 w-5 text-muted-foreground/60";
 
+  const todayStr = new Date().toISOString().slice(0, 10);
+  const completedToday = activityDates.includes(todayStr);
+  const isCelebrating = completedToday || progress.percentage >= 100;
+
   return (
     <div className="space-y-8">
-      {/* 1. Top Header Area (Greeting, Search Bar, Notification Bell, Action) */}
-      <DashboardHeader username={username} />
+      {/* 1. Top Header Area (Greeting, Notification Bell, Action with Pip) */}
+      <DashboardHeader
+        username={username}
+        isCelebrating={isCelebrating}
+      />
 
-      {/* Gentle Streak Decay Nudge Banner */}
+      {/* Gentle Streak Decay Nudge Banner with Mascot Pip */}
       {isStreakFading && (
-        <div className="flex items-center justify-between gap-3 rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4 text-xs text-amber-900 dark:text-amber-200">
-          <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-500/20 text-amber-500">
-              <Flame className="h-5 w-5 animate-pulse" />
+        <div className="flex items-center justify-between gap-4 rounded-3xl border-2 border-amber-500/30 bg-amber-500/10 p-4 sm:p-5 text-xs text-amber-950 dark:text-amber-100 shadow-sm">
+          <div className="flex items-center gap-3.5">
+            <div className="shrink-0">
+              <BlobCharacter blobId="mascot" size="sm" state="sad" />
             </div>
             <div>
-              <p className="font-heading text-xs font-bold sm:text-sm">
-                Your streak is fading!
+              <p className="font-heading text-xs font-black sm:text-sm text-foreground">
+                Your streak is fading, but Pip knows you can do it!
               </p>
-              <p className="font-body text-muted-foreground mt-0.5 text-xs">
-                You missed yesterday — complete a quest today to keep your
-                discipline flame burning bright.
+              <p className="font-body text-muted-foreground mt-0.5 text-xs leading-relaxed">
+                You missed yesterday — complete a quest today to rekindle your discipline flame. Pip is right here cheering you on!
               </p>
             </div>
           </div>
           <Link href="/dashboard/quests">
             <Button
               size="sm"
-              className="shadow-brand rounded-xl text-xs font-semibold"
+              className="shadow-brand rounded-xl text-xs font-black uppercase tracking-wider"
             >
               Save Streak
+            </Button>
+          </Link>
+        </div>
+      )}
+
+      {/* Supportive Streak Reset Banner with Group Hurt Blobs */}
+      {isStreakReset && (
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-3xl border-2 border-rose-500/30 bg-rose-500/10 p-4 sm:p-5 text-xs text-rose-950 dark:text-rose-100 shadow-sm">
+          <div className="flex items-center gap-4">
+            <div className="relative h-16 w-24 sm:h-20 sm:w-28 shrink-0">
+              <GroupBlobImage
+                src="/blobs/blobs-hurt.png"
+                alt="Companions encouraging you after streak reset"
+                fill
+                sizes="112px"
+                className="filter drop-shadow-sm"
+                fallbackTitle="Fresh Streak"
+              />
+            </div>
+            <div>
+              <p className="font-heading text-xs font-black sm:text-sm text-foreground">
+                Ouch — but every hero starts somewhere. Ready for a fresh streak?
+              </p>
+              <p className="font-body text-muted-foreground mt-0.5 text-xs leading-relaxed">
+                Your streak has reset, but every legend has setbacks. Your companions are cheering you on — complete any quest today to ignite a fresh new streak!
+              </p>
+            </div>
+          </div>
+          <Link href="/dashboard/quests">
+            <Button
+              size="sm"
+              className="shadow-brand rounded-xl text-xs font-black uppercase tracking-wider shrink-0"
+            >
+              Ignite Fresh Streak
             </Button>
           </Link>
         </div>
@@ -295,69 +368,104 @@ export default async function DashboardPage() {
               </Link>
             </div>
 
-            {/* Sample Active Quests */}
-            <div className="mt-5 space-y-3">
-              <div className="flex items-center justify-between rounded-2xl border border-emerald-500/30 bg-emerald-500/5 p-4 transition-all hover:bg-emerald-500/10">
-                <div className="flex items-center gap-3.5">
-                  <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-500" />
-                  <div>
-                    <p className="font-body text-foreground text-muted-foreground text-xs font-semibold line-through sm:text-sm">
-                      Morning 90-Min Focus Deep Work Sprint
-                    </p>
-                    <div className="text-muted-foreground mt-0.5 flex items-center gap-2 font-mono text-[11px]">
-                      <span className="font-semibold text-cyan-600 dark:text-cyan-400">
-                        Focus
-                      </span>
-                      <span>•</span>
-                      <span>Completed at 09:30 AM</span>
+            {/* Quests Content / Long Inactivity Empty State */}
+            {isLongInactive ? (
+              <div className="mt-5 flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-rose-500/20 bg-rose-500/5 p-8 text-center sm:p-10">
+                <div className="relative h-28 w-44 sm:h-36 sm:w-56 mb-4">
+                  <GroupBlobImage
+                    src="/blobs/blobs-hurt.png"
+                    alt="Companions missing your adventures"
+                    fill
+                    sizes="(max-width: 640px) 176px, 224px"
+                    className="filter drop-shadow-md"
+                    fallbackTitle="Companions Miss You"
+                  />
+                </div>
+                <h3 className="font-display text-lg sm:text-xl font-bold text-foreground">
+                  Your companions have missed you. Let&apos;s get back to it.
+                </h3>
+                <p className="font-body mt-1.5 max-w-md text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                  It&apos;s been over a week since your last completed quest. No pressure, no judgment — just pick one small task today to bring the party back to life.
+                </p>
+                <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+                  <Link href="/dashboard/quests?action=new">
+                    <Button size="sm" className="rounded-xl text-xs font-bold gap-2">
+                      <Plus className="h-3.5 w-3.5" />
+                      <span>Create a Quick Quest</span>
+                    </Button>
+                  </Link>
+                  <Link href="/dashboard/quests">
+                    <Button variant="outline" size="sm" className="rounded-xl text-xs font-semibold">
+                      <span>Browse Quest Board</span>
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            ) : (
+              /* Sample Active Quests */
+              <div className="mt-5 space-y-3">
+                <div className="flex items-center justify-between rounded-2xl border border-emerald-500/30 bg-emerald-500/5 p-4 transition-all hover:bg-emerald-500/10">
+                  <div className="flex items-center gap-3.5">
+                    <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-500" />
+                    <div>
+                      <p className="font-body text-foreground text-muted-foreground text-xs font-semibold line-through sm:text-sm">
+                        Morning 90-Min Focus Deep Work Sprint
+                      </p>
+                      <div className="text-muted-foreground mt-0.5 flex items-center gap-2 font-mono text-[11px]">
+                        <span className="font-semibold text-cyan-600 dark:text-cyan-400">
+                          Focus
+                        </span>
+                        <span>•</span>
+                        <span>Completed at 09:30 AM</span>
+                      </div>
                     </div>
                   </div>
+                  <Badge variant="xp">+250 XP</Badge>
                 </div>
-                <Badge variant="xp">+250 XP</Badge>
-              </div>
 
-              <div className="border-border/80 bg-card hover:border-primary/40 hover:bg-secondary/30 flex items-center justify-between rounded-2xl border p-4 transition-all">
-                <div className="flex items-center gap-3.5">
-                  <Circle className="text-muted-foreground/50 h-5 w-5 shrink-0" />
-                  <div>
-                    <p className="font-body text-foreground text-xs font-semibold sm:text-sm">
-                      Strength Routine (50 Pushups & Core Session)
-                    </p>
-                    <div className="text-muted-foreground mt-0.5 flex items-center gap-2 font-mono text-[11px]">
-                      <span className="font-semibold text-rose-600 dark:text-rose-400">
-                        Vitality
-                      </span>
-                      <span>•</span>
-                      <span>Reward: +180 XP · +25 Gold</span>
+                <div className="border-border/80 bg-card hover:border-primary/40 hover:bg-secondary/30 flex items-center justify-between rounded-2xl border p-4 transition-all">
+                  <div className="flex items-center gap-3.5">
+                    <Circle className="text-muted-foreground/50 h-5 w-5 shrink-0" />
+                    <div>
+                      <p className="font-body text-foreground text-xs font-semibold sm:text-sm">
+                        Strength Routine (50 Pushups & Core Session)
+                      </p>
+                      <div className="text-muted-foreground mt-0.5 flex items-center gap-2 font-mono text-[11px]">
+                        <span className="font-semibold text-rose-600 dark:text-rose-400">
+                          Vitality
+                        </span>
+                        <span>•</span>
+                        <span>Reward: +180 XP · +25 Gold</span>
+                      </div>
                     </div>
                   </div>
+                  <Badge variant="outline" className="font-mono text-[11px]">
+                    Pending
+                  </Badge>
                 </div>
-                <Badge variant="outline" className="font-mono text-[11px]">
-                  Pending
-                </Badge>
-              </div>
 
-              <div className="border-border/80 bg-card hover:border-primary/40 hover:bg-secondary/30 flex items-center justify-between rounded-2xl border p-4 transition-all">
-                <div className="flex items-center gap-3.5">
-                  <Circle className="text-muted-foreground/50 h-5 w-5 shrink-0" />
-                  <div>
-                    <p className="font-body text-foreground text-xs font-semibold sm:text-sm">
-                      Read 25 Pages of Non-Fiction Book
-                    </p>
-                    <div className="text-muted-foreground mt-0.5 flex items-center gap-2 font-mono text-[11px]">
-                      <span className="font-semibold text-violet-600 dark:text-violet-400">
-                        Intellect
-                      </span>
-                      <span>•</span>
-                      <span>Reward: +120 XP · +15 Gold</span>
+                <div className="border-border/80 bg-card hover:border-primary/40 hover:bg-secondary/30 flex items-center justify-between rounded-2xl border p-4 transition-all">
+                  <div className="flex items-center gap-3.5">
+                    <Circle className="text-muted-foreground/50 h-5 w-5 shrink-0" />
+                    <div>
+                      <p className="font-body text-foreground text-xs font-semibold sm:text-sm">
+                        Read 25 Pages of Non-Fiction Book
+                      </p>
+                      <div className="text-muted-foreground mt-0.5 flex items-center gap-2 font-mono text-[11px]">
+                        <span className="font-semibold text-violet-600 dark:text-violet-400">
+                          Intellect
+                        </span>
+                        <span>•</span>
+                        <span>Reward: +120 XP · +15 Gold</span>
+                      </div>
                     </div>
                   </div>
+                  <Badge variant="outline" className="font-mono text-[11px]">
+                    Pending
+                  </Badge>
                 </div>
-                <Badge variant="outline" className="font-mono text-[11px]">
-                  Pending
-                </Badge>
               </div>
-            </div>
+            )}
           </Card>
 
           {/* Quick Attributes Card */}

@@ -79,7 +79,7 @@ export function OfflineBanner() {
               <Wifi className="h-3.5 w-3.5" aria-hidden="true" />
             </div>
             <span>
-              Connection restored! Re-synchronized with Life RPG servers.
+              Connection restored! Re-synchronized with Revel servers.
             </span>
           </motion.div>
         )}

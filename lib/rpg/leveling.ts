@@ -1,4 +1,4 @@
-// Life RPG: Core Progression Engine & Leveling Curve
+// Revel: Core Progression Engine & Leveling Curve
 // Implements non-linear leveling curve, multi-level jumps, and progress calculations.
 
 /**

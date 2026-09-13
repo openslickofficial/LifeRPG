@@ -1,4 +1,4 @@
-// Life RPG - Shared TypeScript Types
+// Revel - Shared TypeScript Types
 
 export type ThemeMode = "light" | "dark" | "system";
 

@@ -1,8 +1,6 @@
-import Link from "next/link";
-import { ArrowLeft, User, Shield } from "lucide-react";
+import { User, Shield } from "lucide-react";
 import { Card, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 
 export default function SettingsPage() {
   return (
@@ -20,17 +18,6 @@ export default function SettingsPage() {
             preferences.
           </p>
         </div>
-
-        <Link href="/dashboard">
-          <Button
-            variant="outline"
-            size="sm"
-            className="gap-2 rounded-xl text-xs"
-          >
-            <ArrowLeft className="h-3.5 w-3.5" />
-            <span>Dashboard</span>
-          </Button>
-        </Link>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">

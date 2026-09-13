@@ -3,15 +3,14 @@
 import * as React from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import {
-  Sparkles,
   Shield,
   Zap,
   Sword,
   Palette,
   X,
-  Crown,
   ChevronRight,
 } from "lucide-react";
+import { BlobCharacter } from "@/components/BlobCharacter";
 
 export interface CharacterLevelUpData {
   leveledUp: boolean;
@@ -218,21 +217,18 @@ export function LevelUpCelebration({
                 <X className="h-4 w-4" aria-hidden="true" />
               </button>
 
-              {/* Crown Emblem with Glow */}
-              <motion.div
-                initial={prefersReducedMotion ? {} : { scale: 0, rotate: -20 }}
-                animate={prefersReducedMotion ? {} : { scale: 1, rotate: 0 }}
-                transition={{
-                  type: "spring",
-                  delay: 0.15,
-                  stiffness: 300,
-                  damping: 18,
-                }}
-                className="relative mb-4 flex h-20 w-20 items-center justify-center rounded-3xl border border-amber-400/40 bg-gradient-to-br from-amber-400/20 via-amber-500/15 to-violet-600/20 shadow-[0_0_40px_rgba(245,158,11,0.35)]"
-              >
-                <Crown className="h-10 w-10 text-amber-400 drop-shadow-md" />
-                <Sparkles className="absolute -top-1 -right-1 h-5 w-5 animate-pulse text-yellow-300" />
-              </motion.div>
+              {/* Central Celebrating Blob Visual */}
+              <div className="relative mb-3 flex items-center justify-center">
+                <BlobCharacter
+                  attribute={attributeLevelUp?.attributeName?.toLowerCase()}
+                  blobId={
+                    attributeLevelUp?.attributeName ? undefined : "mascot"
+                  }
+                  size="lg"
+                  state="celebrating"
+                  priority={true}
+                />
+              </div>
 
               {/* Display Title */}
               <motion.h2

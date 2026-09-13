@@ -11,7 +11,7 @@ function assert(condition: boolean, msg: string) {
 }
 
 console.log("\n==========================================");
-console.log("LIFE RPG: ANTI-CHEAT ENGINE TEST SUITE");
+console.log("REVEL: ANTI-CHEAT ENGINE TEST SUITE");
 console.log("==========================================\n");
 
 // 1. MINIMUM TASK AGE FLOOR (30 Seconds)

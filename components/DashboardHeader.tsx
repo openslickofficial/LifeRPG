@@ -1,60 +1,55 @@
 "use client";
 
 import * as React from "react";
-import { Search, Bell, Plus } from "lucide-react";
+import { Bell, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { BlobCharacter } from "@/components/BlobCharacter";
 
 interface DashboardHeaderProps {
   username: string;
   avatarUrl?: string | null;
+  isCelebrating?: boolean;
   className?: string;
 }
 
 export function DashboardHeader({
   username,
+  isCelebrating = false,
   className = "",
 }: DashboardHeaderProps) {
-  const [searchQuery, setSearchQuery] = React.useState("");
-
   return (
     <header
       className={`border-border/60 flex flex-col gap-4 border-b pb-6 lg:flex-row lg:items-center lg:justify-between ${className}`}
     >
-      {/* Greeting & Narrative */}
-      <div>
-        <div className="flex items-center gap-2">
-          <h1 className="font-heading text-foreground text-2xl font-extrabold tracking-tight sm:text-3xl">
-            Welcome back,{" "}
-            <span className="bg-gradient-to-r from-violet-600 via-indigo-600 to-cyan-500 bg-clip-text text-transparent dark:from-violet-400 dark:via-indigo-300 dark:to-cyan-400">
-              {username}
-            </span>{" "}
-            ⚔️
-          </h1>
+      {/* Greeting & Narrative with Mascot Pip */}
+      <div className="flex items-center gap-3.5">
+        <div className="shrink-0">
+          <BlobCharacter
+            blobId="mascot"
+            size="sm"
+            state={isCelebrating ? "celebrating" : "idle"}
+          />
         </div>
-        <p className="font-body text-muted-foreground mt-1 text-xs leading-relaxed sm:text-sm">
-          Your daily focus streak is burning bright. Ready to conquer
-          today&apos;s quest board?
-        </p>
+        <div>
+          <div className="flex items-center gap-2">
+            <h1 className="font-heading text-foreground text-2xl font-extrabold tracking-tight sm:text-3xl">
+              Welcome back,{" "}
+              <span className="bg-gradient-to-r from-violet-600 via-indigo-600 to-cyan-500 bg-clip-text text-transparent dark:from-violet-400 dark:via-indigo-300 dark:to-cyan-400">
+                {username}
+              </span>{" "}
+              ⚔️
+            </h1>
+          </div>
+          <p className="font-body text-muted-foreground mt-1 text-xs leading-relaxed sm:text-sm">
+            {isCelebrating
+              ? "Pip is cheering you on — outstanding progress on today's quests!"
+              : "Your daily focus streak is burning bright. Ready to conquer today's quest board?"}
+          </p>
+        </div>
       </div>
 
-      {/* Search Bar & Action Controls */}
-      <div className="flex flex-wrap items-center gap-3">
-        {/* Functional-looking Search Bar */}
-        <div className="relative w-full sm:w-72 md:w-80">
-          <Search className="text-muted-foreground pointer-events-none absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2" />
-          <input
-            type="search"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search quests, attributes, shop..."
-            aria-label="Search quests and attributes"
-            className="border-border bg-card font-body text-foreground placeholder:text-muted-foreground/70 focus:border-primary focus:ring-primary/20 h-11 w-full rounded-2xl border-2 pr-12 pl-9 text-xs shadow-xs transition-all outline-none focus:ring-2"
-          />
-          <kbd className="border-border bg-secondary text-muted-foreground pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 rounded-lg border-2 px-1.5 py-0.5 font-mono text-[10px] font-bold shadow-xs">
-            ⌘K
-          </kbd>
-        </div>
-
+      {/* Action Controls */}
+      <div className="flex items-center gap-3">
         {/* Notification Bell with Unread Dot */}
         <button
           type="button"

@@ -1,4 +1,4 @@
-# ⚔️ Life RPG — Gamified Real-Life Productivity
+# ⚔️ Revel — Gamified Real-Life Productivity
 
 > **Level up your life, one quest at a time.** Turn daily habits, personal goals, and real-world tasks into an engaging role-playing game with dynamic leveling, attributes, streaks, and an in-game cosmetic economy.
 
@@ -10,9 +10,9 @@
 
 ---
 
-## 📖 About Life RPG
+## 📖 About Revel
 
-**Life RPG** bridges the gap between task management and gaming psychology. By framing everyday responsibilities as epic quests, it leverages intrinsic motivation, real-time positive feedback loops, and RPG character progression to help you beat procrastination and build lasting discipline.
+**Revel** bridges the gap between task management and gaming psychology. By framing everyday responsibilities as epic quests, it leverages intrinsic motivation, real-time positive feedback loops, and RPG character progression to help you beat procrastination and build lasting discipline.
 
 Whether you are studying for exams, hitting the gym, writing code, or practicing an instrument, every completed task yields **Experience Points (XP)** and **Gold Coins**, elevating your core character attributes across **Intellect**, **Strength**, **Discipline**, and **Creativity**.
 
@@ -28,7 +28,7 @@ Whether you are studying for exams, hitting the gym, writing code, or practicing
 | :-------------------------------------: | :--------------------------------------: |
 | ![Level Up](./screenshots/level_up.png) | ![Currency Shop](./screenshots/shop.png) |
 
-> 💡 **Live Preview Mode**: Life RPG includes an instant evaluation mode (`?preview=true`) across all routes (`/dashboard?preview=true`, `/dashboard/quests?preview=true`, `/dashboard/shop?preview=true`, `/dashboard/attributes?preview=true`), enabling judges and reviewers to immediately test all interactive mechanics with sample state even before configuring live Supabase keys.
+> 💡 **Live Preview Mode**: Revel includes an instant evaluation mode (`?preview=true`) across all routes (`/dashboard?preview=true`, `/dashboard/quests?preview=true`, `/dashboard/shop?preview=true`, `/dashboard/attributes?preview=true`), enabling judges and reviewers to immediately test all interactive mechanics with sample state even before configuring live Supabase keys.
 
 ---
 
@@ -42,6 +42,7 @@ Whether you are studying for exams, hitting the gym, writing code, or practicing
 - **Database & Backend**: [Supabase](https://supabase.com/) (PostgreSQL, Row Level Security, Atomic RPC Stored Procedures, Real-Time Auth)
 - **Validation**: [Zod](https://zod.dev/) (Isomorphic schema validation on forms and server mutations)
 - **Theme Engine**: `next-themes` (Dark/Light mode + custom cosmetic themes: _Arcane Violet_, _Cyberpunk Neon_, _Midnight Obsidian_)
+- **Typography**: [Fontshare](https://www.fontshare.com/) — General Sans & Satoshi (hero display font), Fredoka (headings), Inter (body), JetBrains Mono (mono)
 - **Rate Limiting**: Custom token-bucket sliding-window engine (`lib/rate-limit.ts`) with zero external infrastructure dependencies
 - **Icons**: [Lucide React](https://lucide.dev/)
 
@@ -95,7 +96,7 @@ Whether you are studying for exams, hitting the gym, writing code, or practicing
 
 ## 🚀 Getting Started
 
-Follow these steps to run Life RPG locally on your machine:
+Follow these steps to run Revel locally on your machine:
 
 ### 1. Prerequisites
 
@@ -106,8 +107,8 @@ Follow these steps to run Life RPG locally on your machine:
 ### 2. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/life-rpg.git
-cd life-rpg
+git clone https://github.com/your-username/revel.git
+cd revel
 ```
 
 ### 3. Install Dependencies
@@ -157,7 +158,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 | ------------------------------- | ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- | -------------------------- |
 | `NEXT_PUBLIC_SUPABASE_URL`      | Supabase API URL endpoint             | Supabase Dashboard $\rightarrow$ **Project Settings** $\rightarrow$ **API** $\rightarrow$ **Project URL**                        | **Yes** (for live backend) |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Public anonymous API key              | Supabase Dashboard $\rightarrow$ **Project Settings** $\rightarrow$ **API** $\rightarrow$ **Project API Keys** (`anon` `public`) | **Yes** (for live backend) |
-| `NEXT_PUBLIC_APP_URL`           | Canonical app URL for OAuth redirects | Your production URL (e.g. `https://life-rpg.vercel.app`). Defaults dynamically to `window.location.origin` if omitted.           | Optional                   |
+| `NEXT_PUBLIC_APP_URL`           | Canonical app URL for OAuth redirects | Your production URL (e.g. `https://revel.vercel.app`). Defaults dynamically to `window.location.origin` if omitted.           | Optional                   |
 | `UPSTASH_REDIS_REST_URL`        | Upstash Redis REST endpoint           | Upstash Console $\rightarrow$ **Databases** $\rightarrow$ **REST API** (Optional for distributed multi-region rate-limiting)     | Optional                   |
 | `UPSTASH_REDIS_REST_TOKEN`      | Upstash Redis REST Token              | Upstash Console $\rightarrow$ **Databases** $\rightarrow$ **REST API**                                                           | Optional                   |
 
@@ -182,7 +183,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ### Deploying to Vercel
 
-Life RPG is optimized for zero-configuration deployment on Vercel:
+Revel is optimized for zero-configuration deployment on Vercel:
 
 1. Push your repository to GitHub / GitLab / Bitbucket.
 2. Import the repository into [Vercel](https://vercel.com/new).
@@ -207,6 +208,10 @@ Per hackathon competition guidelines, the following disclosures and attributions
   - [Supabase JS & SSR SDKs](https://supabase.com/) for authentication and database management
   - [Zod](https://zod.dev/) for type-safe runtime validations
   - [next-themes](https://github.com/pacocoursey/next-themes) for theme switching
+  - [Fontshare](https://www.fontshare.com/) — General Sans & Satoshi display fonts (free for commercial use via CDN)
+- **Media Assets**:
+  - Hero cinematic background video (`/public/hero.mp4`) — original project asset used as ambient background with scrim overlay
+  - Blob companion illustrations — original project character assets
 - **AI Development Tools**:
   - **Google Antigravity IDE / Gemini AI**: Utilized during development as an intelligent pair programmer for rapid scaffolding, refactoring, SQL migration crafting, and WCAG accessibility verification.
 - **Design Inspiration**:

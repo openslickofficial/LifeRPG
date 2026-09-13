@@ -1,3 +1,4 @@
+@import url('https://api.fontshare.com/v2/css?f[]=general-sans@500,600,700,800&f[]=satoshi@600,700,800,900&display=swap');
 @import "tailwindcss";
 
 @custom-variant dark (&:is(.dark, .dark *));
@@ -126,8 +127,13 @@
   --color-health: var(--health-crimson);
 
   --font-heading: var(--font-heading), system-ui, sans-serif;
+  --font-display: 'General Sans', 'Satoshi', 'Inter Tight', system-ui, -apple-system, sans-serif;
   --font-body: var(--font-body), system-ui, sans-serif;
   --font-mono: var(--font-mono), monospace;
+}
+
+.font-display {
+  font-family: 'General Sans', 'Satoshi', 'Inter Tight', system-ui, -apple-system, sans-serif;
 }
 
 * {

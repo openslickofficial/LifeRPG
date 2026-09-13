@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Shield, AlertCircle, Loader2, ArrowLeft } from "lucide-react";
+import { AlertCircle, Loader2, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -14,6 +14,7 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/client";
+import { GroupBlobImage } from "@/components/GroupBlobImage";
 
 function LoginForm() {
   const searchParams = useSearchParams();
@@ -74,16 +75,27 @@ function LoginForm() {
           className="text-muted-foreground hover:text-foreground mb-6 inline-flex items-center gap-1.5 text-xs font-semibold transition-colors"
         >
           <ArrowLeft className="h-3.5 w-3.5" />
-          <span>Back to Life RPG Home</span>
+          <span>Back to Revel Home</span>
         </Link>
 
         <Card className="border-border/80 bg-card/95 shadow-elevated rounded-3xl border p-0 backdrop-blur-xl">
           <CardHeader className="space-y-3 p-8 pb-4 text-center">
-            {/* Logo Emblem */}
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-tr from-violet-600 via-indigo-600 to-cyan-500 p-0.5 shadow-md shadow-violet-500/25">
-              <div className="bg-background/20 flex h-full w-full items-center justify-center rounded-[14px] text-white backdrop-blur-xs">
-                <Shield className="h-7 w-7" />
+            {/* Welcoming Companions Group Shot */}
+            <div className="flex flex-col items-center justify-center">
+              <div className="relative h-28 w-52 sm:h-32 sm:w-60">
+                <GroupBlobImage
+                  src="/blobs/blobs-waving-hand.png"
+                  alt="Your companions waving welcome"
+                  fill
+                  priority
+                  sizes="(max-width: 640px) 208px, 240px"
+                  className="filter drop-shadow-md"
+                  fallbackTitle="Your companions are waiting"
+                />
               </div>
+              <span className="font-heading mt-2 inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3.5 py-1 text-xs font-bold text-emerald-600 dark:text-emerald-400 shadow-xs">
+                <span>Your companions are waiting.</span>
+              </span>
             </div>
 
             <div>

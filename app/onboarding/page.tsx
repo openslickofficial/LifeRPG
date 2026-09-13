@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { Shield, Sparkles, Loader2, AlertCircle } from "lucide-react";
+import { Sparkles, Loader2, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -13,6 +13,7 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/client";
+import { GroupBlobImage } from "@/components/GroupBlobImage";
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -117,19 +118,27 @@ export default function OnboardingPage() {
       <div className="w-full max-w-md">
         <Card className="border-border/80 bg-card/95 shadow-elevated rounded-3xl border p-0 backdrop-blur-xl">
           <CardHeader className="space-y-3 p-8 pb-4 text-center">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-tr from-violet-600 via-indigo-600 to-cyan-500 p-0.5 shadow-md shadow-violet-500/25">
-              <div className="bg-background/20 flex h-full w-full items-center justify-center rounded-[14px] text-white backdrop-blur-xs">
-                <Shield className="h-7 w-7" />
+            {/* Hero Welcome Group Shot */}
+            <div className="flex flex-col items-center justify-center">
+              <div className="relative h-32 w-56 sm:h-36 sm:w-64">
+                <GroupBlobImage
+                  src="/blobs/blobs-waving-hand.png"
+                  alt="Your companions welcoming you"
+                  fill
+                  priority
+                  sizes="(max-width: 640px) 224px, 256px"
+                  className="filter drop-shadow-md"
+                  fallbackTitle="Your companions can't wait to meet you"
+                />
               </div>
             </div>
 
             <div>
               <CardTitle className="font-heading text-foreground text-2xl font-bold tracking-tight sm:text-3xl">
-                Claim Your Call Sign
+                Welcome to Revel! Your companions can&apos;t wait to meet you.
               </CardTitle>
               <CardDescription className="font-body text-muted-foreground mt-2 text-sm leading-relaxed">
-                Every adventurer in Life RPG requires a distinct handle for
-                quests, guilds, and leaderboards.
+                Claim your call sign below to connect your identity and begin your adventure together.
               </CardDescription>
             </div>
           </CardHeader>

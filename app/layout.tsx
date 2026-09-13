@@ -27,9 +27,15 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Life RPG — Gamified Real-Life Productivity",
+  title: "Revel — Turn Your Tasks Into Triumphs",
   description:
-    "Transform daily habits, deep work sprints, and self-improvement into an epic gamified role-playing adventure.",
+    "Transform daily habits, deep work sprints, and self-improvement into an epic gamified role-playing adventure with Revel.",
+  openGraph: {
+    title: "Revel — Turn Your Tasks Into Triumphs",
+    description:
+      "Transform daily habits, deep work sprints, and self-improvement into an epic gamified role-playing adventure with Revel.",
+    siteName: "Revel",
+  },
 };
 
 export default async function RootLayout({
@@ -45,8 +51,15 @@ export default async function RootLayout({
       lang="en"
       suppressHydrationWarning
       data-theme={appliedTheme}
-      className={`${fredoka.variable} ${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
+      className={`${fredoka.variable} ${inter.variable} ${jetbrainsMono.variable} h-full antialiased scroll-smooth`}
     >
+      <head>
+        <link rel="preconnect" href="https://api.fontshare.com" crossOrigin="anonymous" />
+        <link
+          rel="stylesheet"
+          href="https://api.fontshare.com/v2/css?f[]=general-sans@500,600,700,800&f[]=satoshi@600,700,800,900&display=swap"
+        />
+      </head>
       <body className="bg-background font-body text-foreground selection:bg-primary/20 selection:text-primary flex min-h-full flex-col">
         <ThemeProvider
           attribute="class"
