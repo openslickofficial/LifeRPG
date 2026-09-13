@@ -8,7 +8,7 @@ export const metadata = {
 
 export default function NotFound() {
   return (
-    <div className="relative min-h-[calc(100vh-57px)] w-full flex flex-col justify-center items-center overflow-hidden bg-[#0A0A0F] text-white px-6 py-20">
+    <div className="relative h-screen w-full flex flex-col justify-center items-center overflow-hidden bg-[#0A0A0F] text-white px-6 py-20">
       {/* Soft Radial Accent Glow */}
       <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[400px] w-[600px] max-w-full rounded-full bg-[radial-gradient(circle_at_center,rgba(16,185,129,0.10)_0%,rgba(16,185,129,0.02)_60%,transparent_75%)] blur-3xl" />
 

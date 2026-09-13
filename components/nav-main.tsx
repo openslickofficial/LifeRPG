@@ -3,7 +3,6 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { type LucideIcon } from "lucide-react";
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -16,7 +15,7 @@ import {
 export interface NavMainItem {
   title: string;
   url: string;
-  icon: LucideIcon;
+  icon: React.ReactNode;
   badge?: string;
 }
 
@@ -31,8 +30,6 @@ export function NavMain({ items }: { items: NavMainItem[] }) {
         {/* Main Hub Menu Items */}
         <SidebarMenu>
           {items.map((item) => {
-            const Icon = item.icon;
-            // No need to highlight "Dashboard"
             const isActive =
               item.url !== "/dashboard" && pathname.startsWith(item.url);
 
@@ -53,7 +50,7 @@ export function NavMain({ items }: { items: NavMainItem[] }) {
                     onClick={() => isMobile && setOpenMobile(false)}
                     className="flex items-center gap-3 w-full"
                   >
-                    <Icon className="h-5 w-5 shrink-0" aria-hidden="true" />
+                    {item.icon}
                     {!isCollapsed && (
                       <span className="font-heading text-xs tracking-wide truncate">
                         {item.title}

@@ -4,18 +4,12 @@ import * as React from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  Sword,
-  Sparkles,
   Plus,
   CheckCircle2,
   Calendar,
   Trash2,
   AlertCircle,
   Loader2,
-  Coins,
-  Shield,
-  Zap,
-  Palette,
   RefreshCw,
   Pause,
   Play,
@@ -38,6 +32,7 @@ import {
 import { checkLevelUp } from "@/lib/rpg/leveling";
 import { BlobCharacter } from "@/components/BlobCharacter";
 import { GroupBlobImage } from "@/components/GroupBlobImage";
+import { ElementIcon } from "@/components/ElementIcon";
 import {
   Dialog,
   DialogContent,
@@ -97,10 +92,10 @@ export interface Quest {
 }
 
 const CATEGORY_ICONS: Record<TaskCategory, React.ReactNode> = {
-  Strength: <Sword className="h-4 w-4" />,
-  Intellect: <Zap className="h-4 w-4" />,
-  Discipline: <Shield className="h-4 w-4" />,
-  Creativity: <Palette className="h-4 w-4" />,
+  Strength: <ElementIcon name="sword" size={16} className="h-4 w-4" />,
+  Intellect: <ElementIcon name="lightning" size={16} className="h-4 w-4" />,
+  Discipline: <ElementIcon name="defence" size={16} className="h-4 w-4" />,
+  Creativity: <ElementIcon name="diamond" size={16} className="h-4 w-4" />,
 };
 
 const CATEGORY_COLORS: Record<
@@ -1150,10 +1145,7 @@ export default function QuestsPage() {
           }`}
         >
           {toastMessage.type === "success" ? (
-            <Sparkles
-              className="h-5 w-5 shrink-0 text-emerald-500"
-              aria-hidden="true"
-            />
+            <ElementIcon name="diamond" size={20} className="h-5 w-5 shrink-0" />
           ) : (
             <AlertCircle
               className="h-5 w-5 shrink-0 text-amber-500"
@@ -1181,6 +1173,7 @@ export default function QuestsPage() {
       <div className="border-border/60 flex flex-col gap-4 border-b pb-6 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <div className="flex items-center gap-2.5">
+            <ElementIcon name="swords" size={28} className="h-7 w-7" />
             <h1 className="font-heading text-foreground text-2xl font-extrabold tracking-tight sm:text-3xl">
               Quest Board
             </h1>
@@ -1372,7 +1365,7 @@ export default function QuestsPage() {
                     CATEGORY_COLORS.Discipline;
                   const CatIcon =
                     CATEGORY_ICONS[dq.category as TaskCategory] || (
-                      <Shield className="h-4 w-4" />
+                      <ElementIcon name="defence" size={16} className="h-4 w-4" />
                     );
                   return (
                     <Card
@@ -1404,7 +1397,7 @@ export default function QuestsPage() {
                             <span>+{dq.xp_reward} XP</span>
                             <span>•</span>
                             <span className="flex items-center gap-0.5">
-                              <Coins className="h-3 w-3" />
+                              <ElementIcon name="coin" size={12} className="h-3 w-3" />
                               {dq.currency_reward}
                             </span>
                           </div>
@@ -1510,7 +1503,7 @@ export default function QuestsPage() {
                             </span>
                             <span>•</span>
                             <span className="flex items-center gap-0.5 font-black text-amber-600 dark:text-amber-400">
-                              <Coins className="h-3 w-3" aria-hidden="true" />
+                              <ElementIcon name="coin" size={12} className="h-3 w-3" />
                               {quest.currency_reward}
                             </span>
                           </div>
@@ -1573,7 +1566,7 @@ export default function QuestsPage() {
                                 <div className="mt-4 flex items-center justify-between rounded-2xl border-2 border-rose-500/30 bg-rose-500/5 p-3 shadow-sm">
                                   <div className="flex items-center gap-2.5">
                                     <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-rose-500 text-white shadow-[0_2px_0_0_#9f1239]">
-                                      <Zap className="h-4 w-4" />
+                                      <ElementIcon name="lightning" size={16} className="h-4 w-4" />
                                     </div>
                                     <div>
                                       <div className="flex items-center gap-1.5 text-xs font-black text-rose-600 dark:text-rose-400">
@@ -1893,7 +1886,7 @@ export default function QuestsPage() {
         <DialogContent className="max-w-lg">
           <DialogHeader>
             <div className="flex items-center gap-2 text-violet-500">
-              <Sword className="h-5 w-5" />
+              <ElementIcon name="sword" size={20} className="h-5 w-5" />
               <DialogTitle>Forge a New Quest</DialogTitle>
             </div>
             <DialogDescription>

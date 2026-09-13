@@ -5,7 +5,8 @@ import { Check, Flame } from "lucide-react";
 
 interface StreakDay {
   dateStr: string; // YYYY-MM-DD
-  dayLabel: string; // Mon, Tue...
+  dayLabelFull: string; // Monday, Tuesday...
+  dayLabelShort: string; // Mon, Tue...
   dayNumber: number; // 12
   isToday: boolean;
   hasActivity: boolean;
@@ -37,7 +38,8 @@ export function StreakCalendar({
       const day = String(d.getDate()).padStart(2, "0");
       const dateStr = `${year}-${month}-${day}`;
 
-      const dayLabel = d.toLocaleDateString("en-US", { weekday: "narrow" });
+      const dayLabelFull = d.toLocaleDateString("en-US", { weekday: "long" });
+      const dayLabelShort = d.toLocaleDateString("en-US", { weekday: "short" });
       const dayNumber = d.getDate();
       const isToday = i === 0;
 
@@ -46,7 +48,8 @@ export function StreakCalendar({
 
       result.push({
         dateStr,
-        dayLabel,
+        dayLabelFull,
+        dayLabelShort,
         dayNumber,
         isToday,
         hasActivity,
@@ -81,8 +84,11 @@ export function StreakCalendar({
             }`}
             title={`${d.dateStr}: ${d.hasActivity ? "Quest Completed!" : "No Activity"}`}
           >
-            <span className="font-heading text-[10px] font-black uppercase">
-              {d.dayLabel}
+            <span className="hidden font-heading text-[10px] font-black uppercase sm:inline">
+              {d.dayLabelFull}
+            </span>
+            <span className="font-heading text-[10px] font-black uppercase sm:hidden">
+              {d.dayLabelShort}
             </span>
             <div className="my-1 flex h-5 w-5 items-center justify-center">
               {d.hasActivity ? (

@@ -4,14 +4,11 @@ import * as React from "react";
 import Link from "next/link";
 import {
   LayoutDashboard,
-  Sword,
-  Zap,
-  ShoppingBag,
   Settings,
-  Shield,
   BookOpen,
   HelpCircle,
 } from "lucide-react";
+import { AppLogo, ElementIcon } from "@/components/ElementIcon";
 import {
   Sidebar,
   SidebarHeader,
@@ -31,41 +28,41 @@ const defaultNavMain: NavMainItem[] = [
   {
     title: "Dashboard",
     url: "/dashboard",
-    icon: LayoutDashboard,
+    icon: <LayoutDashboard className="h-5 w-5 shrink-0" aria-hidden="true" />,
   },
   {
     title: "Quests",
     url: "/dashboard/quests",
-    icon: Sword,
+    icon: <ElementIcon name="swords" size={20} className="h-5 w-5" />,
     badge: "Active",
   },
   {
     title: "Attributes",
     url: "/dashboard/attributes",
-    icon: Zap,
+    icon: <ElementIcon name="lightning" size={20} className="h-5 w-5" />,
   },
   {
     title: "Shop",
     url: "/dashboard/shop",
-    icon: ShoppingBag,
+    icon: <ElementIcon name="chest" size={20} className="h-5 w-5" />,
     badge: "Armory",
   },
   {
     title: "Settings",
     url: "/dashboard/settings",
-    icon: Settings,
+    icon: <Settings className="h-5 w-5 shrink-0" aria-hidden="true" />,
   },
 ];
 
 const defaultNavSecondary: NavSecondaryItem[] = [
   {
     title: "How to Play",
-    url: "/onboarding",
+    url: "/dashboard/how-to-play",
     icon: BookOpen,
   },
   {
     title: "Game Guide",
-    url: "/#features",
+    url: "/dashboard/game-guide",
     icon: HelpCircle,
   },
 ];
@@ -102,11 +99,8 @@ export function AppSidebar({
                 onClick={() => isMobile && setOpenMobile(false)}
                 className="flex items-center gap-3"
               >
-                {/* 3D Shield Emblem */}
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-tr from-violet-600 via-indigo-600 to-cyan-500 p-0.5 shadow-md shadow-violet-500/25">
-                  <div className="flex h-full w-full items-center justify-center rounded-[10px] bg-background/20 text-white backdrop-blur-xs">
-                    <Shield className="h-5 w-5" />
-                  </div>
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-background/80">
+                  <AppLogo className="h-9 w-9" alt="Revel" />
                 </div>
 
                 {/* Brand Titles */}

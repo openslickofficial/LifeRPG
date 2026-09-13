@@ -1,0 +1,30 @@
+<svg width="1600" height="900" viewBox="0 0 1600 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1600" y2="900" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F5F1EB"/>
+      <stop offset="0.52" stop-color="#E9F6F1"/>
+      <stop offset="1" stop-color="#0A0A0F"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(800 340) rotate(90) scale(420 760)">
+      <stop stop-color="#34D399" stop-opacity="0.45"/>
+      <stop offset="0.48" stop-color="#34D399" stop-opacity="0.1"/>
+      <stop offset="1" stop-color="#34D399" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <rect width="1600" height="900" fill="url(#glow)"/>
+  <circle cx="1180" cy="210" r="120" fill="#34D399" fill-opacity="0.16"/>
+  <circle cx="330" cy="660" r="150" fill="#7C3AED" fill-opacity="0.12"/>
+  <circle cx="780" cy="620" r="180" fill="#0EA5E9" fill-opacity="0.08"/>
+  <g opacity="0.85">
+    <path d="M270 670C420 540 520 470 660 450C800 430 900 490 1020 520C1125 545 1225 535 1340 470V760H270V670Z" fill="#0A0A0F" fill-opacity="0.18"/>
+  </g>
+  <g opacity="0.95">
+    <rect x="350" y="260" width="900" height="120" rx="42" fill="#F5F1EB" fill-opacity="0.18"/>
+    <rect x="450" y="410" width="700" height="36" rx="18" fill="#F5F1EB" fill-opacity="0.18"/>
+    <rect x="500" y="470" width="600" height="26" rx="13" fill="#F5F1EB" fill-opacity="0.12"/>
+  </g>
+  <g>
+    <text x="800" y="505" text-anchor="middle" fill="#F8FAFC" font-family="Arial, Helvetica, sans-serif" font-size="76" font-weight="700" letter-spacing="6">REVEL</text>
+  </g>
+</svg>

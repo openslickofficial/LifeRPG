@@ -33,6 +33,16 @@ const PARTICLES: Particle[] = [
 
 export function AmbientParticles({ className = "" }: { className?: string }) {
   const prefersReducedMotion = useReducedMotion();
+  const [isMounted, setIsMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    const id = window.requestAnimationFrame(() => setIsMounted(true));
+    return () => window.cancelAnimationFrame(id);
+  }, []);
+
+  if (!isMounted || prefersReducedMotion) {
+    return null;
+  }
 
   return (
     <div
@@ -49,16 +59,12 @@ export function AmbientParticles({ className = "" }: { className?: string }) {
             height: p.size,
           }}
           className="absolute rounded-full bg-emerald-400/60 shadow-[0_0_8px_rgba(52,211,153,0.7)]"
-          animate={
-            prefersReducedMotion
-              ? { opacity: 0.25 }
-              : {
-                  x: [0, p.driftX, 0],
-                  y: [0, p.driftY, 0],
-                  opacity: [0.15, 0.55, 0.15],
-                  scale: [1, 1.25, 1],
-                }
-          }
+          animate={{
+            x: [0, p.driftX, 0],
+            y: [0, p.driftY, 0],
+            opacity: [0.15, 0.55, 0.15],
+            scale: [1, 1.25, 1],
+          }}
           transition={{
             duration: p.duration,
             delay: p.delay,

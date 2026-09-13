@@ -9,7 +9,7 @@ function Skeleton({
     <div
       data-slot="skeleton"
       className={cn(
-        "bg-muted/70 dark:bg-muted/40 animate-pulse rounded-2xl",
+        "skeleton-shimmer border border-border/60 bg-[rgba(148,163,184,0.08)] dark:bg-[rgba(148,163,184,0.12)]",
         className
       )}
       {...props}

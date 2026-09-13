@@ -2,15 +2,10 @@
 
 import * as React from "react";
 import {
-  ShoppingBag,
-  Coins,
   Check,
   Palette,
   Award,
-  Sparkles,
-  Zap,
   Moon,
-  Shield,
   Loader2,
   AlertCircle,
   RotateCcw,
@@ -31,7 +26,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { purchaseItemAction, applyThemeAction } from "@/lib/actions/shop";
 import { createClient } from "@/lib/supabase/client";
-import { BlobCharacter } from "@/components/BlobCharacter";
+import { ElementIcon } from "@/components/ElementIcon";
 
 export interface ShopItem {
   id: string;
@@ -295,6 +290,7 @@ export default function ShopPage() {
       <div className="border-border/60 flex flex-col justify-between gap-4 border-b pb-6 sm:flex-row sm:items-center">
         <div>
           <div className="flex items-center gap-2.5">
+            <ElementIcon name="chest" size={32} className="h-8 w-8" />
             <h1 className="font-heading text-foreground text-2xl font-extrabold tracking-tight sm:text-3xl">
               Adventurer Vault & Shop
             </h1>
@@ -310,7 +306,7 @@ export default function ShopPage() {
           {/* Gold Purse Indicator */}
           <div className="flex items-center gap-2.5 rounded-2xl border border-amber-500/30 bg-amber-500/10 px-4 py-2 shadow-xs">
             <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-amber-500/20 text-amber-500">
-              <Coins className="h-4 w-4" aria-hidden="true" />
+              <ElementIcon name="coin_bag" size={16} className="h-4 w-4" />
             </div>
             <div>
               <span className="text-muted-foreground font-mono text-[10px] tracking-wider uppercase">
@@ -444,7 +440,7 @@ export default function ShopPage() {
         </div>
       ) : filteredItems.length === 0 ? (
         <Card className="flex flex-col items-center justify-center rounded-3xl border-2 border-dashed p-12 text-center">
-          <BlobCharacter blobId="mascot" size="md" state="idle" />
+          <ElementIcon name="chest" size={72} className="mb-2 h-[72px] w-[72px]" />
           <CardTitle className="mt-4 text-xl font-heading font-black">
             {selectedFilter === "owned"
               ? "No Vault Purchases Yet"
@@ -497,13 +493,13 @@ export default function ShopPage() {
                         <Award className="mr-1 h-3 w-3" />
                       )}
                       {item.type === "cosmetic" && (
-                        <Sparkles className="mr-1 h-3 w-3" />
+                        <ElementIcon name="diamond" size={12} className="mr-1 h-3 w-3" />
                       )}
                       <span>{item.type}</span>
                     </Badge>
 
                     <div className="flex items-center gap-1.5 rounded-xl border-2 border-amber-500 bg-amber-400 px-3 py-1 font-mono text-xs font-black text-slate-950 shadow-[0_2px_0_0_#b45309]">
-                      <Coins className="h-3.5 w-3.5" aria-hidden="true" />
+                      <ElementIcon name="coin" size={14} className="h-3.5 w-3.5" />
                       <span>{item.price} Gold</span>
                     </div>
                   </div>
@@ -512,7 +508,7 @@ export default function ShopPage() {
                   <div className="border-border/80 bg-secondary/50 relative flex h-28 w-full items-center justify-center overflow-hidden rounded-2xl border-2 p-4">
                     {isCyberpunk && (
                       <div className="flex flex-col items-center gap-1.5">
-                        <Zap className="h-8 w-8 text-cyan-500 drop-shadow-md" />
+                        <ElementIcon name="lightning" size={32} className="h-8 w-8" />
                         <span className="font-heading text-xs font-black tracking-wider text-cyan-500 uppercase">
                           Neon Cyan & Magenta HUD
                         </span>
@@ -528,7 +524,7 @@ export default function ShopPage() {
                     )}
                     {item.type === "badge" && (
                       <div className="flex flex-col items-center gap-1.5">
-                        <Shield className="h-8 w-8 text-amber-500 drop-shadow-md" />
+                        <ElementIcon name="defence" size={32} className="h-8 w-8" />
                         <span className="font-heading text-xs font-black tracking-wider text-amber-500 uppercase">
                           Paladin Emblem
                         </span>
@@ -538,7 +534,7 @@ export default function ShopPage() {
                       !isCyberpunk &&
                       !isObsidian && (
                         <div className="flex flex-col items-center gap-1.5">
-                          <Sparkles className="h-8 w-8 animate-spin text-violet-500 drop-shadow-md" />
+                          <ElementIcon name="diamond" size={32} className="h-8 w-8" />
                           <span className="font-heading text-xs font-black tracking-wider text-violet-500 uppercase">
                             Arcane Particles
                           </span>
@@ -605,7 +601,7 @@ export default function ShopPage() {
                     >
                       {isAffordable ? (
                         <>
-                          <ShoppingBag className="mr-1.5 h-3.5 w-3.5" />
+                          <ElementIcon name="chest" size={14} className="mr-1.5 h-3.5 w-3.5" />
                           <span>Buy for {item.price} Gold</span>
                         </>
                       ) : (

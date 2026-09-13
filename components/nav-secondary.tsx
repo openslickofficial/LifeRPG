@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { type LucideIcon } from "lucide-react";
 import {
   SidebarGroup,
@@ -26,6 +27,7 @@ export function NavSecondary({
   items: NavSecondaryItem[];
   className?: string;
 } & React.ComponentPropsWithoutRef<typeof SidebarGroup>) {
+  const pathname = usePathname();
   const { isMobile, setOpenMobile, state } = useSidebar();
   const isCollapsed = state === "collapsed" && !isMobile;
 
@@ -35,13 +37,19 @@ export function NavSecondary({
         <SidebarMenu>
           {items.map((item) => {
             const Icon = item.icon;
+            const isActive = pathname === item.url;
             return (
               <SidebarMenuItem key={item.title}>
                 <SidebarMenuButton
                   asChild
                   tooltip={item.title}
                   size="sm"
-                  className="text-muted-foreground hover:text-foreground rounded-lg"
+                  isActive={isActive}
+                  className={`rounded-lg ${
+                    isActive
+                      ? "bg-secondary text-primary font-bold"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
                 >
                   <Link
                     href={item.url}

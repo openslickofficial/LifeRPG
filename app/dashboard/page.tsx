@@ -1,15 +1,9 @@
 import * as React from "react";
 import Link from "next/link";
 import {
-  Shield,
-  Sparkles,
-  Flame,
-  Coins,
   CheckCircle2,
   Circle,
   ArrowRight,
-  Zap,
-  Sword,
   Plus,
 } from "lucide-react";
 import { DashboardHeader } from "@/components/DashboardHeader";
@@ -24,6 +18,7 @@ import { getLevelProgress, getRankTitle } from "@/lib/rpg/leveling";
 import { StreakCalendar } from "@/components/StreakCalendar";
 import { BlobCharacter } from "@/components/BlobCharacter";
 import { GroupBlobImage } from "@/components/GroupBlobImage";
+import { ElementIcon } from "@/components/ElementIcon";
 
 interface DashboardPageProps {
   searchParams?: Promise<{ demo?: string }>;
@@ -162,12 +157,12 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
   // Flame icon visual intensity based on streak duration
   const flameIconClass =
     streakCount >= 30
-      ? "h-5 w-5 text-rose-500 scale-125 drop-shadow-[0_0_12px_rgba(244,63,94,0.85)] animate-pulse"
+      ? "h-6 w-6 scale-125 drop-shadow-[0_0_12px_rgba(244,63,94,0.85)] animate-pulse"
       : streakCount >= 7
-        ? "h-5 w-5 text-amber-500 scale-110 drop-shadow-[0_0_8px_rgba(245,158,11,0.6)] animate-pulse"
+        ? "h-6 w-6 scale-110 drop-shadow-[0_0_8px_rgba(245,158,11,0.6)] animate-pulse"
         : streakCount > 0
-          ? "h-5 w-5 text-amber-500"
-          : "h-5 w-5 text-muted-foreground/60";
+          ? "h-6 w-6"
+          : "h-6 w-6 opacity-50";
 
   const todayStr = new Date().toISOString().slice(0, 10);
   const completedToday = activityDates.includes(todayStr);
@@ -242,29 +237,13 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
         </div>
       )}
 
-      {/* Auth verification banner if logged in */}
-      {isAuthenticatedUser && (
-        <div className="flex items-center justify-between gap-3 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-3.5 text-xs text-emerald-800 dark:text-emerald-200">
-          <div className="flex items-center gap-2.5">
-            <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-500" />
-            <span className="font-medium">
-              Live Supabase Character Session Verified for{" "}
-              <strong>{username}</strong>
-            </span>
-          </div>
-          <Badge variant="xp" className="text-[10px]">
-            CONNECTED
-          </Badge>
-        </div>
-      )}
-
       {/* 2. Grid of 4 Reusable Stat Tiles (Reflows: 4 col -> 2 col -> 1 col) */}
       <section aria-label="Core Character Stats">
         <h2 className="sr-only">Core Character Stats Overview</h2>
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {/* Stat 1: Character Level */}
           <StatTile
-            icon={<Shield className="h-5 w-5" aria-hidden="true" />}
+            icon={<ElementIcon name="defence" size={22} className="h-6 w-6" />}
             label="Character Level"
             value={`Lvl ${level}`}
             subvalue={getRankTitle(level)}
@@ -274,7 +253,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
 
           {/* Stat 2: Current XP with Circular Progress Ring */}
           <StatTile
-            icon={<Sparkles className="h-5 w-5" aria-hidden="true" />}
+            icon={<ElementIcon name="diamond" size={22} className="h-6 w-6" />}
             label="Experience Points"
             value={`${currentXp.toLocaleString()}`}
             subvalue={`${xpNeededRemaining} XP to Lvl ${level + 1}`}
@@ -296,7 +275,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
 
           {/* Stat 3: Daily Activity Streak with Dynamic Flame Intensity & Shields */}
           <StatTile
-            icon={<Flame className={flameIconClass} aria-hidden="true" />}
+            icon={<ElementIcon name="fire" size={22} className={flameIconClass} />}
             label="Daily Streak"
             value={streakCount > 0 ? `${streakCount} Days` : "0 Days"}
             subvalue={
@@ -318,7 +297,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
 
           {/* Stat 4: Gold Currency */}
           <StatTile
-            icon={<Coins className="h-5 w-5" aria-hidden="true" />}
+            icon={<ElementIcon name="coin_bag" size={22} className="h-6 w-6" />}
             label="Gold Purse"
             value={`${currency.toLocaleString()}`}
             subvalue="Spendable in Shop Vault"
@@ -343,7 +322,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
             <div className="border-border/60 flex items-center justify-between border-b pb-4">
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-violet-500/20 bg-violet-500/10 text-violet-600 dark:text-violet-400">
-                  <Sword className="h-5 w-5" aria-hidden="true" />
+                  <ElementIcon name="swords" size={20} className="h-5 w-5" />
                 </div>
                 <div>
                   <CardTitle as="h2" className="text-xl">
@@ -472,7 +451,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
           <Card className="rounded-3xl p-6">
             <div className="border-border/60 flex items-center justify-between border-b pb-3">
               <div className="flex items-center gap-2.5">
-                <Zap className="h-4 w-4 text-cyan-500" aria-hidden="true" />
+                <ElementIcon name="lightning" size={16} className="h-4 w-4" />
                 <h2 className="font-heading text-foreground text-sm font-bold">
                   Attribute Mastery Summary
                 </h2>

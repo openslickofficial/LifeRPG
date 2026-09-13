@@ -3,11 +3,10 @@
 import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { motion, useScroll, useTransform, useReducedMotion, type Variants } from "framer-motion";
+import { motion, useScroll, useTransform, useReducedMotion, useInView, type Variants } from "framer-motion";
 import { Check, Zap, Star, Shield, ArrowRight, Sparkles } from "lucide-react";
 import { BlobCharacter } from "@/components/BlobCharacter";
 import { AsteriskLogo } from "@/components/navbar";
-import { GroupBlobImage } from "@/components/GroupBlobImage";
 import { AmbientParticles } from "@/components/AmbientParticles";
 import { CinematicShowcase } from "@/components/CinematicShowcase";
 
@@ -77,19 +76,103 @@ const companionShowcase = [
 ];
 
 const socialStats = [
-  { value: "14,000+", label: "Active Adventurers" },
-  { value: "2.3M+", label: "Quests Completed" },
-  { value: "4.9 / 5", label: "Adventurer Rating" },
-  { value: "0%", label: "Pay-to-Win Mechanics" },
+  {
+    value: 14000,
+    label: "Active Adventurers",
+    formatter: (n: number) => `${Math.round(n).toLocaleString()}+`,
+  },
+  {
+    value: 2300000,
+    label: "Quests Completed",
+    formatter: (n: number) => `${(n / 1000000).toFixed(1).replace(".0", "")}M+`,
+  },
+  {
+    value: 4.9,
+    label: "Adventurer Rating",
+    formatter: (n: number) => `${n.toFixed(1)} / 5`,
+  },
+  {
+    value: 0,
+    label: "Pay-to-Win Mechanics",
+    formatter: (n: number) => `${Math.round(n)}%`,
+  },
 ];
+
+function AnimatedStatValue({
+  target,
+  formatter,
+}: {
+  target: number;
+  formatter: (n: number) => string;
+}) {
+  const ref = React.useRef<HTMLSpanElement | null>(null);
+  const isInView = useInView(ref, { once: true, amount: 0.5 });
+  const prefersReducedMotion = useReducedMotion();
+  const [displayValue, setDisplayValue] = React.useState(
+    prefersReducedMotion ? target : 0
+  );
+
+  React.useEffect(() => {
+    if (!isInView) return;
+
+    if (prefersReducedMotion) return;
+
+    let animationFrame = 0;
+    let startTime: number | null = null;
+    const duration = 1400;
+
+    const animate = (timestamp: number) => {
+      if (startTime === null) startTime = timestamp;
+      const progress = Math.min((timestamp - startTime) / duration, 1);
+      const eased = 1 - (1 - progress) ** 3;
+      setDisplayValue(target * eased);
+
+      if (progress < 1) {
+        animationFrame = window.requestAnimationFrame(animate);
+      }
+    };
+
+    animationFrame = window.requestAnimationFrame(animate);
+
+    return () => window.cancelAnimationFrame(animationFrame);
+  }, [isInView, prefersReducedMotion, target]);
+
+  return <span ref={ref}>{formatter(displayValue)}</span>;
+}
 
 export default function Home() {
   const [hoveredBlob, setHoveredBlob] = React.useState<string | null>(null);
-  const [isHeroVideoLoaded, setIsHeroVideoLoaded] = React.useState(false);
+  const prefersReducedMotion = useReducedMotion();
+  const [isHeroVideoReady, setIsHeroVideoReady] = React.useState(prefersReducedMotion);
+  const [shouldPlayHeroVideo, setShouldPlayHeroVideo] = React.useState(false);
 
   const heroRef = React.useRef<HTMLElement>(null);
   const heroVideoRef = React.useRef<HTMLVideoElement>(null);
-  const prefersReducedMotion = useReducedMotion();
+
+  React.useEffect(() => {
+    if (prefersReducedMotion) {
+      return;
+    }
+
+    const start = window.requestAnimationFrame(() => {
+      setShouldPlayHeroVideo(true);
+    });
+
+    return () => window.cancelAnimationFrame(start);
+  }, [prefersReducedMotion]);
+
+  React.useEffect(() => {
+    if (!shouldPlayHeroVideo || !heroVideoRef.current) return;
+
+    const video = heroVideoRef.current;
+    const playPromise = video.play();
+
+    if (playPromise) {
+      playPromise.catch(() => {
+        setShouldPlayHeroVideo(false);
+      });
+    }
+  }, [shouldPlayHeroVideo]);
 
   // Parallax Scroll Tracking for Hero
   const { scrollYProgress } = useScroll({
@@ -175,17 +258,28 @@ export default function Home() {
           <div className="absolute left-1/2 top-[40%] -translate-x-1/2 -translate-y-1/2 h-[500px] w-[800px] max-w-full rounded-full bg-[radial-gradient(circle_at_center,rgba(16,185,129,0.08)_0%,rgba(16,185,129,0.02)_50%,transparent_75%)] dark:bg-[radial-gradient(circle_at_center,rgba(16,185,129,0.16)_0%,rgba(16,185,129,0.03)_50%,transparent_75%)] blur-3xl" />
 
           {/* Autoplaying Hero Cinematic Background Video */}
+          <div className="absolute inset-0 overflow-hidden">
+            <Image
+              src="/hero-poster.svg"
+              alt=""
+              fill
+              priority
+              className={`object-cover object-center transition-opacity duration-1000 ${isHeroVideoReady ? "opacity-0" : "opacity-100"}`}
+              aria-hidden="true"
+            />
+          </div>
+
           {!prefersReducedMotion && (
             <video
               ref={heroVideoRef}
-              autoPlay
+              autoPlay={shouldPlayHeroVideo}
               muted
               loop
               playsInline
               preload="auto"
-              onLoadedData={() => setIsHeroVideoLoaded(true)}
-              className={`absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-1000 ${isHeroVideoLoaded ? "opacity-20 dark:opacity-40" : "opacity-0"
-                }`}
+              poster="/hero-poster.svg"
+              onCanPlay={() => setIsHeroVideoReady(true)}
+              className={`absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-1000 ${isHeroVideoReady ? "opacity-20 dark:opacity-40" : "opacity-0"}`}
             >
               <source src="/hero2.mp4" type="video/mp4" />
             </video>
@@ -303,7 +397,7 @@ export default function Home() {
                 type="button"
                 className="inline-flex items-center justify-center h-12 px-7 rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold text-sm sm:text-base tracking-tight shadow-[0_0_28px_rgba(16,185,129,0.4)] ring-1 ring-emerald-400/50 hover:ring-emerald-400 active:scale-95 transition-all duration-150 group cursor-pointer"
               >
-                <span>Start Your Quest — Free</span>
+                <span>Start Your Quest</span>
                 <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
               </button>
             </Link>
@@ -866,7 +960,7 @@ export default function Home() {
           {socialStats.map((stat) => (
             <div key={stat.label} className="relative flex flex-col items-center text-center">
               <span className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 dark:text-white tracking-tight">
-                {stat.value}
+                <AnimatedStatValue target={stat.value} formatter={stat.formatter} />
               </span>
               <span className="mt-2 text-xs font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400">
                 {stat.label}
@@ -975,9 +1069,9 @@ export default function Home() {
             <Image
               src="/blobs/blobs-waving-hand.png"
               alt="Your companion party waving hello"
-              width={480}
-              height={280}
-              className="h-48 sm:h-56 md:h-64 w-auto object-contain drop-shadow-[0_16px_32px_rgba(0,0,0,0.25)] dark:drop-shadow-[0_16px_32px_rgba(0,0,0,0.6)]"
+              width={560}
+              height={340}
+              className="h-56 sm:h-72 md:h-80 lg:h-[22rem] w-auto object-contain drop-shadow-[0_16px_32px_rgba(0,0,0,0.25)] dark:drop-shadow-[0_16px_32px_rgba(0,0,0,0.6)]"
             />
           </motion.div>
         </motion.div>
@@ -1032,7 +1126,7 @@ export default function Home() {
                   Supabase & Framer Motion
                 </p>
                 <Link
-                  href="https://github.com"
+                  href="https://github.com/openslickofficial/LifeRPG"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1 mt-2 text-sm font-semibold underline underline-offset-4 decoration-slate-950/40 hover:decoration-slate-950 transition-colors duration-200"
@@ -1057,7 +1151,7 @@ export default function Home() {
                 {/* Social Icons Row */}
                 <div className="mt-4 flex items-center gap-3">
                   <Link
-                    href="https://github.com"
+                    href="https://github.com/openslickofficial"
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="GitHub"
@@ -1079,7 +1173,7 @@ export default function Home() {
                     </svg>
                   </Link>
                   <Link
-                    href="mailto:hello@revel.app"
+                    href="mailto:subhajitmandal42033@gmail.com"
                     aria-label="Email"
                     className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-950/20 bg-slate-950/10 text-slate-950 hover:bg-slate-950 hover:text-emerald-400 transition-all duration-200"
                   >

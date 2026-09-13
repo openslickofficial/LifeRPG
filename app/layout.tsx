@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Fredoka, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
-import { Navbar } from "@/components/navbar";
+import { AppShell } from "@/components/app-shell";
 import { cookies } from "next/headers";
 
 const fredoka = Fredoka({
@@ -30,6 +30,10 @@ export const metadata: Metadata = {
   title: "Revel — Turn Your Tasks Into Triumphs",
   description:
     "Transform daily habits, deep work sprints, and self-improvement into an epic gamified role-playing adventure with Revel.",
+  icons: {
+    icon: "/app_logo.png",
+    apple: "/app_logo.png",
+  },
   openGraph: {
     title: "Revel — Turn Your Tasks Into Triumphs",
     description:
@@ -67,8 +71,7 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Navbar />
-          <main className="flex-1">{children}</main>
+          <AppShell>{children}</AppShell>
         </ThemeProvider>
       </body>
     </html>

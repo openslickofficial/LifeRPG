@@ -351,20 +351,14 @@ export const SidebarRail = React.forwardRef<
   HTMLButtonElement,
   React.ComponentProps<"button">
 >(({ className, ...props }, ref) => {
-  const { toggleSidebar } = useSidebar();
-
   return (
     <button
       ref={ref}
       data-sidebar="rail"
-      aria-label="Toggle Sidebar"
+      aria-hidden="true"
       tabIndex={-1}
-      onClick={toggleSidebar}
-      title="Toggle Sidebar"
       className={cn(
-        "absolute inset-y-0 z-20 hidden w-4 -translate-x-1/2 transition-all ease-linear after:absolute after:inset-y-0 after:left-1/2 after:w-[2px] hover:after:bg-primary group-data-[side=left]:-right-4 group-data-[side=right]:left-0 sm:flex",
-        "[[data-side=left]_&]:cursor-w-resize [[data-side=right]_&]:cursor-e-resize",
-        "[[data-side=left][data-state=collapsed]_&]:cursor-e-resize [[data-side=right][data-state=collapsed]_&]:cursor-w-resize",
+        "pointer-events-none absolute inset-y-0 z-20 hidden w-4 -translate-x-1/2 transition-all ease-linear after:absolute after:inset-y-0 after:left-1/2 after:w-[2px] group-data-[side=left]:-right-4 group-data-[side=right]:left-0 sm:flex",
         className
       )}
       {...props}
@@ -444,7 +438,7 @@ export const SidebarContent = React.forwardRef<
       ref={ref}
       data-sidebar="content"
       className={cn(
-        "flex min-h-0 flex-1 flex-col gap-2 overflow-auto p-3",
+        "flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto overflow-x-hidden p-3 group-data-[collapsible=icon]:overflow-hidden",
         className
       )}
       {...props}
@@ -588,7 +582,6 @@ export const SidebarMenuButton = React.forwardRef<
       isActive = false,
       variant = "default",
       size = "default",
-      tooltip,
       className,
       children,
       ...props
@@ -597,7 +590,7 @@ export const SidebarMenuButton = React.forwardRef<
   ) => {
     const Comp = asChild ? Slot : "button";
 
-    const button = (
+    return (
       <Comp
         ref={ref}
         data-sidebar="menu-button"
@@ -612,22 +605,6 @@ export const SidebarMenuButton = React.forwardRef<
       >
         {children}
       </Comp>
-    );
-
-    if (!tooltip) {
-      return button;
-    }
-
-    return (
-      <div className="relative flex w-full items-center">
-        {button}
-        <span
-          role="tooltip"
-          className="border-border/80 bg-popover font-heading text-popover-foreground shadow-elevated pointer-events-none absolute left-full ml-3 z-50 rounded-xl border px-3 py-1.5 text-xs font-bold whitespace-nowrap opacity-0 transition-opacity duration-150 group-hover/menu-item:opacity-100 group-focus-visible/menu-item:opacity-100 hidden group-data-[collapsible=icon]:block"
-        >
-          {tooltip}
-        </span>
-      </div>
     );
   }
 );

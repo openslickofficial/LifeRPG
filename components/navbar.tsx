@@ -5,48 +5,64 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { AppLogo } from "@/components/ElementIcon";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { createClient } from "@/lib/supabase/client";
 
-/**
- * Modern 6-spoke rounded asterisk starburst logo mark
- */
+/** Brand mark — `public/app_logo.png`. */
 export function AsteriskLogo({ className = "h-5 w-5" }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 32 32"
-      fill="currentColor"
-      className={className}
-      aria-label="Revel Logo"
-    >
-      <rect x="13.6" y="3" width="4.8" height="26" rx="2.4" />
-      <rect
-        x="13.6"
-        y="3"
-        width="4.8"
-        height="26"
-        rx="2.4"
-        transform="rotate(60 16 16)"
-      />
-      <rect
-        x="13.6"
-        y="3"
-        width="4.8"
-        height="26"
-        rx="2.4"
-        transform="rotate(120 16 16)"
-      />
-    </svg>
-  );
+  return <AppLogo className={className} alt="Revel" />;
 }
 
 export function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
+  const [user, setUser] = React.useState<{
+    id: string;
+    email?: string | null;
+    user_metadata?: { username?: string; avatar_url?: string };
+  } | null>(null);
+
+  React.useEffect(() => {
+    const supabase = createClient();
+
+    const fetchUser = async () => {
+      const {
+        data: { user: currentUser },
+      } = await supabase.auth.getUser();
+      setUser(currentUser);
+    };
+
+    fetchUser();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   // Dashboard layout has its own dedicated Sidebar and SiteHeader
   if (pathname.startsWith("/dashboard")) {
     return null;
   }
+
+  const username =
+    user?.user_metadata?.username ||
+    user?.email?.split("@")[0] ||
+    "Adventurer";
+  const avatarUrl =
+    user?.user_metadata?.avatar_url ||
+    `https://api.dicebear.com/7.x/bottts/svg?seed=${username}`;
+  const initials = username
+    .split(" ")
+    .map((part) => part[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
 
   const navLinks = [
     { label: "Home", href: "/", targetId: "top" },
@@ -126,25 +142,46 @@ export function Navbar() {
           ))}
         </nav>
 
-        {/* Right: Theme Toggle + Login text link + Small Solid Primary Accent Pill Button */}
+        {/* Right: Theme Toggle + auth state */}
         <div className="hidden md:flex items-center gap-4">
           <ThemeToggle className="h-8 w-8 rounded-lg border-slate-300 dark:border-white/10 bg-slate-100 dark:bg-white/[0.05] hover:bg-slate-200 dark:hover:bg-white/[0.1] hover:border-emerald-500/40" />
 
-          <Link
-            href="/login"
-            className="text-sm font-medium text-slate-600 dark:text-slate-300 transition-colors hover:text-slate-900 dark:hover:text-white"
-          >
-            Login
-          </Link>
-
-          <Link href="/login">
+          {user ? (
             <button
               type="button"
-              className="inline-flex items-center justify-center rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold text-xs px-4 py-2 shadow-[0_0_16px_rgba(16,185,129,0.3)] transition-all active:scale-95 cursor-pointer"
+              onClick={() => router.push("/dashboard")}
+              className="flex items-center rounded-full border border-emerald-500/30 bg-emerald-500/5 transition-colors hover:bg-emerald-500/10"
+              aria-label="Open dashboard"
             >
-              Start Your Quest
+              <Avatar className="h-8 w-8 border border-emerald-500/30 bg-emerald-500/10">
+                <AvatarImage src={avatarUrl} alt={username} />
+                <AvatarFallback className="bg-emerald-600 text-[10px] font-black text-white">
+                  {initials || "AV"}
+                </AvatarFallback>
+              </Avatar>
+              {/* <span className="hidden text-sm font-semibold text-slate-700 dark:text-slate-200 sm:inline">
+                {username}
+              </span> */}
             </button>
-          </Link>
+          ) : (
+            <>
+              <Link
+                href="/login"
+                className="text-sm font-medium text-slate-600 dark:text-slate-300 transition-colors hover:text-slate-900 dark:hover:text-white"
+              >
+                Login
+              </Link>
+
+              <Link href="/login">
+                <button
+                  type="button"
+                  className="inline-flex items-center justify-center rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold text-xs px-4 py-2 shadow-[0_0_16px_rgba(16,185,129,0.3)] transition-all active:scale-95 cursor-pointer"
+                >
+                  Start Your Quest
+                </button>
+              </Link>
+            </>
+          )}
         </div>
 
         {/* Mobile Hamburger Toggle */}
@@ -175,22 +212,45 @@ export function Navbar() {
             <div className="mt-2 flex items-center justify-between border-t border-slate-900/[0.08] dark:border-white/[0.06] pt-3">
               <div className="flex items-center gap-3">
                 <ThemeToggle className="h-8 w-8 rounded-lg border-slate-300 dark:border-white/10 bg-slate-100 dark:bg-white/[0.05] hover:bg-slate-200 dark:hover:bg-white/[0.1] hover:border-emerald-500/40" />
-                <Link
-                  href="/login"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white"
-                >
-                  Login
-                </Link>
+
+                {user ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      router.push("/dashboard");
+                    }}
+                    className="flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/5 p-1"
+                    aria-label="Open dashboard"
+                  >
+                    <Avatar className="h-8 w-8 border border-emerald-500/30 bg-emerald-500/10">
+                      <AvatarImage src={avatarUrl} alt={username} />
+                      <AvatarFallback className="bg-emerald-600 text-[10px] font-black text-white">
+                        {initials || "AV"}
+                      </AvatarFallback>
+                    </Avatar>
+                  </button>
+                ) : (
+                  <Link
+                    href="/login"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white"
+                  >
+                    Login
+                  </Link>
+                )}
               </div>
-              <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
-                <button
-                  type="button"
-                  className="inline-flex items-center justify-center rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold text-xs px-4 py-1.5"
-                >
-                  Start Your Quest
-                </button>
-              </Link>
+
+              {!user && (
+                <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
+                  <button
+                    type="button"
+                    className="inline-flex items-center justify-center rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold text-xs px-4 py-1.5"
+                  >
+                    Start Your Quest
+                  </button>
+                </Link>
+              )}
             </div>
           </nav>
         </div>

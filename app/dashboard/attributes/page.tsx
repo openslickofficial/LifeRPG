@@ -1,10 +1,5 @@
 import Link from "next/link";
 import {
-  Zap,
-  Sword,
-  Shield,
-  Palette,
-  Sparkles,
   Plus,
   CheckCircle2,
 } from "lucide-react";
@@ -16,6 +11,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getLevelProgress } from "@/lib/rpg/leveling";
 import { BlobCharacter } from "@/components/BlobCharacter";
 import { getBlobByAttribute } from "@/lib/blobs";
+import { ElementIcon } from "@/components/ElementIcon";
 
 interface AttributeDefinition {
   name: "Strength" | "Intellect" | "Discipline" | "Creativity";
@@ -37,7 +33,7 @@ const ATTRIBUTE_DEFINITIONS: AttributeDefinition[] = [
   {
     name: "Intellect",
     title: "Master of Systems & Cognition",
-    icon: <Zap className="h-6 w-6 text-cyan-500" />,
+    icon: <ElementIcon name="lightning" size={24} className="h-6 w-6" />,
     accentColor: "cyan",
     textColor: "text-cyan-600 dark:text-cyan-400",
     borderColor: "border-cyan-500/30 hover:border-cyan-500/60",
@@ -68,7 +64,7 @@ const ATTRIBUTE_DEFINITIONS: AttributeDefinition[] = [
   {
     name: "Strength",
     title: "Vessel of Physical Resilience",
-    icon: <Sword className="h-6 w-6 text-rose-500" />,
+    icon: <ElementIcon name="sword" size={24} className="h-6 w-6" />,
     accentColor: "rose",
     textColor: "text-rose-600 dark:text-rose-400",
     borderColor: "border-rose-500/30 hover:border-rose-500/60",
@@ -99,7 +95,7 @@ const ATTRIBUTE_DEFINITIONS: AttributeDefinition[] = [
   {
     name: "Discipline",
     title: "Bastion of Willpower & Habits",
-    icon: <Shield className="h-6 w-6 text-violet-500" />,
+    icon: <ElementIcon name="defence" size={24} className="h-6 w-6" />,
     accentColor: "violet",
     textColor: "text-violet-600 dark:text-violet-400",
     borderColor: "border-violet-500/30 hover:border-violet-500/60",
@@ -130,7 +126,7 @@ const ATTRIBUTE_DEFINITIONS: AttributeDefinition[] = [
   {
     name: "Creativity",
     title: "Beacon of Originality & Vision",
-    icon: <Palette className="h-6 w-6 text-amber-500" />,
+    icon: <ElementIcon name="diamond" size={24} className="h-6 w-6" />,
     accentColor: "amber",
     textColor: "text-amber-600 dark:text-amber-400",
     borderColor: "border-amber-500/30 hover:border-amber-500/60",
@@ -274,7 +270,7 @@ export default async function AttributesPage() {
         <div className="relative z-10 flex flex-col justify-between gap-6 md:flex-row md:items-center">
           <div>
             <div className="flex items-center gap-2">
-              <Sparkles className="text-primary h-4 w-4" />
+              <ElementIcon name="diamond" size={16} className="h-4 w-4" />
               <span className="font-heading text-muted-foreground text-xs font-bold tracking-wider uppercase">
                 Active Archetype
               </span>

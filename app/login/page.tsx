@@ -62,7 +62,7 @@ function LoginForm() {
   };
 
   return (
-    <div className="relative flex min-h-[calc(100vh-4rem)] items-center justify-center px-4 py-12">
+    <div className="relative flex h-screen items-center justify-center px-4 py-12">
       {/* Dynamic Ambient Background Glows */}
       <div
         aria-hidden="true"

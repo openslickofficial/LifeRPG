@@ -1,6 +1,7 @@
-import { User, Shield } from "lucide-react";
+import { User } from "lucide-react";
 import { Card, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { ElementIcon } from "@/components/ElementIcon";
 
 export default function SettingsPage() {
   return (
@@ -48,7 +49,7 @@ export default function SettingsPage() {
         <Card className="rounded-3xl p-6">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-cyan-500/10 text-cyan-600 dark:text-cyan-400">
-              <Shield className="h-5 w-5" />
+              <ElementIcon name="defence" size={20} className="h-5 w-5" />
             </div>
             <div>
               <CardTitle className="text-lg">Security & Privacy</CardTitle>

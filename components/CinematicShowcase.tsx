@@ -21,6 +21,19 @@ export function CinematicShowcase({
   const [isMuted, setIsMuted] = React.useState(false);
   const [isHovered, setIsHovered] = React.useState(false);
   const [hasStarted, setHasStarted] = React.useState(false);
+  const [isInView, setIsInView] = React.useState(false);
+
+  React.useEffect(() => {
+    if (!containerRef.current) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsInView(entry.isIntersecting),
+      { rootMargin: "200px 0px" }
+    );
+
+    observer.observe(containerRef.current);
+    return () => observer.disconnect();
+  }, []);
 
   const handlePlayToggle = () => {
     if (!videoRef.current) return;
@@ -99,15 +112,23 @@ export function CinematicShowcase({
           className="group relative aspect-video w-full cursor-pointer overflow-hidden rounded-2xl sm:rounded-3xl border border-slate-900/[0.12] dark:border-white/[0.12] bg-slate-100 dark:bg-[#12121A] shadow-[0_20px_50px_rgba(0,0,0,0.15)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.8)] backdrop-blur-md"
         >
           {/* Video Element */}
-          <video
-            ref={videoRef}
-            src={videoSrc}
-            playsInline
-            loop
-            preload="metadata"
-            onEnded={() => setIsPlaying(false)}
-            className="h-full w-full object-cover object-center"
-          />
+          {isInView && (
+            <video
+              ref={videoRef}
+              src={videoSrc}
+              playsInline
+              loop
+              preload="metadata"
+              onEnded={() => setIsPlaying(false)}
+              className="h-full w-full object-cover object-center"
+            />
+          )}
+
+          {!isInView && (
+            <div className="absolute inset-0 flex items-center justify-center bg-slate-900/80 text-xs font-mono uppercase tracking-[0.28em] text-slate-300">
+              Loading cinematic...
+            </div>
+          )}
 
           {/* Vignette Overlay for cinematic look */}
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
