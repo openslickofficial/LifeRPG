@@ -141,18 +141,12 @@ This is a common setup gotcha and is important for both local debugging and prod
 
 ## Screenshots
 
-> Screenshots are stored in the project under `public/screenshots`.
-
-```md
 ![Dashboard](./public/screenshots/1.png)
 ![Quest Flow](./public/screenshots/2.png)
 ![Character Progression](./public/screenshots/3.png)
 ![Shop & Themes](./public/screenshots/4.png)
 ![Gameplay Overview](./public/screenshots/5.png)
 ![Onboarding / App Preview](./public/screenshots/6.png)
-```
-
----
 
 ## Disclosures
 
