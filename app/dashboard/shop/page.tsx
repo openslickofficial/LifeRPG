@@ -112,7 +112,7 @@ export default function ShopPage() {
 
   // Toast state
   const [toastMessage, setToastMessage] = React.useState<{
-    type: "success" | "error" | "info";
+    type: "success" | "error" | "info" | "rate_limit";
     text: string;
   } | null>(null);
 
@@ -120,7 +120,7 @@ export default function ShopPage() {
 
   const showToast = (
     text: string,
-    type: "success" | "error" | "info" = "success"
+    type: "success" | "error" | "info" | "rate_limit" = "success"
   ) => {
     setToastMessage({ type, text });
     setTimeout(() => setToastMessage(null), 3500);
@@ -219,7 +219,10 @@ export default function ShopPage() {
       // Rollback on server rejection
       setCurrency(previousCurrency);
       setOwnedItemIds(previousOwned);
-      showToast(res.error || "Failed to purchase item.", "error");
+      showToast(
+        res.error || "Failed to purchase item.",
+        res.isRateLimited ? "rate_limit" : "error"
+      );
     }
 
     setIsPurchasing(false);
@@ -274,9 +277,14 @@ export default function ShopPage() {
               className="h-5 w-5 shrink-0 text-emerald-500"
               aria-hidden="true"
             />
-          ) : (
+          ) : toastMessage.type === "error" ? (
             <AlertCircle
               className="h-5 w-5 shrink-0 text-rose-500"
+              aria-hidden="true"
+            />
+          ) : (
+            <AlertCircle
+              className="h-5 w-5 shrink-0 text-cyan-500"
               aria-hidden="true"
             />
           )}
